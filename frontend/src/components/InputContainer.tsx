@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react'
-import ModelSelector, { type Model } from './ModelSelector'
-
+import ModelSelector from './ModelSelector'
+import { type Model } from '../types'
 type Props = {
   onSend: (text: string, file?: File | null) => void
   isLoading: boolean
@@ -100,7 +100,7 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
                   />
                   <label
                     htmlFor="file-upload"
-                    className="flex items-center gap-1 bg-white text-neutral-800 px-2 py-1 rounded-md hover:bg-neutral-100 cursor-pointer text-xs"
+                    className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 px-2 py-1 rounded-md cursor-pointer text-xs"
                   >
                     <Upload size={14} />
                     Upload
@@ -111,7 +111,8 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex items-center gap-1 bg-white text-neutral-800 px-3 py-1 rounded-md hover:bg-neutral-100 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 text-white px-3 py-1 rounded-md  text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+              
               >
                 {isLoading ? (
                   <Loader2 size={14} className="animate-spin" />

@@ -1,9 +1,5 @@
 import React from 'react'
-
-export type Model = {
-  id: string;
-  name: string;
-}
+import type { Model } from '../types'
 
 type Props = {
   models: Model[]

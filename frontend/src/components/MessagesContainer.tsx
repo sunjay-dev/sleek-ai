@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import UserMessage from './UserMessage'
 import AiMessage from './AiMessage'
-
-export type Message = {
-  text: string
-  isAi: boolean
-}
+import type { Message } from '../types'
 
 const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; isLoading: boolean }> = ({ messages, onResend, isLoading }) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -58,7 +54,11 @@ const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; 
                   onResend={onResend}
                 />
               ) : (
-                <UserMessage text={message.text} />
+                <UserMessage
+                  text={message.text}
+                  isCopied={copiedIndex === index}
+                  onCopy={() => handleCopy(message.text, index)}
+                />
               )}
             </div>
           ))}

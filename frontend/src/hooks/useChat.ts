@@ -1,9 +1,5 @@
 import { useState } from 'react'
-
-export type Message = {
-  text: string
-  isAi: boolean
-}
+import type { Message } from '../types'
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([])

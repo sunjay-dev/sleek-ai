@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import MessagesContainer from '../components/MessagesContainer'
 import InputContainer from '../components/InputContainer'
-import { type Model } from '../components/ModelSelector'
+import { type Model } from '../types'
 import { useChat } from '../page/useChat'
 
 const models: Model[] = [
