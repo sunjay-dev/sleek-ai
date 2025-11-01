@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "bun run src/app.ts",
+    "dev": "bun --watch src/app.ts",
+    "build": "tsc",
+    "test": "bun test",
+    "lint": "eslint . --ext .ts,.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.17.1",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "hono": "^4.10.4",
+    "openai": "^6.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.2"
+  }
+}
