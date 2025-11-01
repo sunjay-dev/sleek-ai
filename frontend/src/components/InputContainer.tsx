@@ -8,10 +8,11 @@ type Props = {
   isLoading: boolean
   models: Model[]
   selectedModel: string
+  onStop: () => void
   onModelChange: (modelId: string) => void
 }
 
-const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedModel, onModelChange }) => {
+const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedModel, onStop, onModelChange }) => {
   const [message, setMessage] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -119,12 +120,15 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
 
               <button
                 type="submit"
-                disabled={isLoading}
+                onClick={isLoading ? onStop : undefined}
+                disabled={!isLoading && !message.trim() && !file}
                 className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 text-white px-3 py-1 rounded-md  text-xs disabled:opacity-50 disabled:cursor-not-allowed"
               
               >
                 {isLoading ? (
-                  <Loader2 size={14} className="animate-spin" />
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                  </>
                 ) : (
                   <>
                     Send <SendHorizontal size={14} />

@@ -57,7 +57,7 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
             </button>
 
             {onResend && (
-              <button type="button" onClick={onResend} className="mr-3 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400" aria-label="Send again">
+              <button type="button" onClick={onResend} className="mr-1 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400" aria-label="Send again">
                 <Repeat2 size={14} />
               </button>
             )}

@@ -17,7 +17,7 @@ const models: Model[] = [
 ];
 
 const ChatPage: React.FC = () => {
-  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel } = useChat()
+  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat()
 
   const handleModelChange = (modelId: string) => {
     setSelectedModel(modelId)
@@ -44,6 +44,7 @@ const ChatPage: React.FC = () => {
           isLoading={isLoading}
           models={models}
           selectedModel={selectedModel}
+          onStop={stopGeneration}
           onModelChange={handleModelChange}
         />
       </div>

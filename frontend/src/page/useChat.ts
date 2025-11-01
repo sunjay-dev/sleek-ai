@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Message } from '../types'
 
 export const useChat = () => {
@@ -7,6 +7,7 @@ export const useChat = () => {
     const [selectedModel, setSelectedModel] = useState<string>(() => {
         return localStorage.getItem('selectedModel') || 'openai/gpt-oss-120b'
     })
+    const abortControllerRef = useRef<AbortController | null>(null)
 
     useEffect(() => {
         // Save the selected model to local storage whenever it changes
@@ -20,22 +21,32 @@ export const useChat = () => {
         setMessages((s) => [...s, userMsg])
 
         try {
+            const controller = new AbortController()
+            abortControllerRef.current = controller
+
             setIsLoading(true)
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: text, model: selectedModel }),
+                signal: controller.signal,
             })
             const data = await res.json()
             const aiText = data?.response ?? 'Sorry, no response.'
             const aiMsg: Message = { text: aiText, isAi: true }
             setMessages((s) => [...s, aiMsg])
         } catch (err) {
-            console.error(err)
-            const errMsg: Message = { text: 'Error: failed to contact server.', isAi: true }
-            setMessages((s) => [...s, errMsg])
+            if ((err as Error).name === 'AbortError') {
+                const stoppedMsg: Message = { text: 'Generation stopped.', isAi: true }
+                setMessages((s) => [...s, stoppedMsg]);
+            } else {
+                console.error(err)
+                const errMsg: Message = { text: 'Error: failed to contact server.', isAi: true }
+                setMessages((s) => [...s, errMsg])
+            }
         } finally {
             setIsLoading(false)
+            abortControllerRef.current = null
         }
     }
 
@@ -45,12 +56,20 @@ export const useChat = () => {
         await sendMessage(lastUser.text)
     }
 
+    const stopGeneration = () => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort()
+            setIsLoading(false)
+        }
+    }
+
     return {
         messages,
         isLoading,
         selectedModel,
         sendMessage,
         resendLastUser,
+        stopGeneration,
         setSelectedModel,
     }
 }
