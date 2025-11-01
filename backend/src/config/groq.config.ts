@@ -7,10 +7,16 @@ const client = new OpenAI({
 });
 
 
-export const askAI = async (prompt: string | ResponseInput | undefined) => {
+export const askAI = async (prompt: string | ResponseInput | undefined, model: string) => {
     const response = await client.responses.create({
-        model: "openai/gpt-oss-120b",
+        model: model,
         input: prompt,
     });
     return response.output_text;
 };
+
+
+export const listModels = async () => {
+    const models = await client.models.list();
+    return models.data;
+}

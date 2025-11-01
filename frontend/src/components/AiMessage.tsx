@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { Copy, Repeat2, Check } from 'lucide-react'
+import styles from './AiMessage.module.css'
 
 type Props = {
   text: string
@@ -31,7 +32,7 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
   return (
     <div className="flex justify-start">
       <div className="max-w-full text-sm md:p-4 p-3 rounded-xl selection:bg-gray-100 selection:text-neutral-800">
-        <div className="markdown">
+        <div className={styles.markdown}>
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
             {text}
           </ReactMarkdown>

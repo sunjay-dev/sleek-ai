@@ -1,12 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Message } from '../components/MessagesContainer'
 
 export const useChat = () => {
     const [messages, setMessages] = useState<Message[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [selectedModel, setSelectedModel] = useState<string>(() => {
+        return localStorage.getItem('selectedModel') || 'openai/gpt-oss-120b'
+    })
+
+    useEffect(() => {
+        // Save the selected model to local storage whenever it changes
+        localStorage.setItem('selectedModel', selectedModel)
+    }, [selectedModel])
     
-    const sendMessage = async (text: string) => {
-        if (!text.trim()) return
+    const sendMessage = async (text: string, file?: File | null) => {
+        if (!text.trim() && !file) return
 
         const userMsg: Message = { text, isAi: false }
         setMessages((s) => [...s, userMsg])
@@ -16,7 +24,7 @@ export const useChat = () => {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: text }),
+                body: JSON.stringify({ query: text, model: selectedModel }),
             })
             const data = await res.json()
             const aiText = data?.response ?? 'Sorry, no response.'
@@ -40,7 +48,9 @@ export const useChat = () => {
     return {
         messages,
         isLoading,
+        selectedModel,
         sendMessage,
         resendLastUser,
+        setSelectedModel,
     }
 }
