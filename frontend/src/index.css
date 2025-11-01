@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -51,8 +53,9 @@ code {
 
 .markdown hr {
   border: 0;
-  border-top: 1px solid rgba(255,255,255,0.08); /* subtle white line */
-  margin: 0; 
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  /* subtle white line */
+  margin: 0;
 }
 
 .markdown {
@@ -78,11 +81,9 @@ code {
 }
 
 .markdown thead th {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.04)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.04));
   color: #fff;
   font-weight: 600;
   font-size: 0.9rem;
@@ -133,6 +134,7 @@ code {
   list-style-type: decimal;
   list-style-position: outside;
 }
+
 .markdown ol li {
   margin-bottom: 0.22rem;
   line-height: 1;
@@ -140,7 +142,7 @@ code {
 
 /* style the marker */
 .markdown ol li::marker {
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 0.95em;
 }
 
@@ -208,13 +210,23 @@ code {
   }
 }
 
-.markdown li > p {
+.markdown li>p {
   display: inline;
   margin: 0;
   padding: 0;
 }
 
 /* Optional: spacing for lists */
-.markdown li + li {
+.markdown li+li {
   margin-top: 0.25rem;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
 }

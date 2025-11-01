@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
-import { SendHorizontal, Upload, Smile } from 'lucide-react'
+import { SendHorizontal, Upload, Loader2 } from 'lucide-react'
 
 type Props = {
   onSend: (text: string) => void
+  isLoading: boolean
 }
 
-const InputContainer: React.FC<Props> = ({ onSend }) => {
+const InputContainer: React.FC<Props> = ({ onSend, isLoading }) => {
   const [message, setMessage] = useState('')
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
+    if (isLoading) return
     const text = message.trim()
     if (!text) return
     onSend(text)
@@ -48,19 +50,19 @@ const InputContainer: React.FC<Props> = ({ onSend }) => {
                 Upload
               </label>
 
-              <div className="flex items-center gap-2">
-                <button type="button" className="text-white/50 hover:text-white/80 p-1">
-                  <Smile size={14} />
-                </button>
-
-                <button
-                  type="submit"
-                  className="flex items-center gap-1 bg-white text-neutral-800 px-3 py-1 rounded-md hover:bg-neutral-100 text-xs"
-                >
-                  Send
-                  <SendHorizontal size={14} />
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex items-center gap-1 bg-white text-neutral-800 px-3 py-1 rounded-md hover:bg-neutral-100 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <>
+                    Send <SendHorizontal size={14} />
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </form>
