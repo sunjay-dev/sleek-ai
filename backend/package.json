@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "bun run src/app.ts",
+    "start": "bun run dist/app.js",
     "dev": "bun --watch src/app.ts",
     "build": "tsc",
     "test": "bun test",
@@ -20,6 +20,7 @@
     "openai": "^6.7.0"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2"
+    "@types/node": "^24.9.2",
+    "typescript": "^5.9.3"
   }
 }

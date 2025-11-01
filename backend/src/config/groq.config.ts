@@ -9,7 +9,7 @@ const client = new OpenAI({
 
 export const askAI = async (prompt: string | ResponseInput | undefined) => {
     const response = await client.responses.create({
-        model: "openai/gpt-oss-20b",
+        model: "openai/gpt-oss-120b",
         input: prompt,
     });
     return response.output_text;

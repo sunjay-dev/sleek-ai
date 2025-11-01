@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
-@import "highlight.js/styles/github-dark.css";
 
 html, body, #root {
   height: 100%;
@@ -10,19 +9,24 @@ body {
   font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
 }
 
-/* spacing for markdown / message text */
+
+.userMessage .markdown {
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  padding: 6px;
+}
+
+.userMessage .markdown *:not(pre *):not(code *) {
+  color: black !important;
+}
+
 .markdown p,
 .markdown li,
 .markdown pre,
 .markdown code {
   line-height: 1.8;
 }
-
-.markdown p,
-.markdown li {
-  margin-bottom: 0.01rem;
-}
-
 
 button {
   cursor: pointer;
@@ -40,81 +44,148 @@ code {
   font-size: 0.9rem;
 }
 
-/* ensure markdown tables and inline elements wrap nicely */
 .markdown :global(table) {
   width: 100%;
   border-collapse: collapse;
 }
 
-/* increase spacing around horizontal rules inside markdown */
 .markdown hr {
   border: 0;
   border-top: 1px solid rgba(255,255,255,0.08); /* subtle white line */
   margin: 0; 
 }
 
-/* tighten other markdown spacing if needed */
 .markdown {
   word-break: break-word;
   white-space: pre-wrap;
+  line-height: 0.8;
 }
 
 .markdown .table-wrap {
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   overflow: auto;
-  border: 1px solid rgba(255,255,255,0.06);
-  margin: 0.4rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 0.6rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(4px);
 }
 
-/* table base */
 .markdown table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 420px;
-  font-size: 0.95rem;
+  min-width: 440px;
+  font-size: 0.94rem;
 }
 
-/* header / cells */
-.markdown thead th,
-.markdown tbody td {
-  padding: 0.42rem 0.6rem;
-  text-align: left;
-  vertical-align: middle;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-
-/* header style */
 .markdown thead th {
-  background: rgba(255,255,255,0.04);
-  color: #ffffff;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.04)
+  );
+  color: #fff;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  line-height: 1.4;
 }
 
-/* striped rows */
+.markdown tbody td {
+  padding: 0.52rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.92);
+  transition: background 0.2s ease;
+  line-height: 1.4;
+}
+
 .markdown tbody tr:nth-child(even) {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.015);
 }
 
-/* small code inside table cells */
+.markdown tbody tr:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .markdown td code,
 .markdown th code {
-  background: rgba(0,0,0,0.25);
-  color: inherit;
-  padding: 0.06rem 0.28rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f1f1;
+  padding: 0.08rem 0.35rem;
   border-radius: 0.25rem;
   font-size: 0.88em;
 }
 
-/* caption */
 .markdown table caption {
   text-align: left;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
-  margin-bottom: 0.35rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.4rem;
+  padding-left: 0.4rem;
 }
 
-/* responsive: horizontal scroll on small screens */
+
+.markdown ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+}
+.markdown ol li {
+  margin-bottom: 0.22rem;
+  line-height: 1;
+}
+
+/* style the marker */
+.markdown ol li::marker {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.95em;
+}
+
+/* nested ordered lists use lower-alpha for clarity */
+.markdown ol ol {
+  list-style-type: lower-alpha;
+  padding-left: 1rem;
+}
+
+.markdown ul {
+  list-style-type: disc;
+  list-style-position: outside;
+}
+
+.markdown ul li {
+  margin-bottom: 0.22rem;
+  line-height: 1;
+}
+
+/* match marker appearance with ol */
+.markdown ul li::marker {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95em;
+}
+
+/* nested unordered lists use hollow circles like ol uses lower-alpha */
+.markdown ul ul {
+  list-style-type: circle;
+  padding-left: 1rem;
+  margin-top: 0.15rem;
+}
+
+/* mixed nested lists (ul > ol, ol > ul) */
+.markdown ul ol,
+.markdown ol ul {
+  padding-left: 1rem;
+  margin-top: 0.15rem;
+}
+
+/* optional compact mode for tighter lists */
+.markdown ul.compact {
+  margin: 0.2rem 0;
+  padding-left: 0.9rem;
+}
+
 @media (max-width: 640px) {
   .markdown .table-wrap {
     -webkit-overflow-scrolling: touch;
@@ -135,4 +206,15 @@ code {
     scrollbar-width: none;
     /* Firefox */
   }
+}
+
+.markdown li > p {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional: spacing for lists */
+.markdown li + li {
+  margin-top: 0.25rem;
 }
