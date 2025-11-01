@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react'
 import ModelSelector from './ModelSelector'
 import { type Model } from '../types'
+
 type Props = {
   onSend: (text: string, file?: File | null) => void
   isLoading: boolean
@@ -17,11 +18,14 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault()
-    if (isLoading || (!message.trim() && !file)) return
-    const text = message.trim()
-    onSend(text, file)
+    e?.preventDefault();
+
+    if (isLoading || (!message.trim() && !file)) 
+    return;
+    
+    onSend(message, file)
     setMessage('')
+    
     setFile(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -73,12 +77,17 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
             />
 
             {file && (
-              <div className="flex items-center gap-2 bg-neutral-700/50 px-2 py-1 rounded-md text-xs text-white/80 mt-2">
-                <Paperclip size={14} />
-                <span className="truncate flex-1">{file.name}</span>
-                <button type="button" onClick={handleRemoveFile} className="p-1 hover:bg-neutral-700 rounded-full">
-                  <X size={14} />
-                </button>
+              <div className="space-y-2">
+                {file.type.startsWith('image/') && (
+                  <img src={URL.createObjectURL(file)} alt="Preview" className="max-h-20 rounded-md" />
+                )}
+                <div className="flex items-center gap-2 bg-neutral-700/50 px-2 py-1 rounded-md text-xs text-white/80">
+                  <Paperclip size={14} />
+                  <span className="truncate flex-1">{file.name}</span>
+                  <button type="button" onClick={handleRemoveFile} className="p-1 hover:bg-neutral-700 rounded-full">
+                    <X size={14} />
+                  </button>
+                </div>
               </div>
             )}
 

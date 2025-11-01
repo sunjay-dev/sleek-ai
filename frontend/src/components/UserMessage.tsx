@@ -1,5 +1,6 @@
 import React from 'react'
 import { Copy, Check } from 'lucide-react'
+import styles from '../styles/UserMessage.module.css'
 
 type Props = {
   text: string
@@ -9,13 +10,13 @@ type Props = {
 
 const UserMessage: React.FC<Props> = ({ text, isCopied, onCopy }) => {
   return (
-    <div className="flex flex-col gap-2 justify-end items-end">
-      <div className="bg-white text-neutral-800 px-3 py-2 rounded-xl max-w-md selection:bg-gray-900/90 userMessage selection:text-white text-sm">
+    <div className="flex flex-col gap-2 justify-end items-end group">
+      <div className={`bg-white text-neutral-800 px-3 py-2 rounded-xl max-w-md selection:bg-gray-900/90 selection:text-white text-sm ${styles.userMessage}`}>
         <p className="leading-relaxed">{text}</p>
       </div>
       <button
         onClick={onCopy}
-        className="mr-2 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400"
+        className="mr-2 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity"
         aria-label="Copy message"
       >
         {isCopied ? <Check size={14} /> : <Copy size={14} />}
