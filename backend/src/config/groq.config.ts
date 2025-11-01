@@ -10,7 +10,7 @@ const client = new OpenAI({
 export const askAI = async (prompt: string | ResponseInput | undefined, model: string) => {
     const response = await client.responses.create({
         model: model,
-        input: prompt,
+        input: prompt
     });
     return response.output_text;
 };

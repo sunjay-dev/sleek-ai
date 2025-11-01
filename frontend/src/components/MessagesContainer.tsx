@@ -38,7 +38,7 @@ const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; 
   }
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-auto py-6 pb-36 md:px-4 px-3">
+    <div ref={containerRef} className="flex-1 overflow-auto py-6 pb-36 px-5">
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center">
           <div className="text-white/50 text-sm text-center">

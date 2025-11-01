@@ -10,10 +10,7 @@ app.get('/', (c) => c.text('Hello, Hono!'));
 
 app.post('/chat', async (c) => {
     const { query, model = 'gpt-oss-120b' } = await c.req.json();
-    console.log('Received query:', query);
-    console.log('Using model:', model);
     const response = await askAI(query, model);
-
     return c.json({ response, isAI: true });
 });
 

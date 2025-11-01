@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactMarkdown from 'react-markdown'
+import React, { useState } from 'react'
+import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { Copy, Repeat2, Check } from 'lucide-react'
@@ -16,7 +16,7 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
   if (text === 'Thinking...') {
     return (
       <div className="flex justify-start">
-        <div className="max-w-full text-sm md:p-4 p-3 rounded-xl w-full">
+        <div className="max-w-full text-sm md:p-4 rounded-xl w-full">
           <div className="space-y-2">
             <div className="h-4 bg-neutral-700 rounded w-3/4 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-600 to-transparent animate-shimmer -translate-x-full" />
@@ -31,9 +31,16 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
   }
   return (
     <div className="flex justify-start">
-      <div className="max-w-full text-sm md:p-4 p-3 rounded-xl selection:bg-gray-100 selection:text-neutral-800">
+      <div className="max-w-full text-sm py-4 rounded-xl selection:bg-gray-100 selection:text-neutral-800">
         <div className={styles.markdown}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+            components={{
+              pre: CodeBlock,
+              table: ({ node, ...props }) => <div className={styles.tableWrapper}><table {...props} /></div>,
+            }}
+          >
             {text}
           </ReactMarkdown>
         </div>
@@ -58,6 +65,37 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
         )}
       </div>
     </div>
+  )
+}
+
+const extractText = (node: any): string => {
+  if (node.type === 'text') {
+    return node.value
+  }
+  if (node.children && Array.isArray(node.children)) {
+    return node.children.map(extractText).join('')
+  }
+  return ''
+}
+
+const CodeBlock: Components['pre'] = ({ node, children }) => {
+  const [isCopied, setIsCopied] = useState(false)
+  const codeText = extractText(node)
+
+  const handleCopy = () => {
+    if (!codeText) return
+    navigator.clipboard.writeText(codeText)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 2000)
+  }
+
+  return (
+    <pre className={styles.codeBlock}>
+      <button onClick={handleCopy} className={styles.copyButton} aria-label="Copy code">
+        {isCopied ? <Check size={14} /> : <Copy size={14} />}
+      </button>
+      {children}
+    </pre>
   )
 }
 
