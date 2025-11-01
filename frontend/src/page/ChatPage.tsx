@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import MessagesContainer from '../components/MessagesContainer'
 import InputContainer from '../components/InputContainer'
 import { type Model } from '../types'
-import { useChat } from '../page/useChat'
+import { useChat } from '../hooks/useChat';
 
 const models: Model[] = [
   { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B' },
