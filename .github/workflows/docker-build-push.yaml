@@ -1,0 +1,77 @@
+name: Build, Push & Deploy Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.set-filters.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run paths-filter only on push
+        if: github.event_name == 'push'
+        id: path-filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+
+      - name: Force all outputs on manual run
+        if: github.event_name == 'workflow_dispatch'
+        id: force-filter
+        run: |
+          echo "backend=true" >> $GITHUB_OUTPUT
+          echo "jobrunner=true" >> $GITHUB_OUTPUT
+
+      - name: Set outputs depending on trigger
+        id: set-filters
+        run: |
+          echo "backend=${{ steps.path-filter.outputs.backend || 'true' }}" >> $GITHUB_OUTPUT
+
+  backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU (for ARM builds)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare metadata
+        id: meta
+        run: |
+          msg=$(echo "${{ github.event.head_commit.message }}" | head -n1)
+          msg=${msg// /_}
+          echo "short_msg=$msg" >> $GITHUB_OUTPUT
+          echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Docker Hub Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          platforms: linux/arm64
+          push: true
+          tags: sunjay195/chatty-ai-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          labels: |
+            git_commit_sha=${{ github.sha }}
+            git_commit_short=${{ steps.meta.outputs.short_sha }}
+            git_commit_msg=${{ steps.meta.outputs.short_msg }}
