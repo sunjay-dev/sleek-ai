@@ -1,5 +1,4 @@
-import { Copy, Check } from 'lucide-react'
-import styles from '../styles/UserMessage.module.css'
+import { Copy, Check } from 'lucide-react';
 
 type Props = {
   text: string
@@ -10,7 +9,7 @@ type Props = {
 export default function UserMessage ({ text, isCopied, onCopy }: Props){
   return (
     <div className="flex flex-col gap-2 justify-end items-end group">
-      <div className={`bg-white text-neutral-800 px-3 py-2 rounded-xl max-w-md selection:bg-gray-900/90 selection:text-white text-sm ${styles.userMessage}`}>
+      <div className="bg-white text-neutral-800 px-3 py-2 rounded-xl max-w-md selection:bg-gray-900/90 selection:text-white text-sm whitespace-pre-wrap wrap-break-words leading-[1.4]">
         <p className="leading-relaxed">{text}</p>
       </div>
       <button

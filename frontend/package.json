@@ -13,6 +13,7 @@
     "@clerk/clerk-react": "^5.53.7",
     "@tailwindcss/vite": "^4.1.16",
     "highlight.js": "^11.11.1",
+    "ldrs": "^1.1.9",
     "lucide-react": "^0.552.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

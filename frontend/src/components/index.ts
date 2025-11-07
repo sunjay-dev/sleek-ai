@@ -4,5 +4,6 @@ import MessagesContainer from "./MessagesContainer";
 import ModelMessage from "./ModelMessage";
 import ModelSelector from "./ModelSelector";
 import UserMessage from "./UserMessage";
+import Loader from "./Loader";
 
-export { Header, InputContainer, MessagesContainer, ModelMessage, ModelSelector, UserMessage };
+export { Header, InputContainer, MessagesContainer, ModelMessage, ModelSelector, UserMessage, Loader };
