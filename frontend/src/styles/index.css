@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
-
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'); */
 html,
 body,
 #root {
@@ -8,7 +8,8 @@ body,
 }
 
 body {
-  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  font-family: Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 button {

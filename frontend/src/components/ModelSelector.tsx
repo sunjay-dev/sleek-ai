@@ -1,5 +1,4 @@
-import React from 'react'
-import type { Model } from '../types'
+import type { Model } from '../types';
 
 type Props = {
   models: Model[]
@@ -8,7 +7,7 @@ type Props = {
   isLoading: boolean
 }
 
-const ModelSelector: React.FC<Props> = ({ models, selectedModel, onModelChange, isLoading }) => {
+export default function ModelSelector({ models, selectedModel, onModelChange, isLoading }: Props) {
   return (
     <div>
       <select
@@ -26,5 +25,3 @@ const ModelSelector: React.FC<Props> = ({ models, selectedModel, onModelChange, 
     </div>
   )
 }
-
-export default ModelSelector

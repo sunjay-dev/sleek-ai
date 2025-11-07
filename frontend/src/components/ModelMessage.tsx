@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { Copy, Repeat2, Check } from 'lucide-react'
-import styles from '../styles/AiMessage.module.css'
+import styles from '../styles/modelMessage.module.css'
 
 type Props = {
   text: string
@@ -12,7 +12,7 @@ type Props = {
   onResend?: () => void
 }
 
-const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
+export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
   if (text === 'Thinking...') {
     return (
       <div className="flex justify-start">
@@ -38,6 +38,7 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
             rehypePlugins={[rehypeHighlight]}
             components={{
               pre: CodeBlock,
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               table: ({ node, ...props }) => <div className={styles.tableWrapper}><table {...props} /></div>,
             }}
           >
@@ -68,6 +69,7 @@ const AiMessage: React.FC<Props> = ({ text, isCopied, onCopy, onResend }) => {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const extractText = (node: any): string => {
   if (node.type === 'text') {
     return node.value
@@ -98,5 +100,3 @@ const CodeBlock: Components['pre'] = ({ node, children }) => {
     </pre>
   )
 }
-
-export default AiMessage

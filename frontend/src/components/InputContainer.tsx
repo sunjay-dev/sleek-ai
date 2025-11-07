@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react'
-import ModelSelector from './ModelSelector'
-import { type Model } from '../types'
+import React, { useState, useRef, useEffect } from 'react';
+import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react';
+import ModelSelector from './ModelSelector';
+import { type Model } from '../types';
 
 type Props = {
   onSend: (text: string, file?: File | null) => void
@@ -12,7 +12,7 @@ type Props = {
   onModelChange: (modelId: string) => void
 }
 
-const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedModel, onStop, onModelChange }) => {
+export default function InputContainer({ onSend, isLoading, models, selectedModel, onStop, onModelChange }: Props) {
   const [message, setMessage] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -21,12 +21,12 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
 
-    if (isLoading || (!message.trim() && !file)) 
-    return;
-    
+    if (isLoading || (!message.trim() && !file))
+      return;
+
     onSend(message, file)
     setMessage('')
-    
+
     setFile(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -123,7 +123,7 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
                 onClick={isLoading ? onStop : undefined}
                 disabled={!isLoading && !message.trim() && !file}
                 className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 text-white px-3 py-1 rounded-md  text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-              
+
               >
                 {isLoading ? (
                   <>
@@ -142,5 +142,3 @@ const InputContainer: React.FC<Props> = ({ onSend, isLoading, models, selectedMo
     </div>
   )
 }
-
-export default InputContainer

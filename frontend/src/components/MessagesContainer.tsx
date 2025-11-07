@@ -1,9 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import UserMessage from './UserMessage'
-import AiMessage from './AiMessage'
-import type { Message } from '../types'
+import ModelMessage from './ModelMessage'
+import type { Message } from '../types';
 
-const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; isLoading: boolean }> = ({ messages, onResend, isLoading }) => {
+type Props = {
+  messages: Message[]
+  onResend?: () => void
+  isLoading: boolean
+}
+
+export default function MessagesContainer ({ messages, onResend, isLoading }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const copyTimeoutRef = useRef<number | null>(null)
@@ -47,7 +53,7 @@ const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; 
           {messages.map((message, index) => (
             <div key={index}>
               {message.isAi ? (
-                <AiMessage
+                <ModelMessage
                   text={message.text}
                   isCopied={copiedIndex === index}
                   onCopy={() => handleCopy(message.text, index)}
@@ -64,7 +70,7 @@ const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; 
           ))}
           {isLoading && (
             <div>
-              <AiMessage text="Thinking..." isCopied={false} onCopy={() => {}} />
+              <ModelMessage text="Thinking..." isCopied={false} onCopy={() => {}} />
             </div>
           )}
         </div>
@@ -72,5 +78,3 @@ const MessagesContainer: React.FC<{ messages: Message[]; onResend?: () => void; 
     </div>
   )
 }
-
-export default MessagesContainer

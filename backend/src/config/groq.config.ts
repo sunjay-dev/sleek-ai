@@ -21,24 +21,54 @@ When the user asks for code:
 If the question is ambiguous, politely ask for clarification instead of guessing.`;
 
 
+
+const messages: any[] = [
+    {
+        role: "system",
+        content: [
+            { type: "input_text", text: systemPrompt },
+        ],
+    },
+];
+
 export const askAI = async (prompt: string, model: string) => {
+    messages.push({
+        role: "user",
+        content: [
+            { type: "input_text", text: prompt },
+        ],
+    });
+
     const response = await client.responses.create({
         model,
-        input: [
-            {
-                role: "system",
-                content: [
-                    { type: "input_text", text: systemPrompt },
-                ],
-            },
-            {
-                role: "user",
-                content: [{ type: "input_text", text: prompt }],
-            },
+        input: messages
+    });
+
+    messages.push({
+        role: "assistant",
+        content: [
+            { type: "input_text", text: response.output_text },
         ],
     });
 
     return response.output_text;
+};
+
+export const streamAskAI = async (prompt: string, model: string) => {
+    messages.push({
+        role: "user",
+        content: [
+            { type: "input_text", text: prompt },
+        ],
+    });
+
+    return client.chat.completions.stream({
+        model,
+        messages: [
+            { role: "system", content: "You are a concise, helpful AI assistant." },
+            { role: "user", content: prompt },
+        ],
+    });
 };
 
 export const listModels = async () => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Copy, Check } from 'lucide-react'
 import styles from '../styles/UserMessage.module.css'
 
@@ -8,7 +7,7 @@ type Props = {
   onCopy: () => void
 }
 
-const UserMessage: React.FC<Props> = ({ text, isCopied, onCopy }) => {
+export default function UserMessage ({ text, isCopied, onCopy }: Props){
   return (
     <div className="flex flex-col gap-2 justify-end items-end group">
       <div className={`bg-white text-neutral-800 px-3 py-2 rounded-xl max-w-md selection:bg-gray-900/90 selection:text-white text-sm ${styles.userMessage}`}>
@@ -22,7 +21,5 @@ const UserMessage: React.FC<Props> = ({ text, isCopied, onCopy }) => {
         {isCopied ? <Check size={14} /> : <Copy size={14} />}
       </button>
     </div>
-  )
+  );
 }
-
-export default UserMessage

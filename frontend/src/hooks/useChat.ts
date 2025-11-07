@@ -1,32 +1,41 @@
 import { useState, useEffect, useRef } from 'react'
 import type { Message } from '../types'
+import { useAuth } from '@clerk/clerk-react';
 
 export const useChat = () => {
-    const [messages, setMessages] = useState<Message[]>([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedModel, setSelectedModel] = useState<string>(() => {
-        return localStorage.getItem('selectedModel') || 'openai/gpt-oss-120b'
+        return localStorage.getItem('selectedModel') || 'openai/gpt-oss-120b';
     })
-    const abortControllerRef = useRef<AbortController | null>(null)
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const { getToken } = useAuth()
 
     useEffect(() => {
         localStorage.setItem('selectedModel', selectedModel)
     }, [selectedModel])
-    
+
     const sendMessage = async (text: string, file?: File | null) => {
+        const token = await getToken();
+
+        if (!token) return
+
         if (!text.trim() && !file) return
 
         const userMsg: Message = { text, isAi: false }
         setMessages((s) => [...s, userMsg])
 
         try {
-            const controller = new AbortController()
+            const controller = new AbortController();
             abortControllerRef.current = controller
 
             setIsLoading(true)
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ query: text, model: selectedModel }),
                 signal: controller.signal,
             })

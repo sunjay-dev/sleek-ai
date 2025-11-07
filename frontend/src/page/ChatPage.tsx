@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import MessagesContainer from '../components/MessagesContainer';
-import InputContainer from '../components/InputContainer';
+import {MessagesContainer, Header, InputContainer} from '../components';
 import { models } from '../data/models';
 import { useChat } from '../hooks/useChat';
 
@@ -27,6 +26,7 @@ export default function ChatPage() {
     <div className='min-h-screen bg-neutral-900 text-white'>
       <div className={`${messages.length === 0 ? 'h-screen' : 'min-h-screen'} bg-neutral-900 flex flex-col`}>
         <div className="md:max-w-3xl max-w-4xl mx-auto w-full flex-1 flex flex-col">
+          <Header />
           <MessagesContainer messages={messages} onResend={resendLastUser} isLoading={isLoading} />
           <InputContainer
             onSend={sendMessage}
