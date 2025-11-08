@@ -4,23 +4,23 @@ import { models } from '../data/models';
 import { useChat } from '../hooks/useChat';
 
 export default function ChatPage() {
-  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat()
+  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
 
   const handleModelChange = (modelId: string) => {
-    setSelectedModel(modelId)
+    setSelectedModel(modelId);
   }
 
   const scrollToBottom = () => {
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-    }, 100)
+    }, 100);
   }
 
   useEffect(() => {
     if (messages.length > 0) {
       scrollToBottom()
     }
-  }, [messages])
+  }, [messages]);
 
   return (
     <div className='min-h-screen bg-neutral-900 text-white'>
@@ -39,5 +39,5 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

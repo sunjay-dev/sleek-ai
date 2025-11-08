@@ -17,7 +17,6 @@ export async function handleStreamAIResponse(c: Context) {
     });
 };
 
-
 export async function handleAIResponse(c: Context) {
     const { query, model = 'openai/gpt-oss-120b' } = await c.req.json();
 
