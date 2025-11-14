@@ -43,7 +43,7 @@ export default function MessagesContainer ({ messages, onResend, isLoading }: Pr
     <div ref={containerRef} className="flex-1 overflow-auto py-6 pb-36 px-5">
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center">
-          <div className="text-white/50 text-sm text-center">
+          <div className="text-primary text-sm text-center">
             <p>No messages yet</p>
             <p className="mt-1">Type something below to get started ↓</p>
           </div>

@@ -19,10 +19,10 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
         <div className="max-w-full text-sm md:p-4 rounded-xl w-full">
           <div className="space-y-2">
             <div className="h-4 bg-neutral-700 rounded w-3/4 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-600 to-transparent animate-shimmer -translate-x-full" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-400 to-transparent animate-shimmer -translate-x-full" />
             </div>
             <div className="h-4 bg-neutral-700 rounded w-full relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-600 to-transparent animate-shimmer -translate-x-full" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-400 to-transparent animate-shimmer -translate-x-full" />
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
   }
   return (
     <div className="flex justify-start">
-      <div className="max-w-full text-sm py-4 rounded-xl selection:bg-gray-100 selection:text-neutral-800">
+      <div className="max-w-full text-sm py-4 rounded-xl">
         <div className={styles.markdown}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -51,14 +51,14 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
             <button
               type="button"
               onClick={onCopy}
-              className="mr-1 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400"
+              className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] rounded-full"
               aria-label="Copy message"
             >
               {isCopied ? <Check size={14} className="transition-all duration-300" /> : <Copy size={14} />}
             </button>
 
             {onResend && (
-              <button type="button" onClick={onResend} className="mr-1 p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-neutral-400" aria-label="Send again">
+              <button type="button" onClick={onResend} className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] rounded-full" aria-label="Send again">
                 <Repeat2 size={14} />
               </button>
             )}

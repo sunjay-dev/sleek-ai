@@ -14,7 +14,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
         value={selectedModel}
         onChange={(e) => onModelChange(e.target.value)}
         disabled={isLoading}
-        className="bg-neutral-700 text-white text-xs p-1 rounded-md focus:outline-none focus:ring-1 focus:ring-white/50 disabled:opacity-50"
+        className="icon-bg p-1 rounded-md cursor-pointer focus:outline-none focus:ring-1 :opacity-50"
       >
         {models.map((model) => (
           <option key={model.id} value={model.id}>

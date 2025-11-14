@@ -1,10 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
-/* @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'); */
+
 html,
 body,
 #root {
   height: 100%;
+  background-color: #fcfbfb;
+}
+
+.bg-primary {
+  background-color: #fcfbfb;
+}
+
+.bg-secondary {
+  background-color: #1c1c1c;
+}
+
+.user-message-color {
+  background-color: #e9e9e980;
+}
+
+.text-primary {
+  color: #1c1c1c;
+}
+
+.text-secondary {
+  color: #fcfbfb;
+}
+.word-break {
+    word-break: break-word;
+}
+.boder-primary {
+  border: .0625rem solid rgba(0,0,0,.1)
+}
+
+.icon-bg {
+  background-color: #292929;
 }
 
 body {
@@ -49,5 +82,5 @@ button {
 }
 
 .animate-shimmer {
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 2.5s infinite;
 }

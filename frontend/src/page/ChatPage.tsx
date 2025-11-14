@@ -23,8 +23,8 @@ export default function ChatPage() {
   }, [messages]);
 
   return (
-    <div className='min-h-screen bg-neutral-900 text-white'>
-      <div className={`${messages.length === 0 ? 'h-screen' : 'min-h-screen'} bg-neutral-900 flex flex-col`}>
+    <div className='min-h-screen bg-primary text-primary'>
+      <div className={`${messages.length === 0 ? 'h-screen' : 'min-h-screen'} bg-primary flex flex-col`}>
         <div className="md:max-w-3xl max-w-4xl mx-auto w-full flex-1 flex flex-col">
           <Header />
           <MessagesContainer messages={messages} onResend={resendLastUser} isLoading={isLoading} />
