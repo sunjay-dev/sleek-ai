@@ -26,7 +26,7 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
     if (isLoading || (!message.trim() && !file))
       return;
 
-    onSend(message, file)
+    onSend(message.trim(), file)
     setMessage('')
 
     setFile(null)

@@ -1,9 +1,12 @@
-import { useState } from 'react'
-import ReactMarkdown, { type Components } from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypeHighlight from 'rehype-highlight'
-import { Copy, Repeat2, Check } from 'lucide-react'
-import styles from '../styles/modelMessage.module.css'
+import { useState } from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import { Copy, Repeat2, Check } from 'lucide-react';
+import styles from '../styles/modelMessage.module.css';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.css';
 
 type Props = {
   text: string
@@ -11,6 +14,8 @@ type Props = {
   onCopy: () => void
   onResend?: () => void
 }
+
+
 
 export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
   if (text === 'Thinking...') {
@@ -29,20 +34,29 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
       </div>
     )
   }
+
+  function cleanAIMath(text: string) {
+    return text
+      .replace(/\\\[/g, '$$')       // convert \[ → $$
+      .replace(/\\\]/g, '$$')       // convert \] → $$
+      .replace(/\\\\/g, '\\')       // convert \\ → \
+      .replace(/\\n/g, '\n');
+  }
+
   return (
     <div className="flex justify-start">
       <div className="max-w-full text-sm py-4 rounded-xl">
         <div className={styles.markdown}>
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeHighlight, rehypeKatex]}
             components={{
               pre: CodeBlock,
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               table: ({ node, ...props }) => <div className={styles.tableWrapper}><table {...props} /></div>,
             }}
           >
-            {text}
+            {cleanAIMath(text)}
           </ReactMarkdown>
         </div>
 
@@ -51,14 +65,14 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
             <button
               type="button"
               onClick={onCopy}
-              className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] rounded-full"
+              className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full"
               aria-label="Copy message"
             >
               {isCopied ? <Check size={14} className="transition-all duration-300" /> : <Copy size={14} />}
             </button>
 
             {onResend && (
-              <button type="button" onClick={onResend} className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] rounded-full" aria-label="Send again">
+              <button type="button" onClick={onResend} className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full" aria-label="Send again">
                 <Repeat2 size={14} />
               </button>
             )}

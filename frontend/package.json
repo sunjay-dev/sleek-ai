@@ -13,6 +13,7 @@
     "@clerk/clerk-react": "^5.53.7",
     "@tailwindcss/vite": "^4.1.16",
     "highlight.js": "^11.11.1",
+    "katex": "^0.16.25",
     "ldrs": "^1.1.9",
     "lucide-react": "^0.552.0",
     "react": "^19.1.1",
@@ -20,7 +21,9 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.9.5",
     "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "tailwindcss": "^4.1.16"
   },
   "devDependencies": {
