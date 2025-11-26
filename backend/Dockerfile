@@ -1,10 +1,7 @@
 # syntax=docker/dockerfile:1
 
-# ──────────────────────────────────────────────
-# Build arguments
-# ──────────────────────────────────────────────
 ARG PNPM_VERSION=10.17.1
-ARG BUN_VERSION=1.3.2-debian
+ARG BUN_VERSION=1.3.2-alpine
 
 # ──────────────────────────────────────────────
 # Base stage — Bun runtime + pnpm
@@ -13,8 +10,8 @@ FROM oven/bun:${BUN_VERSION} AS base
 
 WORKDIR /usr/src/app
 
-# Install pnpm globally (still using npm inside Bun image)
-RUN apt-get update -y && apt-get install -y openssl && \
+# Install pnpm globally and required libs for Prisma
+RUN apk add --no-cache openssl bash curl build-base && \
     bun install -g pnpm@${PNPM_VERSION}
 
 # ──────────────────────────────────────────────
@@ -22,7 +19,6 @@ RUN apt-get update -y && apt-get install -y openssl && \
 # ──────────────────────────────────────────────
 FROM base AS deps
 
-# Use cache mount for pnpm store
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
     --mount=type=cache,target=/root/.local/share/pnpm/store \
