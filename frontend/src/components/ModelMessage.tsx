@@ -6,7 +6,6 @@ import { Copy, Repeat2, Check } from 'lucide-react';
 import styles from '../styles/modelMessage.module.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import 'katex/dist/katex.css';
 
 type Props = {
   text: string
@@ -14,8 +13,6 @@ type Props = {
   onCopy: () => void
   onResend?: () => void
 }
-
-
 
 export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
   if (text === 'Thinking...') {

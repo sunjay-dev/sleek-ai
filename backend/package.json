@@ -6,12 +6,11 @@
   "scripts": {
     "dev": "bun --watch src/app.ts",
     "build": "tsc",
-    "start": "bun run src/app.ts",
+    "start": "bun src/app.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:studio": "prisma studio",
-    "lint": "eslint . --ext .ts,.js",
-    "test": "bun test"
+    "lint": "eslint . --ext .ts,.js"
   },
   "keywords": [],
   "author": "",
@@ -20,14 +19,15 @@
   "dependencies": {
     "@clerk/backend": "^2.20.0",
     "@hono/clerk-auth": "^3.0.3",
-    "@prisma/client": "^6.19.0",
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "dotenv": "^17.2.3",
     "hono": "^4.10.4",
     "openai": "^6.7.0"
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
-    "prisma": "^6.19.0",
+    "prisma": "^7.0.1",
     "typescript": "^5.9.3"
   }
 }

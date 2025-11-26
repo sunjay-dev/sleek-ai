@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import UserMessage from './UserMessage'
-import ModelMessage from './ModelMessage'
+import { useEffect, useRef, useState } from 'react';
+import UserMessage from './UserMessage';
+import ModelMessage from './ModelMessage';
 import type { Message } from '../types';
 
 type Props = {
