@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PNPM_VERSION=10.17.1
-ARG BUN_VERSION=1.3.2-alpine
+ARG BUN_VERSION=1.3.3-alpine
 
 # ──────────────────────────────────────────────
 # Base stage — Bun runtime + pnpm
