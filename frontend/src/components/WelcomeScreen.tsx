@@ -1,5 +1,8 @@
+type Props = {
+  sendMessage:  (text: string, file?: File | null) => void
+}
 
-export default function WelcomeScreen({ sendMessage }) {
+export default function WelcomeScreen({ sendMessage }: Props) {
 
   const suggestions = [
     "Weather in London today",
@@ -8,7 +11,7 @@ export default function WelcomeScreen({ sendMessage }) {
     "Weather forecast for New York this week"
   ];
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = (suggestion: string) => {
     sendMessage(suggestion);
   };
 

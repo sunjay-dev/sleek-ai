@@ -1,4 +1,4 @@
-import { useRef,useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { MessagesContainer, InputContainer, Sidebar } from "@/components";
 import { models } from "@/data/models";
 import { useChat } from "@/hooks/useChat";
@@ -25,10 +25,10 @@ export default function ChatPage() {
   };
 
   return (
-   <div className="flex h-dvh overflow-hidden bg-white text-primary">
-  <Sidebar />
-  <main className="flex flex-col flex-1 ">
-  
+    <div className="flex h-dvh overflow-hidden bg-white text-primary">
+      <Sidebar />
+      <main className="flex flex-col flex-1 ">
+
         <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-primary no-scrollbar">
           <MessagesContainer
             messages={messages}
@@ -36,13 +36,11 @@ export default function ChatPage() {
             onResend={resendLastUser}
             isLoading={isLoading}
           />
-
           <div ref={messagesEndRef} />
         </div>
 
-        {/* INPUT BAR (NEVER SCROLLS) */}
         <InputContainer
-          onSend={sendMessage}
+          sendMessage={sendMessage}
           isLoading={isLoading}
           models={models}
           selectedModel={selectedModel}
@@ -53,4 +51,3 @@ export default function ChatPage() {
     </div>
   );
 }
-

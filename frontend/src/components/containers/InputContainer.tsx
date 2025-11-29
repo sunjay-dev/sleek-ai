@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react';
 import ModelSelector from '@/components/ModelSelector';
 import { type Model } from '@/types';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 type Props = {
-  onSend: (text: string, file?: File | null) => void
+  sendMessage: (text: string, file?: File | null) => void
   isLoading: boolean
   models: Model[]
   selectedModel: string
@@ -12,21 +13,21 @@ type Props = {
   onModelChange: (modelId: string) => void
 }
 
-export default function InputContainer({ onSend, isLoading, models, selectedModel, onStop, onModelChange }: Props) {
-  const [message, setMessage] = useState('');
+export default function InputContainer({ sendMessage, isLoading, models, selectedModel, onStop, onModelChange }: Props) {
+  const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isMobile = useIsMobile();
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (isLoading || (!message.trim() && !file)) return;
 
-    onSend(message.trim(), file);
-    setMessage('');
+    sendMessage(message.trim(), file);
+    setMessage("");
     setFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -42,7 +43,7 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
 
   const handleRemoveFile = () => {
     setFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   useEffect(() => {
@@ -121,5 +122,5 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
         </form>
       </div>
     </div>
-  )
+  );
 }

@@ -2,13 +2,14 @@ import { UserButton, useUser } from "@clerk/clerk-react";
 import { PanelLeftClose, BadgePlus } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import CollapsedSidebar from "./CollapsedSidebar";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function Sidebar() {
   const { user } = useUser();
   
   const [collapsed, setCollapsed] = useState(false);
   const userBtnRef = useRef<HTMLDivElement>(null);
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isMobile = useIsMobile();
 
   const openClerkMenu = () => {
     const internalBtn = userBtnRef.current?.querySelector("button");
@@ -20,7 +21,6 @@ export default function Sidebar() {
     setCollapsed(true)
   }, [isMobile])
 
-  // Hardcoded chats
   const chats = [
     { id: "1", title: "Project Ideas", snippet: "Discuss ideas for hackathon..." },
     { id: "2", title: "Team Chat", snippet: "Who is online now?" },
@@ -35,7 +35,7 @@ export default function Sidebar() {
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} />;
 
   return (
-    <aside className="fixed md:relative h-dvh w-54 bg-white border-r border-secondary flex flex-col">
+    <aside className="fixed md:relative h-dvh w-54 bg-white border-r border-secondary flex flex-col z-30">
       {/* HEADER */}
       <div className="px-4 py-3 flex items-center justify-between border-secondary">
         <div className="flex items-center gap-1">

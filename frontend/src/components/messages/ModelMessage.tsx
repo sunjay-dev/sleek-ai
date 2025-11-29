@@ -2,10 +2,11 @@ import { useState } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import { Copy, Repeat2, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import styles from '@/styles/modelMessage.module.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import ModelMessageToolTip from '../tooltips/ModelMessageToolTip';
 
 type Props = {
   text: string
@@ -15,28 +16,11 @@ type Props = {
 }
 
 export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
-  if (text === 'Thinking...') {
-    return (
-      <div className="flex justify-start">
-        <div className="max-w-full text-sm md:p-4 rounded-xl w-full">
-          <div className="space-y-2">
-            <div className="h-4 bg-neutral-700 rounded w-3/4 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-400 to-transparent animate-shimmer -translate-x-full" />
-            </div>
-            <div className="h-4 bg-neutral-700 rounded w-full relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neutral-400 to-transparent animate-shimmer -translate-x-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   function cleanAIMath(text: string) {
     return text
-      .replace(/\\\[/g, '$$')       // convert \[ → $$
-      .replace(/\\\]/g, '$$')       // convert \] → $$
-      .replace(/\\\\/g, '\\')       // convert \\ → \
+      .replace(/\\\[/g, '$$')
+      .replace(/\\\]/g, '$$')
+      .replace(/\\\\/g, '\\')
       .replace(/\\n/g, '\n');
   }
 
@@ -57,24 +41,7 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
           </ReactMarkdown>
         </div>
 
-        {text !== 'Thinking...' && (
-          <div className="mt-2 flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={onCopy}
-              className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full"
-              aria-label="Copy message"
-            >
-              {isCopied ? <Check size={14} className="transition-all duration-300" /> : <Copy size={14} />}
-            </button>
-
-            {onResend && (
-              <button type="button" onClick={onResend} className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full" aria-label="Send again">
-                <Repeat2 size={14} />
-              </button>
-            )}
-          </div>
-        )}
+        <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
       </div>
     </div>
   )
@@ -88,7 +55,7 @@ const extractText = (node: any): string => {
   if (node.children && Array.isArray(node.children)) {
     return node.children.map(extractText).join('')
   }
-  return ''
+  return "";
 }
 
 const CodeBlock: Components['pre'] = ({ node, children }) => {

@@ -23,5 +23,5 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
         ))}
       </select>
     </div>
-  )
+  );
 }

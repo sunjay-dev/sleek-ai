@@ -35,5 +35,5 @@ export default function CollapsedSidebar({ setCollapsed }: Props) {
           </button>
         </div>
       </div>
-  )
+  );
 }
