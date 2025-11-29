@@ -1,4 +1,4 @@
-import React, { useRef,useEffect } from "react";
+import { useRef,useEffect } from "react";
 import { MessagesContainer, InputContainer, Sidebar } from "@/components";
 import { models } from "@/data/models";
 import { useChat } from "@/hooks/useChat";
@@ -25,7 +25,7 @@ export default function ChatPage() {
   };
 
   return (
-   <div className="flex h-screen overflow-hidden bg-white text-slate-900">
+   <div className="flex h-screen overflow-hidden bg-white text-primary">
   <Sidebar />
   <main className="flex flex-col flex-1 ">
   
