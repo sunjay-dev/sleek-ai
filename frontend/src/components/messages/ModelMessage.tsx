@@ -3,7 +3,7 @@ import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { Copy, Repeat2, Check } from 'lucide-react';
-import styles from '../styles/modelMessage.module.css';
+import styles from '@/styles/modelMessage.module.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 

@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { ChatPage, AuthPage } from '../page';
+import { ChatPage, AuthPage } from '@/page';
 import ProtectedRoute from './ProtectedRoutes';
 
 export const routes = createBrowserRouter([

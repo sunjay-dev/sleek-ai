@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react';
-import ModelSelector from './ModelSelector';
-import { type Model } from '../types';
+import ModelSelector from '@/components/ModelSelector';
+import { type Model } from '@/types';
 
 type Props = {
   onSend: (text: string, file?: File | null) => void
@@ -19,57 +19,45 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (isLoading || (!message.trim() && !file)) return;
 
-    if (isLoading || (!message.trim() && !file))
-      return;
-
-    onSend(message.trim(), file)
-    setMessage('')
-
-    setFile(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
+    onSend(message.trim(), file);
+    setMessage('');
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    console.log(isMobile)
     if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit()
+      e.preventDefault();
+      handleSubmit();
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
-    }
+    if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
   }
 
   const handleRemoveFile = () => {
-    setFile(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   useEffect(() => {
-    const textarea = textareaRef.current
+    const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto'
-      const scrollHeight = textarea.scrollHeight
-      textarea.style.height = `${scrollHeight}px`
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, [message])
+  }, [message]);
 
   return (
-    <div className="fixed inset-x-0 bottom-2 z-20">
-      <div className="mx-auto max-w-2xl px-4 pb-2 ">
+    <div className="w-full flex justify-center items-center px-4 pb-4 bg-primary">
+      <div className="w-full max-w-180">
         <form onSubmit={handleSubmit}>
-          <div className="bg-white rounded-lg boder-primary border-white/20 p-2">
+          <div className="bg-white rounded-2xl border border-white/20 px-3 py-2 shadow-md">
             <textarea
               ref={textareaRef}
               value={message}
@@ -77,7 +65,7 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
               onKeyDown={handleKeyDown}
               placeholder="Message..."
               rows={2}
-              className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary mb-1 overflow-y-auto max-h-30 no-scrollbar"
+              className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary mb-1 overflow-y-auto max-h-28 no-scrollbar"
             />
 
             {file && (
@@ -95,7 +83,7 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
               </div>
             )}
 
-            <div className="flex justify-between text-xs text-white items-center border-t border-white/10 pt-2">
+            <div className="flex justify-between items-center gap-2 border-t border-white/10 pt-2 text-xs text-white">
               <div className="flex items-center gap-2">
                 <ModelSelector
                   models={models}
@@ -115,8 +103,7 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
                     htmlFor="file-upload"
                     className="flex items-center gap-1 icon-bg hover:bg-neutral-600 px-2 py-1 rounded-md cursor-pointer"
                   >
-                    <Upload size={14} />
-                    Upload
+                    <Upload size={14} /> Upload
                   </label>
                 </div>
               </div>
@@ -126,17 +113,8 @@ export default function InputContainer({ onSend, isLoading, models, selectedMode
                 onClick={isLoading ? onStop : undefined}
                 disabled={!isLoading && !message.trim() && !file}
                 className="flex items-center gap-1 bg-neutral-800 text-white hover:bg-neutral-700 px-3 py-1 rounded-md disabled:bg-[#e9e9e980] disabled:text-[#6f6f6f] disabled:cursor-not-allowed"
-
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 size={14} className="animate-spin" />
-                  </>
-                ) : (
-                  <>
-                    Send <SendHorizontal size={14} />
-                  </>
-                )}
+                {isLoading ? <Loader2 size={14} className="animate-spin" /> : <>Send <SendHorizontal size={14} /></>}
               </button>
             </div>
           </div>

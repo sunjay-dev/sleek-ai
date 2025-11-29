@@ -10,6 +10,16 @@ body,
   background-color: #fcfbfb;
 }
 
+html, body {
+  overflow: auto;
+  scrollbar-width: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+}
+
 .bg-primary {
   background-color: #fcfbfb;
 }
@@ -83,4 +93,13 @@ button {
 
 .animate-shimmer {
   animation: shimmer 2.5s infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none !important;
 }

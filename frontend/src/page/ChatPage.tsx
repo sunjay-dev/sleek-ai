@@ -1,43 +1,55 @@
-import { useEffect } from 'react';
-import {MessagesContainer, Header, InputContainer} from '../components';
-import { models } from '../data/models';
-import { useChat } from '../hooks/useChat';
+import React, { useRef,useEffect } from "react";
+import { MessagesContainer, InputContainer, Sidebar } from "@/components";
+import { models } from "@/data/models";
+import { useChat } from "@/hooks/useChat";
 
 export default function ChatPage() {
-  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
+  const {
+    messages,
+    sendMessage,
+    resendLastUser,
+    isLoading,
+    selectedModel,
+    setSelectedModel,
+    stopGeneration
+  } = useChat();
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleModelChange = (modelId: string) => {
     setSelectedModel(modelId);
-  }
-
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-    }, 100);
-  }
-
-  useEffect(() => {
-    if (messages.length > 0) {
-      scrollToBottom()
-    }
-  }, [messages]);
+  };
 
   return (
-    <div className='min-h-screen bg-primary text-primary'>
-      <div className={`${messages.length === 0 ? 'h-screen' : 'min-h-screen'} bg-primary flex flex-col`}>
-        <div className="md:max-w-3xl max-w-4xl mx-auto w-full flex-1 flex flex-col">
-          <Header />
-          <MessagesContainer messages={messages} onResend={resendLastUser} isLoading={isLoading} />
-          <InputContainer
-            onSend={sendMessage}
+   <div className="flex h-screen overflow-hidden bg-white text-slate-900">
+  <Sidebar />
+  <main className="flex flex-col flex-1 ">
+  
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-primary no-scrollbar">
+          <MessagesContainer
+            messages={messages}
+            onResend={resendLastUser}
             isLoading={isLoading}
-            models={models}
-            selectedModel={selectedModel}
-            onStop={stopGeneration}
-            onModelChange={handleModelChange}
           />
+
+          <div ref={messagesEndRef} />
         </div>
-      </div>
+
+        {/* INPUT BAR (NEVER SCROLLS) */}
+        <InputContainer
+          onSend={sendMessage}
+          isLoading={isLoading}
+          models={models}
+          selectedModel={selectedModel}
+          onStop={stopGeneration}
+          onModelChange={handleModelChange}
+        />
+      </main>
     </div>
   );
 }
+

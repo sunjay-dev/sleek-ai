@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './styles/index.css';
+import '@/styles/index.css';
 import 'highlight.js/styles/atom-one-light.css';
 import 'katex/dist/katex.css';
 import { ClerkProvider } from '@clerk/clerk-react';

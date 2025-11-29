@@ -1,9 +1,9 @@
-import Header from "./Header";
-import InputContainer from "./InputContainer";
-import MessagesContainer from "./MessagesContainer";
-import ModelMessage from "./ModelMessage";
+import InputContainer from "./containers/InputContainer";
+import MessagesContainer from "./containers/MessagesContainer";
+import ModelMessage from "./messages/ModelMessage";
 import ModelSelector from "./ModelSelector";
-import UserMessage from "./UserMessage";
+import UserMessage from "./messages/UserMessage";
 import Loader from "./Loader";
+import Sidebar from "./sidebars/Sidebar";
 
-export { Header, InputContainer, MessagesContainer, ModelMessage, ModelSelector, UserMessage, Loader };
+export { InputContainer, MessagesContainer, ModelMessage, ModelSelector, Sidebar,UserMessage, Loader };

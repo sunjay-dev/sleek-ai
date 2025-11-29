@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import UserMessage from './UserMessage';
-import ModelMessage from './ModelMessage';
-import type { Message } from '../types';
+import {UserMessage, ModelMessage} from '@/components';
+import type { Message } from '@/types';
 
 type Props = {
   messages: Message[]
@@ -40,7 +39,7 @@ export default function MessagesContainer ({ messages, onResend, isLoading }: Pr
   }
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-auto py-6 pb-36 px-5">
+    <div ref={containerRef} className={`flex-1 overflow-auto py-6 px-5 mx-auto w-full max-w-180 ${messages.length === 0 ? 'h-[-webkit-fill-available]' : ''}`}>
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center">
           <div className="text-primary text-sm text-center">
