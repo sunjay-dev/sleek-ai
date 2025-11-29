@@ -24,6 +24,28 @@ body::-webkit-scrollbar {
   background-color: #fcfbfb;
 }
 
+.bg-primary-gradient {
+  background: linear-gradient(
+    to bottom,
+    rgb(249, 249, 249),
+    rgb(246, 246, 246) 80%
+  );
+  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.05);
+}
+
+.bg-primary-gradient:hover {
+  background: linear-gradient(
+    to bottom,
+    rgb(240, 240, 240),
+    rgb(240, 240, 240) 80%
+  );
+}
+
+.text-gray-lab {
+  color: rgb(140, 140, 140);
+}
+
+
 .bg-secondary {
   background-color: #1c1c1c;
 }

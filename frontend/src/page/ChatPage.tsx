@@ -25,13 +25,14 @@ export default function ChatPage() {
   };
 
   return (
-   <div className="flex h-screen overflow-hidden bg-white text-primary">
+   <div className="flex h-dvh overflow-hidden bg-white text-primary">
   <Sidebar />
   <main className="flex flex-col flex-1 ">
   
         <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-primary no-scrollbar">
           <MessagesContainer
             messages={messages}
+            sendMessage={sendMessage}
             onResend={resendLastUser}
             isLoading={isLoading}
           />

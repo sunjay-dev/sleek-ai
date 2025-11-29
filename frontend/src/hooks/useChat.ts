@@ -20,7 +20,9 @@ export const useChat = () => {
         localStorage.setItem('selectedModel', selectedModel)
     }, [selectedModel]);
 
-
+    useEffect(()=> {
+       console.log(messages) 
+    }, [messages])
 
     const sendMessage = async (text: string, file?: File | null) => {
         const token = await getToken();

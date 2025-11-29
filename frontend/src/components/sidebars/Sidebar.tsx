@@ -1,6 +1,6 @@
 import { UserButton, useUser } from "@clerk/clerk-react";
 import { PanelLeftClose, BadgePlus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import CollapsedSidebar from "./CollapsedSidebar";
 
 export default function Sidebar() {
@@ -8,11 +8,17 @@ export default function Sidebar() {
   
   const [collapsed, setCollapsed] = useState(false);
   const userBtnRef = useRef<HTMLDivElement>(null);
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   const openClerkMenu = () => {
     const internalBtn = userBtnRef.current?.querySelector("button");
     internalBtn?.click();
   };
+
+  useEffect(()=> {
+    if(isMobile)
+    setCollapsed(true)
+  }, [isMobile])
 
   // Hardcoded chats
   const chats = [
@@ -29,7 +35,7 @@ export default function Sidebar() {
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} />;
 
   return (
-    <aside className="fixed md:relative h-screen w-54 bg-white border-r border-secondary flex flex-col">
+    <aside className="fixed md:relative h-dvh w-54 bg-white border-r border-secondary flex flex-col">
       {/* HEADER */}
       <div className="px-4 py-3 flex items-center justify-between border-secondary">
         <div className="flex items-center gap-1">
@@ -57,7 +63,7 @@ export default function Sidebar() {
       </div>
 
       {/* CHAT LIST */}
-      <nav className="px-3 pt-3 pb-3 overflow-y-auto flex-grow min-h-0">
+      <nav className="px-3 pt-3 pb-3 overflow-y-auto grow min-h-0">
         {chats.map((chat) => {
           const isActive = chat.id === activeChatId;
           return (

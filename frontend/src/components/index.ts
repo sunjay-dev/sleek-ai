@@ -5,5 +5,6 @@ import ModelSelector from "./ModelSelector";
 import UserMessage from "./messages/UserMessage";
 import Loader from "./Loader";
 import Sidebar from "./sidebars/Sidebar";
+import WelcomeScreen from './WelcomeScreen'
 
-export { InputContainer, MessagesContainer, ModelMessage, ModelSelector, Sidebar,UserMessage, Loader };
+export { InputContainer, MessagesContainer, ModelMessage, ModelSelector, Sidebar,UserMessage, Loader, WelcomeScreen };

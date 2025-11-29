@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {UserMessage, ModelMessage} from '@/components';
+import {UserMessage, ModelMessage, WelcomeScreen} from '@/components';
 import type { Message } from '@/types';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   isLoading: boolean
 }
 
-export default function MessagesContainer ({ messages, onResend, isLoading }: Props) {
+export default function MessagesContainer ({ messages, sendMessage, onResend, isLoading }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const copyTimeoutRef = useRef<number | null>(null)
@@ -41,12 +41,7 @@ export default function MessagesContainer ({ messages, onResend, isLoading }: Pr
   return (
     <div ref={containerRef} className={`flex-1 overflow-auto py-6 px-5 mx-auto w-full max-w-180 ${messages.length === 0 ? 'h-[-webkit-fill-available]' : ''}`}>
       {messages.length === 0 ? (
-        <div className="h-full flex items-center justify-center">
-          <div className="text-primary text-sm text-center">
-            <p>No messages yet</p>
-            <p className="mt-1">Type something below to get started ↓</p>
-          </div>
-        </div>
+        <WelcomeScreen sendMessage={sendMessage} />
       ) : (
         <div className="space-y-4">
           {messages.map((message, index) => (
