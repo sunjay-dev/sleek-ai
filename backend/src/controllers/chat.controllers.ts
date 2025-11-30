@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { streamAskAI, askAI, listModels } from "../config/groq.config";
+import { streamAskAI, askAI, listModels } from "../config/groq.config.js";
 import { streamText } from "hono/streaming";
 
 export async function handleStreamAIResponse(c: Context) {

@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import register from "../config/prometheus.config";
+import register from "../config/prometheus.config.js";
 
 export function handleHomeRoute(c: Context) {
     return c.text('Hello, Hono!', 200);

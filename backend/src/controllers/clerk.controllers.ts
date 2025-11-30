@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import prisma from "../config/prisma.config";
+import prisma from "../config/prisma.config.js";
 
 export async function handleClerkWebHook(c: Context) {
     const evt = c.get("clerkEvent");

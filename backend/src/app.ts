@@ -4,9 +4,9 @@ const app = new Hono();
 
 app.use('*', cors());
 
-import serverRoutes from './routes/server.routes';
-import chatRouter from './routes/chat.routes';
-import clerkRouter from './routes/clerk.routes';
+import serverRoutes from './routes/server.routes.js';
+import chatRouter from './routes/chat.routes.js';
+import clerkRouter from './routes/clerk.routes.js';
 
 app.route('/', serverRoutes);
 app.route('/api/chat', chatRouter);

@@ -45,7 +45,7 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
   }
 
   return (
-    <div ref={containerRef} className={`flex-1 overflow-auto py-6 px-5 mx-auto w-full max-w-180 ${messages.length === 0 ? 'h-[-webkit-fill-available]' : ""}`}>
+    <div ref={containerRef} className={`flex-1 py-6 px-2 mx-auto w-full max-w-180 ${messages.length === 0 ? 'h-[-webkit-fill-available]' : ""}`}>
       {messages.length === 0 ? (
         <WelcomeScreen sendMessage={sendMessage} />
       ) : (
@@ -74,5 +74,5 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
         </div>
       )}
     </div>
-  )
+  );
 }

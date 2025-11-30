@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
 import { MessagesContainer, InputContainer, Sidebar } from "@/components";
-import { models } from "@/data/models";
 import { useChat } from "@/hooks/useChat";
 
 export default function ChatPage() {
@@ -29,7 +28,7 @@ export default function ChatPage() {
       <Sidebar />
       <main className="flex flex-col flex-1 ">
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-primary no-scrollbar">
+        <div className="flex-1 overflow-y-scroll space-y-2 bg-primary no-scrollbar">
           <MessagesContainer
             messages={messages}
             sendMessage={sendMessage}
@@ -42,7 +41,6 @@ export default function ChatPage() {
         <InputContainer
           sendMessage={sendMessage}
           isLoading={isLoading}
-          models={models}
           selectedModel={selectedModel}
           onStop={stopGeneration}
           onModelChange={handleModelChange}

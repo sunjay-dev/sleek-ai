@@ -1,19 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SendHorizontal, Upload, Loader2, Paperclip, X } from 'lucide-react';
 import ModelSelector from '@/components/ModelSelector';
-import { type Model } from '@/types';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { models } from "@/data/models";
 
 type Props = {
   sendMessage: (text: string, file?: File | null) => void
   isLoading: boolean
-  models: Model[]
   selectedModel: string
   onStop: () => void
   onModelChange: (modelId: string) => void
 }
 
-export default function InputContainer({ sendMessage, isLoading, models, selectedModel, onStop, onModelChange }: Props) {
+export default function InputContainer({ sendMessage, isLoading, selectedModel, onStop, onModelChange }: Props) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);

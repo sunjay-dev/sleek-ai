@@ -1,5 +1,5 @@
-import { getAuth } from '@hono/clerk-auth'
-import type { Next, Context } from 'hono'
+import { getAuth } from '@hono/clerk-auth';
+import type { Next, Context } from 'hono';
 
 export async function checkUser(c: Context, next: Next) {
   const auth = getAuth(c);

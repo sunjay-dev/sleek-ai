@@ -41,7 +41,7 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
           </ReactMarkdown>
         </div>
 
-        <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
+          <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
       </div>
     </div>
   )

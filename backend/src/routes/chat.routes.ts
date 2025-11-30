@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { handleStreamAIResponse, handleListModels, handleAIResponse } from "../controllers/chat.controllers";
-import { clerkMiddleware } from '@hono/clerk-auth'
-import { checkUser } from "../middlewares/auth.middlewares";
+import { handleStreamAIResponse, handleListModels, handleAIResponse } from "../controllers/chat.controllers.js";
+import { clerkMiddleware } from '@hono/clerk-auth';
+import { checkUser } from "../middlewares/auth.middlewares.js";
 const router = new Hono();
 
 router.post("/",  clerkMiddleware(), checkUser, handleAIResponse);
