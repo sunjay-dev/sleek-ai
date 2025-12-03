@@ -29,7 +29,6 @@ When the user asks for math or LaTeX output:
 
 If the question is ambiguous, politely ask for clarification instead of guessing.`;
 
-
 class ShortTermMemory {
   private readonly maxSize: number;
   private readonly store: any[] = [];

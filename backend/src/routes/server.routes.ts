@@ -1,11 +1,11 @@
-import { Hono } from 'hono';
-import { handleHealthRoute, handleHomeRoute, handlePrometheusMatrics } from '../controllers/server.controllers.js';
-import { prometheusAuth } from '../middlewares/auth.middlewares.js';
+import { Hono } from "hono";
+import { handleHealthRoute, handleHomeRoute, handlePrometheusMatrics } from "../controllers/server.controllers.js";
+import { prometheusAuth } from "../middlewares/auth.middlewares.js";
 
 const router = new Hono();
 
-router.get('/', handleHomeRoute);
-router.get('/health', handleHealthRoute);
-router.get('/metrics', prometheusAuth, handlePrometheusMatrics);
+router.get("/", handleHomeRoute);
+router.get("/health", handleHealthRoute);
+router.get("/metrics", prometheusAuth, handlePrometheusMatrics);
 
 export default router;

@@ -1,14 +1,14 @@
-import { getAuth } from '@hono/clerk-auth';
-import type { Next, Context } from 'hono';
+import { getAuth } from "@hono/clerk-auth";
+import type { Next, Context } from "hono";
 
 export async function checkUser(c: Context, next: Next) {
   const auth = getAuth(c);
-  if (!auth?.userId) return c.json({ message: 'Unauthorized' }, 401);
+  if (!auth?.userId) return c.json({ message: "Unauthorized" }, 401);
   await next();
 }
 
 export async function prometheusAuth(c: Context, next: Next) {
-  const authHeader = c.req.header('Authorization');
+  const authHeader = c.req.header("Authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return c.json({ message: "Missing or invalid Authorization header" }, 401);

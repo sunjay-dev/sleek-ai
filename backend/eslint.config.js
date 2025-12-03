@@ -13,7 +13,7 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin, // <- plugin object, not string
+      '@typescript-eslint': tsPlugin,
     },
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
