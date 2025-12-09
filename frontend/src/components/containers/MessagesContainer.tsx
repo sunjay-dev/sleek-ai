@@ -45,7 +45,10 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
   };
 
   return (
-    <div ref={containerRef} className={`flex-1 py-6 px-4 sm:px-2 mx-auto w-full max-w-180 ${messages.length === 0 ? "h-[-webkit-fill-available]" : ""}`}>
+    <div
+      ref={containerRef}
+      className={`flex-1 py-6 px-4 sm:px-2 mx-auto w-full max-w-svw sm:max-w-180 ${messages.length === 0 ? "h-[-webkit-fill-available]" : ""}`}
+    >
       {messages.length === 0 ? (
         <WelcomeScreen sendMessage={sendMessage} />
       ) : (
@@ -53,7 +56,13 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
           {messages.map((message, index) => (
             <div key={index}>
               {message.isAi ? (
-                <MemoModelMessage key={index} text={message.text} isCopied={copiedIndex === index} onCopy={() => handleCopy(message.text, index)} onResend={onResend} />
+                <MemoModelMessage
+                  key={index}
+                  text={message.text}
+                  isCopied={copiedIndex === index}
+                  onCopy={() => handleCopy(message.text, index)}
+                  onResend={onResend}
+                />
               ) : (
                 <MemoUserMessage key={index} text={message.text} isCopied={copiedIndex === index} onCopy={() => handleCopy(message.text, index)} />
               )}

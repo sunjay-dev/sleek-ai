@@ -19,12 +19,18 @@ export default function ChatPage() {
     <div className="flex h-dvh overflow-hidden bg-white text-primary">
       <Sidebar />
       <main className="flex flex-col flex-1 ">
-        <div className="flex-1 overflow-y-scroll space-y-2 bg-primary no-scrollbar">
+        <div className="flex-1 overflow-y-scroll space-y-2 bg-primary md:no-scrollbar">
           <MessagesContainer messages={messages} sendMessage={sendMessage} onResend={resendLastUser} isLoading={isLoading} />
           <div ref={messagesEndRef} />
         </div>
 
-        <InputContainer sendMessage={sendMessage} isLoading={isLoading} selectedModel={selectedModel} onStop={stopGeneration} onModelChange={handleModelChange} />
+        <InputContainer
+          sendMessage={sendMessage}
+          isLoading={isLoading}
+          selectedModel={selectedModel}
+          onStop={stopGeneration}
+          onModelChange={handleModelChange}
+        />
       </main>
     </div>
   );

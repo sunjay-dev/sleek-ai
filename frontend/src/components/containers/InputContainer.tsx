@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { SendHorizontal, Upload, Loader2, Paperclip, X } from "lucide-react";
+import { ArrowUp, Loader2, Paperclip, X } from "lucide-react";
 import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { models } from "@/data/models";
@@ -21,7 +21,11 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (isLoading || (!message.trim() && !file)) return;
+    if (isLoading) {
+      onStop();
+      return;
+    }
+    if (!message.trim() && !file) return;
 
     sendMessage(message.trim(), file);
     setMessage("");
@@ -53,9 +57,11 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
     }
   }, [message]);
 
+  const hasContent = message.trim().length > 0 || file !== null;
+
   return (
     <div className="w-full flex justify-center items-center px-4 pb-4 bg-primary">
-      <div className="w-full max-w-180">
+      <div className="w-full max-w-svw sm:max-w-180">
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-white/20 px-3 py-2 shadow-md">
             <textarea
@@ -65,7 +71,7 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
               onKeyDown={handleKeyDown}
               placeholder="Message..."
               rows={2}
-              className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary mb-1 overflow-y-auto max-h-28 no-scrollbar"
+              className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 no-scrollbar"
             />
 
             {file && (
@@ -82,33 +88,37 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
             )}
 
             <div className="flex justify-between items-center gap-2 border-t border-white/10 pt-2 text-xs text-white">
-              <div className="flex items-center gap-2">
-                <ModelSelector models={models} selectedModel={selectedModel} onModelChange={onModelChange} isLoading={isLoading} />
-                <div>
-                  <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" id="file-upload" />
-                  <label htmlFor="file-upload" className="flex items-center gap-1 icon-bg hover:bg-neutral-600 px-2 py-1 rounded-md cursor-pointer">
-                    <Upload size={14} /> Upload
-                  </label>
-                </div>
+              <div>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" id="file-upload" />
+                <label
+                  htmlFor="file-upload"
+                  className="flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent hover:bg-[#e9e9e980] text-primary cursor-pointer transition-colors"
+                  title="Attach file"
+                >
+                  <Paperclip size={16} strokeWidth={1.8} />
+                </label>
               </div>
 
-              <button
-                type="submit"
-                onClick={isLoading ? onStop : undefined}
-                disabled={!isLoading && !message.trim() && !file}
-                className="flex items-center gap-1 bg-neutral-800 text-white hover:bg-neutral-700 px-3 py-1 rounded-md disabled:bg-[#e9e9e980] disabled:text-[#6f6f6f] disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <Loader2 size={14} className="animate-spin" />
-                ) : (
-                  <>
-                    Send <SendHorizontal size={14} />
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                <ModelSelector models={models} selectedModel={selectedModel} onModelChange={onModelChange} isLoading={isLoading} />
+
+                <button
+                  type="submit"
+                  disabled={!isLoading && !hasContent}
+                  className={`
+                  flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
+                  ${isLoading || hasContent ? "bg-neutral-800 text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"}
+                `}
+                >
+                  {isLoading ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}
+                </button>
+              </div>
             </div>
           </div>
         </form>
+        <div className="text-center mt-2">
+          <p className="text-[10px] text-gray-400">AI can make mistakes. Check important info.</p>
+        </div>
       </div>
     </div>
   );
