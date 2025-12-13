@@ -1,30 +1,32 @@
 import { type Context } from "hono";
-import { streamAskAI, askAI, listModels } from "../config/groq.config.js";
 import { streamText } from "hono/streaming";
-
-export async function handleStreamAIResponse(c: Context) {
-    const { query, model = "gpt-oss-120b" } = await c.req.json();
-
-    const stream = await streamAskAI(query, model);
-
-    return streamText(c, async (writer) => {
-        for await (const chunk of stream) {
-            const text = chunk.choices?.[0]?.delta?.content;
-            if (text) {
-                await writer.write(text);
-            }
-        }
-    });
-}
+import { askAI, streamAskAI } from "../config/groq.config.js";
 
 export async function handleAIResponse(c: Context) {
-    const { query, model = "openai/gpt-oss-120b" } = await c.req.json();
+  const { query, model = "openai/gpt-oss-120b" } = await c.req.json();
 
-    const response = await askAI(query, model);
-    return c.json({ response, isAI: true }, 200);
+  const userId = c.get("user");
+
+  const response = await askAI(query, userId, model);
+  return c.json({ response, isAI: true }, 200);
 }
 
-export async function handleListModels(c: Context) {
-    const models = await listModels();
-    return c.json({ models }, 200);
+export async function handleStreamAIResponse(c: Context) {
+  const { query, model = "openai/gpt-oss-120b" } = await c.req.json();
+  const userId = c.get("user");
+
+  return streamText(c, async (stream) => {
+    try {
+      const eventStream = await streamAskAI(query, userId, model);
+
+      for await (const event of eventStream) {
+        if (event.event === "on_chat_model_stream" && event.data.chunk.content) {
+          await stream.write(event.data.chunk.content);
+        }
+      }
+    } catch (error) {
+      console.error("Streaming error:", error);
+      await stream.write("\n[Error generating response]");
+    }
+  });
 }

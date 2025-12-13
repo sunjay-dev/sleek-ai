@@ -14,3 +14,11 @@ export default function MessageLoader() {
     </div>
   );
 }
+
+// export default function MessageLoader() {
+//   return (
+//     <div className="flex justify-start px-3 py-2">
+//       <div className="h-3.5 w-3.5 bg-neutral-900 rounded-full animate-pulse" />
+//     </div>
+//   );
+// }

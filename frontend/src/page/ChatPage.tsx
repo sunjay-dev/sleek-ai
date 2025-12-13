@@ -1,27 +1,25 @@
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 import { MessagesContainer, InputContainer, Sidebar } from "@/components";
 import { useChat } from "@/hooks/useChat";
 
 export default function ChatPage() {
   const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleModelChange = (modelId: string) => {
-    setSelectedModel(modelId);
-  };
+  useLayoutEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length]);
 
   return (
     <div className="flex h-dvh overflow-hidden bg-white text-primary">
       <Sidebar />
-      <main className="flex flex-col flex-1 ">
-        <div className="flex-1 overflow-y-scroll space-y-2 bg-primary md:no-scrollbar">
+
+      <main className="flex flex-col flex-1 min-h-0">
+        <div ref={containerRef} className="flex-1 min-h-0 overflow-y-auto space-y-2 bg-primary md:no-scrollbar">
           <MessagesContainer messages={messages} sendMessage={sendMessage} onResend={resendLastUser} isLoading={isLoading} />
-          <div ref={messagesEndRef} />
+          <div ref={scrollRef} />
         </div>
 
         <InputContainer
@@ -29,7 +27,7 @@ export default function ChatPage() {
           isLoading={isLoading}
           selectedModel={selectedModel}
           onStop={stopGeneration}
-          onModelChange={handleModelChange}
+          onModelChange={(id) => setSelectedModel(id)}
         />
       </main>
     </div>

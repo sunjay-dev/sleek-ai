@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { UserMessage, ModelMessage, WelcomeScreen, MessageLoader } from "@/components";
 import type { Message } from "@/types";
 
@@ -16,13 +16,6 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const copyTimeoutRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (el) {
-      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-    }
-  }, [messages]);
 
   useEffect(() => {
     return () => {
@@ -44,6 +37,10 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
     }
   };
 
+  const handleCopyMessage = useCallback((text: string, idx: number) => {
+    handleCopy(text, idx);
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -60,11 +57,16 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
                   key={index}
                   text={message.text}
                   isCopied={copiedIndex === index}
-                  onCopy={() => handleCopy(message.text, index)}
+                  onCopy={() => handleCopyMessage(message.text, index)}
                   onResend={onResend}
                 />
               ) : (
-                <MemoUserMessage key={index} text={message.text} isCopied={copiedIndex === index} onCopy={() => handleCopy(message.text, index)} />
+                <MemoUserMessage
+                  key={index}
+                  text={message.text}
+                  isCopied={copiedIndex === index}
+                  onCopy={() => handleCopyMessage(message.text, index)}
+                />
               )}
             </div>
           ))}
