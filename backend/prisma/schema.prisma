@@ -17,25 +17,24 @@ model User {
   id        String   @id @default(cuid())
   clerkId   String   @unique
   firstName String?
-  email      String?
+  email     String?
   lastName  String?
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  chats     Chat[]
+  chats Chat[]
 }
 
 model Chat {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
   title     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   messages  Message[]
 }
-
 
 model Message {
   id        String   @id @default(cuid())

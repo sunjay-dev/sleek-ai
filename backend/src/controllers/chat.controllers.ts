@@ -1,6 +1,6 @@
 import { type Context } from "hono";
 import { streamText } from "hono/streaming";
-import { askAI, streamAskAI } from "../config/groq.config.js";
+import { askAI, streamAskAI } from "../utils/model.utils.js";
 
 export async function handleAIResponse(c: Context) {
   const { query, model = "openai/gpt-oss-120b" } = await c.req.json();
