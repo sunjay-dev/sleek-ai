@@ -1,8 +1,10 @@
+import { ContentfulStatusCode } from "hono/utils/http-status";
+
 export class AppError extends Error {
-  statusCode: number;
+  statusCode: ContentfulStatusCode;
   details?: Record<string, any>;
 
-  constructor(message: string, statusCode: number, details?: Record<string, any>) {
+  constructor(message: string, statusCode: ContentfulStatusCode, details?: Record<string, any>) {
     super(message);
     this.statusCode = statusCode;
     this.details = details;

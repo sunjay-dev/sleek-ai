@@ -23,8 +23,11 @@ export const createGroqAgent = (model: string) => {
     middleware: [
       summarizationMiddleware({
         model: summarizerLLM,
-        trigger: { tokens: 4000 },
-        keep: { messages: 10 },
+        trigger: {
+          tokens: 4000,
+          fraction: 0.75,
+        },
+        keep: { fraction: 0.25 },
       }),
     ],
   });

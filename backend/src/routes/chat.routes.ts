@@ -1,13 +1,11 @@
 import { Hono } from "hono";
-import { handleAIResponse, handleStreamAIResponse } from "../controllers/chat.controllers.js";
+import { handleAIResponse, handleCreateUserChat, handleGetUserChats } from "../controllers/chat.controllers.js";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 const router = new Hono();
 
-router.post("/", clerkMiddleware(), checkUser, handleAIResponse);
-
-router.post("/stream", clerkMiddleware(), checkUser, handleStreamAIResponse);
-
-// router.get("/listModels", handleListModels);
+router.get("/", clerkMiddleware(), checkUser, handleGetUserChats);
+router.post("/", clerkMiddleware(), checkUser, handleCreateUserChat);
+router.put("/:chatId", clerkMiddleware(), checkUser, handleAIResponse);
 
 export default router;

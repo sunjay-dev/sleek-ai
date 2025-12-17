@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import type { Message } from "../types";
 import { useAuth } from "@clerk/clerk-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-
+  const navigate = useNavigate();
+  const { chatId } = useParams<{ chatId?: string }>();
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedModel, setSelectedModel] = useState<string>(() => {
@@ -33,14 +35,39 @@ export const useChat = () => {
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
-      setIsLoading(true);
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-        method: "POST",
+      let currentChatId = chatId;
+
+      if (!currentChatId) {
+        setIsLoading(true);
+        const createChatRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query: text }),
+          signal: controller.signal,
+        });
+
+        if (!createChatRes.ok) {
+          throw new Error("Failed to create chat.");
+        }
+
+        const { chatId: newChatId } = await createChatRes.json();
+        currentChatId = newChatId;
+
+        navigate(`/chat/${currentChatId}`, { replace: true });
+      } else {
+        setIsLoading(true);
+      }
+
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${currentChatId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ query: text, model: selectedModel }),
+        body: JSON.stringify({ query: text, model: selectedModel, file }),
         signal: controller.signal,
       });
 

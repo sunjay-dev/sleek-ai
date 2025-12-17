@@ -1,5 +1,5 @@
 import { RedisSaver } from "@langchain/langgraph-checkpoint-redis";
-import { logger } from "../utils/logger.utils.js";
+import { InternalServerError } from "../utils/appError.utils.js";
 
 let redisCheckpointer: RedisSaver;
 
@@ -10,9 +10,8 @@ export const getRedisCheckpointer = async () => {
         defaultTTL: 60 * 60,
         refreshOnRead: false,
       });
-    } catch (err) {
-      logger.error("Failed to connect to Redis", err);
-      throw err;
+    } catch {
+      throw new InternalServerError("Error occured while connecting to Redis");
     }
   }
   return redisCheckpointer;

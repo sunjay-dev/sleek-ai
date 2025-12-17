@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   clerkId   String   @unique
   firstName String?
   email     String?
@@ -27,9 +27,9 @@ model User {
 }
 
 model Chat {
-  id        String    @id @default(cuid())
+  id        String    @id @default(uuid())
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [clerkId])
   title     String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -37,10 +37,18 @@ model Chat {
 }
 
 model Message {
-  id        String   @id @default(cuid())
+  id        String      @id @default(uuid())
   chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   text      String
-  isAi      Boolean
-  createdAt DateTime @default(now())
+  role      MessageRole @default(USER)
+  createdAt DateTime    @default(now())
+
+  @@index([chatId, createdAt])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
 }
