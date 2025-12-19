@@ -1,11 +1,6 @@
-import { createConsola } from "consola";
+import pino from "pino";
+import pretty from "pino-pretty";
 
-export const logger = createConsola({
-    reporters: [
-        {
-            log: (logObj) => {
-                console.log(JSON.stringify(logObj));
-            },
-        },
-    ],
-});
+const logger = pino(pretty());
+
+export default logger;

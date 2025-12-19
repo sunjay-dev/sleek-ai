@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import { AppError } from "../utils/appError.utils.js";
-import { logger } from "../utils/logger.utils.js";
+import logger from "../utils/logger.utils.js";
 
 export function errorHandler(err: Error, c: Context) {
   if (err instanceof AppError) {
