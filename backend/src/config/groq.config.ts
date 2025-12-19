@@ -2,7 +2,7 @@ import { ChatGroq } from "@langchain/groq";
 import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
-import redisCheckpointer from "./redis.config.js";
+import checkpointer from "../config/pgCheckpointer.config.js";
 
 const chatAgent = (model: string, temperature = 0) => {
   return new ChatGroq({
@@ -19,7 +19,7 @@ export const createGroqAgent = (model: string) => {
     model: llm,
     tools,
     systemPrompt,
-    checkpointer: redisCheckpointer,
+    checkpointer,
     middleware: [
       summarizationMiddleware({
         model: summarizerLLM,

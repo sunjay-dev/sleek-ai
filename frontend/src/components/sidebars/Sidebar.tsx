@@ -80,7 +80,7 @@ export default function Sidebar() {
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} />;
 
   return (
-    <aside className="fixed md:relative h-dvh w-64 bg-white border-r border-secondary flex flex-col z-30 flex-shrink-0">
+    <aside className="fixed md:relative h-dvh w-64 bg-white border-r border-secondary flex flex-col z-30 shrink-0">
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/logo.png" className="h-6 w-6" />
@@ -91,7 +91,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <div className="px-3 pb-2">
+      <div className="px-3 pb-2 border-b border-secondary">
         <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
           <BadgePlus size={16} />
           New chat

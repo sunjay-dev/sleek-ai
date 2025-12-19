@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { askAI } from "../utils/model.utils.js";
+import { getAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError } from "../utils/appError.utils.js";
 
@@ -41,7 +41,7 @@ export async function handleCreateUserChat(c: Context) {
   }
 }
 
-export async function handleAIResponse(c: Context) {
+export async function handleChatResponse(c: Context) {
   const chatId = c.req.param("chatId");
   const userId = c.get("user");
   const { query, model } = await c.req.json();
@@ -56,7 +56,9 @@ export async function handleAIResponse(c: Context) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const aiResponse = await askAI(query, userId, model);
+    const threadId = `${userId}:${chatId}`;
+
+    const aiResponse = await getAIResponse(query, threadId, model);
 
     await prisma.message.createMany({
       data: [
