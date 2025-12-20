@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import type { Message } from "../types";
+import type { Chat, Message } from "@/types";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const useChat = () => {
+  const [chats, setChats] = useState<Chat[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const navigate = useNavigate();
   const { chatId } = useParams<{ chatId?: string }>();
@@ -14,32 +15,64 @@ export const useChat = () => {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
-
   const { getToken } = useAuth();
 
   useEffect(() => {
     localStorage.setItem("selectedModel", selectedModel);
   }, [selectedModel]);
 
-  const sendMessage = async (text: string, file?: File | null) => {
-    const token = await getToken();
+  const sendMessage = (text: string, file?: File | null) => {
+    getToken().then((token) => {
+      if (!token) return;
+      if (!text.trim() && !file) return;
 
-    if (!token) return;
+      const userMsg: Message = { text, isAi: false };
+      setMessages((s) => [...s, userMsg]);
 
-    if (!text.trim() && !file) return;
-
-    const userMsg: Message = { text, isAi: false };
-    setMessages((s) => [...s, userMsg]);
-
-    try {
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
-      let currentChatId = chatId;
+      const currentChatId = chatId;
+
+      const handleChatUpdate = (chatIdToUse: string) => {
+        setIsLoading(true);
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query: text, model: selectedModel, file }),
+          signal: controller.signal,
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to send message");
+            return res.json();
+          })
+          .then((data) => {
+            const aiText = data?.response ?? "Sorry, no response.";
+            const aiMsg: Message = { text: aiText, isAi: true };
+            setMessages((s) => [...s, aiMsg]);
+          })
+          .catch((err) => {
+            if (err.name === "AbortError") {
+              const stoppedMsg: Message = { text: "Generation stopped.", isAi: true };
+              setMessages((s) => [...s, stoppedMsg]);
+            } else {
+              console.error(err);
+              const errMsg: Message = { text: "Error: failed to contact server.", isAi: true };
+              setMessages((s) => [...s, errMsg]);
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
+            abortControllerRef.current = null;
+          });
+      };
 
       if (!currentChatId) {
         setIsLoading(true);
-        const createChatRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -47,53 +80,34 @@ export const useChat = () => {
           },
           body: JSON.stringify({ query: text }),
           signal: controller.signal,
-        });
-
-        if (!createChatRes.ok) {
-          throw new Error("Failed to create chat.");
-        }
-
-        const { chatId: newChatId } = await createChatRes.json();
-        currentChatId = newChatId;
-
-        navigate(`/chat/${currentChatId}`, { replace: true });
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to create chat");
+            return res.json();
+          })
+          .then((data) => {
+            navigate(`/chat/${data.id}`, { replace: true });
+            handleChatUpdate(data.id);
+            setChats((chats) => [data, ...chats]);
+          })
+          .catch((err) => {
+            console.error(err);
+            const errMsg: Message = { text: "Error: failed to create chat.", isAi: true };
+            setMessages((s) => [...s, errMsg]);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
       } else {
-        setIsLoading(true);
+        handleChatUpdate(currentChatId);
       }
-
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${currentChatId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ query: text, model: selectedModel, file }),
-        signal: controller.signal,
-      });
-
-      const data = await res.json();
-      const aiText = data?.response ?? "Sorry, no response.";
-      const aiMsg: Message = { text: aiText, isAi: true };
-      setMessages((s) => [...s, aiMsg]);
-    } catch (err) {
-      if ((err as Error).name === "AbortError") {
-        const stoppedMsg: Message = { text: "Generation stopped.", isAi: true };
-        setMessages((s) => [...s, stoppedMsg]);
-      } else {
-        console.error(err);
-        const errMsg: Message = { text: "Error: failed to contact server.", isAi: true };
-        setMessages((s) => [...s, errMsg]);
-      }
-    } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
-    }
+    });
   };
 
-  const resendLastUser = async () => {
+  const resendLastUser = () => {
     const lastUser = [...messages].reverse().find((m) => !m.isAi);
     if (!lastUser) return;
-    await sendMessage(lastUser.text);
+    sendMessage(lastUser.text);
   };
 
   const stopGeneration = () => {
@@ -112,5 +126,7 @@ export const useChat = () => {
     resendLastUser,
     stopGeneration,
     setSelectedModel,
+    chats,
+    setChats,
   };
 };

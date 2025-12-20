@@ -4,14 +4,8 @@ import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
-interface Chat {
-  id: string;
-  title: string | null;
-}
-
 export default function ChatPage() {
-  const { messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
-  const [chats, setChats] = useState<Chat[]>([]);
+  const { chats, setChats, messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -20,46 +14,50 @@ export default function ChatPage() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = await getToken();
+    async function getUserChats() {
+      getToken().then((token) => {
         if (!token) return;
 
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           headers: { Authorization: `Bearer ${token}` },
-        });
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch chats");
+            return res.json();
+          })
+          .then((data) => setChats(data))
+          .catch((error) => console.error("Failed to fetch chats", error));
+      });
+    }
+    getUserChats();
+  }, [getToken, setChats]);
 
-        if (res.ok) setChats(await res.json());
-      } catch (err) {
-        console.error("Failed to fetch chats", err);
-      }
-    })();
-  }, [getToken]);
-
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (!deleteChatId) return;
 
     setDeleting(true);
 
-    try {
-      const token = await getToken();
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${deleteChatId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+    getToken()
+      .then((token) => {
+        if (!token) throw new Error("No token");
+
+        return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${deleteChatId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("Delete failed");
+
+        setChats((prev) => prev.filter((c) => c.id !== deleteChatId));
+
+        if (window.location.pathname.includes(deleteChatId)) navigate("/");
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        setDeleting(false);
+        setDeleteChatId(null);
       });
-
-      if (!res.ok) throw new Error("Delete failed");
-
-      // update UI
-      setChats((prev) => prev.filter((c) => c.id !== deleteChatId));
-
-      if (window.location.pathname.includes(deleteChatId)) navigate("/");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setDeleting(false);
-      setDeleteChatId(null);
-    }
   };
 
   return (

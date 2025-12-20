@@ -4,11 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
 import { useIsMobile } from "@/hooks/useIsMobile";
-
-interface Chat {
-  id: string;
-  title: string | null;
-}
+import type { Chat } from "@/types";
 
 type Props = {
   onDeleteRequest: (chatId: string) => void;
@@ -34,24 +30,26 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
   };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = await getToken();
+    setLoading(true);
+
+    getToken()
+      .then((token) => {
         if (!token) return;
 
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (res.ok) {
-          setChats(await res.json());
-        }
-      } catch (err) {
-        console.error("failed to fetch chats", err);
-      } finally {
-        setLoading(false);
-      }
-    })();
+      })
+      .then((res) => {
+        if (!res) return;
+        if (!res.ok) throw new Error("Failed to fetch chats");
+        return res.json();
+      })
+      .then((data) => {
+        if (data) setChats(data);
+      })
+      .catch((err) => console.error("failed to fetch chats", err))
+      .finally(() => setLoading(false));
   }, [getToken, setChats]);
 
   useEffect(() => {
@@ -99,9 +97,9 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
               onClick={() => setOpenMenuId(null)}
               className={({ isActive }) =>
                 [
-                  "group relative flex items-center justify-between px-3 py-2 rounded-lg text-xs",
+                  "group relative flex items-center justify-between px-3 py-1.5 rounded-lg text-xs",
                   "hover:bg-gray-50",
-                  isActive ? "font-medium bg-gray-50" : "",
+                  isActive ? "font-medium bg-gray-100" : "",
                 ].join(" ")
               }
             >
@@ -110,7 +108,6 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
               <button
                 type="button"
                 onClick={(e) => {
-                  // Prevent the <a> navigation triggered by NavLink
                   e.preventDefault();
                   e.stopPropagation();
                   setOpenMenuId(isMenuOpen ? null : chat.id);

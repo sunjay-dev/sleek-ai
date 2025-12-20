@@ -15,11 +15,11 @@ export default function DeleteChat({ open, onCancel, onConfirm, loading }: Props
         <p className="mb-5 text-sm text-gray-600">Are you sure you want to delete this chat?</p>
 
         <div className="flex justify-end gap-3">
-          <button onClick={onCancel} disabled={loading} className="px-4 py-2 rounded bg-gray-200 text-gray-700">
+          <button onClick={onCancel} disabled={loading} className="px-4 py-1.5 rounded bg-gray-200 text-gray-700">
             Cancel
           </button>
 
-          <button onClick={onConfirm} disabled={loading} className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white">
+          <button onClick={onConfirm} disabled={loading} className="px-4 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white">
             {loading ? "Deleting…" : "Delete"}
           </button>
         </div>

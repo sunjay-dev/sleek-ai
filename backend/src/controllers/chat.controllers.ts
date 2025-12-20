@@ -27,15 +27,16 @@ export async function handleCreateUserChat(c: Context) {
   const { query } = await c.req.json();
 
   try {
+    const title = query?.trim() ? query.trim().slice(0, 30) + "..." : "New Chat";
+
     const newChat = await prisma.chat.create({
       data: {
-        userId: userId,
-        title: query ? query.substring(0, 30) + "..." : "New Chat",
+        userId,
+        title,
       },
-      select: { id: true },
     });
 
-    return c.json({ chatId: newChat.id }, 201);
+    return c.json(newChat, 201);
   } catch {
     throw new InternalServerError("Error occured while creating new chat");
   }

@@ -25,10 +25,10 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
     };
   }, []);
 
-  const handleCopy = async (text: string, idx: number) => {
+  const handleCopy = async (text: string, index: number) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopiedIndex(idx);
+      setCopiedIndex(index);
 
       if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
       copyTimeoutRef.current = window.setTimeout(() => setCopiedIndex(null), 1500);
@@ -37,8 +37,8 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isL
     }
   };
 
-  const handleCopyMessage = useCallback((text: string, idx: number) => {
-    handleCopy(text, idx);
+  const handleCopyMessage = useCallback((text: string, index: number) => {
+    handleCopy(text, index);
   }, []);
 
   return (
