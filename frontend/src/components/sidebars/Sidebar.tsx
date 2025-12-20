@@ -10,14 +10,19 @@ interface Chat {
   title: string | null;
 }
 
-export default function Sidebar() {
+type Props = {
+  onDeleteRequest: (chatId: string) => void;
+  chats: Chat[];
+  setChats: (chats: Chat[]) => void;
+};
+
+export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
   const { user } = useUser();
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   const [collapsed, setCollapsed] = useState(false);
-  const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -47,7 +52,7 @@ export default function Sidebar() {
         setLoading(false);
       }
     })();
-  }, [getToken]);
+  }, [getToken, setChats]);
 
   useEffect(() => {
     if (isMobile) setCollapsed(true);
@@ -56,25 +61,6 @@ export default function Sidebar() {
   const createChat = () => {
     navigate("/");
     if (isMobile) setCollapsed(true);
-  };
-
-  const deleteChat = async (id: string) => {
-    if (!window.confirm("Delete this chat?")) return;
-
-    setChats((c) => c.filter((x) => x.id !== id));
-    setOpenMenuId(null);
-
-    try {
-      const token = await getToken();
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (window.location.pathname.includes(id)) navigate("/");
-    } catch (err) {
-      console.error("delete failed", err);
-    }
   };
 
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} />;
@@ -107,31 +93,51 @@ export default function Sidebar() {
           const isMenuOpen = openMenuId === chat.id;
 
           return (
-            <div key={chat.id} className="group relative flex items-center justify-between px-3 py-2 rounded-lg text-xs hover:bg-gray-50">
-              <NavLink
-                to={`/chat/${chat.id}`}
-                className={({ isActive }) => `flex-1 truncate ${isActive ? "font-medium" : ""}`}
-                onClick={() => setOpenMenuId(null)}
-              >
-                {chat.title || "Untitled chat"}
-              </NavLink>
+            <NavLink
+              key={chat.id}
+              to={`/chat/${chat.id}`}
+              onClick={() => setOpenMenuId(null)}
+              className={({ isActive }) =>
+                [
+                  "group relative flex items-center justify-between px-3 py-2 rounded-lg text-xs",
+                  "hover:bg-gray-50",
+                  isActive ? "font-medium bg-gray-50" : "",
+                ].join(" ")
+              }
+            >
+              <span className="flex-1 truncate">{chat.title || "Untitled chat"}</span>
 
               <button
+                type="button"
                 onClick={(e) => {
+                  // Prevent the <a> navigation triggered by NavLink
                   e.preventDefault();
                   e.stopPropagation();
                   setOpenMenuId(isMenuOpen ? null : chat.id);
                 }}
-                className={`p-1 rounded-md hover:bg-gray-200 transition
-      ${isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                className={[
+                  "p-1 rounded-md hover:bg-gray-200 transition",
+                  isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                ].join(" ")}
+                aria-label="Open chat menu"
               >
                 <MoreHorizontal size={16} />
               </button>
 
               {isMenuOpen && (
-                <div className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50">
+                <div
+                  className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
                   <button
-                    onClick={() => deleteChat(chat.id)}
+                    type="button"
+                    onClick={() => {
+                      setOpenMenuId(null);
+                      onDeleteRequest(chat.id);
+                    }}
                     className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50"
                   >
                     <Trash2 size={14} />
@@ -139,7 +145,7 @@ export default function Sidebar() {
                   </button>
                 </div>
               )}
-            </div>
+            </NavLink>
           );
         })}
       </nav>

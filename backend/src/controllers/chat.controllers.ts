@@ -69,7 +69,29 @@ export async function handleChatResponse(c: Context) {
     });
 
     return c.json({ response: aiResponse, isAi: true });
-  } catch {
-    throw new InternalServerError("Error occured while handling AI response");
+  } catch (error) {
+    throw new InternalServerError("Error occured while handling AI response", { error });
+  }
+}
+
+export async function handleDeleteUserChat(c: Context) {
+  const userId = c.get("user");
+  const chatId = c.req.param("chatId");
+
+  if (!chatId) return c.json({ error: "Missing chat ID" }, 400);
+
+  try {
+    const result = await prisma.chat.deleteMany({
+      where: { id: chatId, userId },
+    });
+
+    if (result.count === 0) {
+      return c.json({ error: "Chat not found or unauthorized" }, 404);
+    }
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Delete chat error:", error);
+    throw new InternalServerError("Failed to delete chat", { error });
   }
 }

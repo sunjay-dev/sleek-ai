@@ -3,7 +3,6 @@ import * as z from "zod";
 
 export const getCurrentTime = tool(
   async ({ timezone = "UTC" }) => {
-    console.log("get current time timezone: ", timezone);
     return new Date().toLocaleString("en-US", { timeZone: timezone });
   },
   {

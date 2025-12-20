@@ -24,7 +24,7 @@ export const createGroqAgent = (model: string) => {
       summarizationMiddleware({
         model: summarizerLLM,
         trigger: {
-          tokens: 4000,
+          tokens: 3200,
           fraction: 0.75,
         },
         keep: { fraction: 0.25 },

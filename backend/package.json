@@ -14,7 +14,7 @@
     "lint": "eslint --ext .ts src"
   },
   "keywords": [],
-  "author": "",
+  "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {

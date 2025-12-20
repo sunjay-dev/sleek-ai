@@ -24,8 +24,6 @@ export const getCurrentWeather = tool(
 
 export const getDailyWeatherForecast = tool(
   async ({ city, day }) => {
-    console.info("get weather forcast city: ", city, " day: ", day);
-
     const dayNumber = Number(day);
     if (isNaN(dayNumber) || dayNumber < 1 || dayNumber > 3) {
       return "Invalid day value. Please provide a number between 1 and 3.";

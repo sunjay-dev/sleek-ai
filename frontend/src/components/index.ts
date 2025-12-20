@@ -9,6 +9,7 @@ import WelcomeScreen from "./WelcomeScreen";
 import MessageLoader from "./loaders/MessageLoader";
 import ModelMessageToolTip from "./tooltips/ModelMessageToolTip";
 import UserMessageToolTip from "./tooltips/UserMessageToolTip";
+import DeleteChat from "./common/DeleteChat";
 
 export {
   InputContainer,
@@ -22,4 +23,5 @@ export {
   Loader,
   MessageLoader,
   WelcomeScreen,
+  DeleteChat,
 };
