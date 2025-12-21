@@ -6,13 +6,13 @@ import { models } from "@/data/models";
 
 type Props = {
   sendMessage: (text: string, file?: File | null) => void;
-  isLoading: boolean;
+  isGenerating: boolean;
   selectedModel: string;
   onStop: () => void;
   onModelChange: (modelId: string) => void;
 };
 
-export default function InputContainer({ sendMessage, isLoading, selectedModel, onStop, onModelChange }: Props) {
+export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange }: Props) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -21,7 +21,7 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (isLoading) {
+    if (isGenerating) {
       onStop();
       return;
     }
@@ -100,17 +100,19 @@ export default function InputContainer({ sendMessage, isLoading, selectedModel, 
               </div>
 
               <div className="flex items-center gap-2">
-                <ModelSelector models={models} selectedModel={selectedModel} onModelChange={onModelChange} isLoading={isLoading} />
+                <ModelSelector models={models} selectedModel={selectedModel} onModelChange={onModelChange} isGenerating={isGenerating} />
 
                 <button
                   type="submit"
-                  disabled={!isLoading && !hasContent}
+                  disabled={!isGenerating && !hasContent}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
-                  ${isLoading || hasContent ? "bg-neutral-800 text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"}
+                  ${
+                    isGenerating || hasContent ? "bg-neutral-800 text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"
+                  }
                 `}
                 >
-                  {isLoading ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}
+                  {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}
                 </button>
               </div>
             </div>

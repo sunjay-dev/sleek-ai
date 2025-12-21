@@ -5,7 +5,18 @@ import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ChatPage() {
-  const { chats, setChats, messages, sendMessage, resendLastUser, isLoading, selectedModel, setSelectedModel, stopGeneration } = useChat();
+  const {
+    chats,
+    setChats,
+    messages,
+    sendMessage,
+    resendLastUser,
+    isFetchingMessages,
+    isGenerating,
+    selectedModel,
+    setSelectedModel,
+    stopGeneration,
+  } = useChat();
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -66,12 +77,18 @@ export default function ChatPage() {
 
       <main className="flex flex-col flex-1 min-h-0">
         <div className="flex-1 min-h-0 overflow-y-auto space-y-2 bg-primary md:no-scrollbar">
-          <MessagesContainer messages={messages} sendMessage={sendMessage} onResend={resendLastUser} isLoading={isLoading} />
+          <MessagesContainer
+            messages={messages}
+            sendMessage={sendMessage}
+            onResend={resendLastUser}
+            isFetchingMessages={isFetchingMessages}
+            isGenerating={isGenerating}
+          />
         </div>
 
         <InputContainer
           sendMessage={sendMessage}
-          isLoading={isLoading}
+          isGenerating={isGenerating}
           selectedModel={selectedModel}
           onStop={stopGeneration}
           onModelChange={setSelectedModel}

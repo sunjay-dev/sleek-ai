@@ -1,6 +1,6 @@
 export type Message = {
   text: string;
-  isAi: boolean;
+  role: "USER" | "ASSISTANT" | "SYSTEM";
 };
 
 export type Model = {

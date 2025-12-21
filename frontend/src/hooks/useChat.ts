@@ -8,7 +8,8 @@ export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const navigate = useNavigate();
   const { chatId } = useParams<{ chatId?: string }>();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingMessages, setIsFetchingMessages] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const [selectedModel, setSelectedModel] = useState<string>(() => {
     return localStorage.getItem("selectedModel") || "openai/gpt-oss-120b";
@@ -26,7 +27,7 @@ export const useChat = () => {
       if (!token) return;
       if (!text.trim() && !file) return;
 
-      const userMsg: Message = { text, isAi: false };
+      const userMsg: Message = { text, role: "USER" };
       setMessages((s) => [...s, userMsg]);
 
       const controller = new AbortController();
@@ -35,7 +36,7 @@ export const useChat = () => {
       const currentChatId = chatId;
 
       const handleChatUpdate = (chatIdToUse: string) => {
-        setIsLoading(true);
+        setIsGenerating(true);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}`, {
           method: "PUT",
           headers: {
@@ -50,28 +51,28 @@ export const useChat = () => {
             return res.json();
           })
           .then((data) => {
-            const aiText = data?.response ?? "Sorry, no response.";
-            const aiMsg: Message = { text: aiText, isAi: true };
+            const aiText = data ?? "Sorry, no response.";
+            const aiMsg: Message = { text: aiText, role: "ASSISTANT" };
             setMessages((s) => [...s, aiMsg]);
           })
           .catch((err) => {
             if (err.name === "AbortError") {
-              const stoppedMsg: Message = { text: "Generation stopped.", isAi: true };
+              const stoppedMsg: Message = { text: "Generation stopped.", role: "ASSISTANT" };
               setMessages((s) => [...s, stoppedMsg]);
             } else {
               console.error(err);
-              const errMsg: Message = { text: "Error: failed to contact server.", isAi: true };
+              const errMsg: Message = { text: "Error: failed to contact server.", role: "ASSISTANT" };
               setMessages((s) => [...s, errMsg]);
             }
           })
           .finally(() => {
-            setIsLoading(false);
+            setIsGenerating(false);
             abortControllerRef.current = null;
           });
       };
 
       if (!currentChatId) {
-        setIsLoading(true);
+        setIsGenerating(true);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           method: "POST",
           headers: {
@@ -92,11 +93,11 @@ export const useChat = () => {
           })
           .catch((err) => {
             console.error(err);
-            const errMsg: Message = { text: "Error: failed to create chat.", isAi: true };
+            const errMsg: Message = { text: "Error: failed to create chat.", role: "ASSISTANT" };
             setMessages((s) => [...s, errMsg]);
           })
           .finally(() => {
-            setIsLoading(false);
+            setIsGenerating(false);
           });
       } else {
         handleChatUpdate(currentChatId);
@@ -105,8 +106,10 @@ export const useChat = () => {
   };
 
   const resendLastUser = () => {
-    const lastUser = [...messages].reverse().find((m) => !m.isAi);
+    const lastUser = [...messages].reverse().find((m) => m.role === "USER");
+
     if (!lastUser) return;
+
     sendMessage(lastUser.text);
   };
 
@@ -114,13 +117,45 @@ export const useChat = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
-      setIsLoading(false);
+      setIsGenerating(false);
     }
   };
 
+  useEffect(() => {
+    if (!chatId) {
+      setMessages([]);
+      return;
+    }
+
+    getToken().then((token) => {
+      if (!token) return;
+
+      setIsFetchingMessages(true);
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/messages/${chatId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch messages");
+          return res.json();
+        })
+        .then((data) => {
+          setMessages(data.messages || []);
+        })
+        .catch((err) => {
+          console.error(err);
+          setMessages([{ text: "Failed to load messages.", role: "ASSISTANT" }]);
+        })
+        .finally(() => setIsFetchingMessages(false));
+    });
+  }, [chatId, getToken]);
+
   return {
     messages,
-    isLoading,
+    isGenerating,
+    isFetchingMessages,
     selectedModel,
     sendMessage,
     resendLastUser,

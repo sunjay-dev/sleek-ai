@@ -6,10 +6,10 @@ type Props = {
   models: Model[];
   selectedModel: string;
   onModelChange: (modelId: string) => void;
-  isLoading: boolean;
+  isGenerating: boolean;
 };
 
-export default function ModelSelector({ models, selectedModel, onModelChange, isLoading }: Props) {
+export default function ModelSelector({ models, selectedModel, onModelChange, isGenerating }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -34,8 +34,8 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
     <div className="relative" ref={menuRef}>
       <button
         type="button"
-        onClick={() => !isLoading && setIsOpen(!isOpen)}
-        disabled={isLoading}
+        onClick={() => !isGenerating && setIsOpen(!isOpen)}
+        disabled={isGenerating}
         className={`
           flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
           ${
@@ -43,7 +43,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
               ? "bg-gray-100 border-gray-300 text-primary"
               : "bg-transparent border-transparent hover:bg-gray-100 text-gray-500 hover:text-primary"
           }
-          ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+          ${isGenerating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         `}
       >
         <Sparkles size={14} className={isOpen || selectedModel ? "text-primary" : "text-gray-400"} />
