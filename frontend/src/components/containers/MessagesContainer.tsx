@@ -39,7 +39,7 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
   if (messages.length === 0) return <WelcomeScreen sendMessage={sendMessage} />;
 
   return (
-    <div ref={containerRef} className="flex-1 py-6 px-4 sm:px-2 mx-auto w-full max-w-svw sm:max-w-180">
+    <div ref={containerRef} className="flex-1 py-6 px-4 mx-auto w-full max-w-svw sm:max-w-180">
       <div className="space-y-4">
         {messages.map((message, index) => (
           <div key={index}>

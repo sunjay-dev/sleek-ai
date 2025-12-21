@@ -1,6 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
 html,
@@ -10,7 +10,8 @@ body,
   background-color: #fcfbfb;
 }
 
-html, body {
+html,
+body {
   overflow: auto;
   scrollbar-width: none !important;
 }
@@ -25,26 +26,17 @@ body::-webkit-scrollbar {
 }
 
 .bg-primary-gradient {
-  background: linear-gradient(
-    to bottom,
-    rgb(249, 249, 249),
-    rgb(246, 246, 246) 80%
-  );
+  background: linear-gradient(to bottom, rgb(249, 249, 249), rgb(246, 246, 246) 80%);
   box-shadow: 0 0px 1px rgba(0, 0, 0, 0.05);
 }
 
 .bg-primary-gradient:hover {
-  background: linear-gradient(
-    to bottom,
-    rgb(240, 240, 240),
-    rgb(240, 240, 240) 80%
-  );
+  background: linear-gradient(to bottom, rgb(240, 240, 240), rgb(240, 240, 240) 80%);
 }
 
 .text-gray-lab {
   color: rgb(140, 140, 140);
 }
-
 
 .bg-secondary {
   background-color: #1c1c1c;
@@ -62,11 +54,11 @@ body::-webkit-scrollbar {
   color: #fcfbfb;
 }
 .word-break {
-    word-break: break-word;
+  word-break: break-word;
 }
 
 .boder-primary {
-  border: .0625rem solid rgba(0,0,0,.1)
+  border: 0.0625rem solid rgba(0, 0, 0, 0.1);
 }
 
 .border-secondary {
@@ -97,7 +89,6 @@ button {
 }
 
 @layer utilities {
-
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -127,6 +118,6 @@ button {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
   scrollbar-width: none !important;
 }

@@ -41,8 +41,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
         });
       })
       .then((res) => {
-        if (!res) return;
-        if (!res.ok) throw new Error("Failed to fetch chats");
+        if (!res?.ok) throw new Error("Failed to fetch chats");
         return res.json();
       })
       .then((data) => {
@@ -58,6 +57,10 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
 
   const createChat = () => {
     navigate("/");
+    if (isMobile) setCollapsed(true);
+  };
+
+  const closeSidebarOnMobile = () => {
     if (isMobile) setCollapsed(true);
   };
 
@@ -94,7 +97,10 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
             <NavLink
               key={chat.id}
               to={`/c/${chat.id}`}
-              onClick={() => setOpenMenuId(null)}
+              onClick={() => {
+                setOpenMenuId(null);
+                closeSidebarOnMobile();
+              }}
               className={({ isActive }) =>
                 [
                   "group relative flex items-center justify-between px-3 py-1.5 rounded-lg text-xs",

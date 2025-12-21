@@ -63,13 +63,13 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
     <div className="w-full flex justify-center items-center px-4 pb-4 bg-primary">
       <div className="w-full max-w-svw sm:max-w-180">
         <form onSubmit={handleSubmit}>
-          <div className="bg-white rounded-2xl border border-white/20 px-3 py-2 shadow-md">
+          <div className="bg-white rounded-2xl border border-gray-500/20 px-3 py-2 shadow-md">
             <textarea
               ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Message..."
+              placeholder="Ask Anything"
               rows={2}
               className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 no-scrollbar"
             />
