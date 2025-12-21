@@ -10,6 +10,7 @@ export const useChat = () => {
   const { chatId } = useParams<{ chatId?: string }>();
   const [isFetchingMessages, setIsFetchingMessages] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const newlyCreatedChatRef = useRef<string | null>(null);
 
   const [selectedModel, setSelectedModel] = useState<string>(() => {
     return localStorage.getItem("selectedModel") || "openai/gpt-oss-120b";
@@ -72,7 +73,6 @@ export const useChat = () => {
       };
 
       if (!currentChatId) {
-        setIsGenerating(true);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           method: "POST",
           headers: {
@@ -87,17 +87,15 @@ export const useChat = () => {
             return res.json();
           })
           .then((data) => {
-            navigate(`/chat/${data.id}`, { replace: true });
+            navigate(`/c/${data.id}`, { replace: true });
             handleChatUpdate(data.id);
+            newlyCreatedChatRef.current = data.id;
             setChats((chats) => [data, ...chats]);
           })
           .catch((err) => {
             console.error(err);
             const errMsg: Message = { text: "Error: failed to create chat.", role: "ASSISTANT" };
             setMessages((s) => [...s, errMsg]);
-          })
-          .finally(() => {
-            setIsGenerating(false);
           });
       } else {
         handleChatUpdate(currentChatId);
@@ -124,6 +122,11 @@ export const useChat = () => {
   useEffect(() => {
     if (!chatId) {
       setMessages([]);
+      return;
+    }
+
+    if (newlyCreatedChatRef.current === chatId) {
+      newlyCreatedChatRef.current = null;
       return;
     }
 

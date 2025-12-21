@@ -11,7 +11,7 @@ export const routes = createBrowserRouter([
         element: <ChatPage />,
       },
       {
-        path: "/chat/:chatId",
+        path: "/c/:chatId",
         element: <ChatPage />,
       },
     ],

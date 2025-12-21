@@ -17,8 +17,8 @@ export async function handleGetUserChats(c: Context) {
     });
 
     return c.json(chats, 200);
-  } catch {
-    throw new InternalServerError("Error occured while fetching users chats");
+  } catch (error) {
+    throw new InternalServerError("Error occured while fetching users chats", { error });
   }
 }
 
@@ -37,8 +37,8 @@ export async function handleCreateUserChat(c: Context) {
     });
 
     return c.json(newChat, 201);
-  } catch {
-    throw new InternalServerError("Error occured while creating new chat");
+  } catch (error) {
+    throw new InternalServerError("Error occured while creating new chat", { error });
   }
 }
 

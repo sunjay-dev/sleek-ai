@@ -93,7 +93,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
           return (
             <NavLink
               key={chat.id}
-              to={`/chat/${chat.id}`}
+              to={`/c/${chat.id}`}
               onClick={() => setOpenMenuId(null)}
               className={({ isActive }) =>
                 [
