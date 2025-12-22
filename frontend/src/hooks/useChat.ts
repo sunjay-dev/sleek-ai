@@ -47,9 +47,12 @@ export const useChat = () => {
           body: JSON.stringify({ query: text, model: selectedModel, file }),
           signal: controller.signal,
         })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to send message");
-            return res.json();
+          .then(async (res) => {
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+            return data;
           })
           .then((data) => {
             const aiText = data ?? "Sorry, no response.";
@@ -62,7 +65,7 @@ export const useChat = () => {
               setMessages((s) => [...s, stoppedMsg]);
             } else {
               console.error(err);
-              const errMsg: Message = { text: "Error: failed to contact server.", role: "ASSISTANT" };
+              const errMsg: Message = { text: err.message, role: "ASSISTANT" };
               setMessages((s) => [...s, errMsg]);
             }
           })
@@ -82,9 +85,12 @@ export const useChat = () => {
           body: JSON.stringify({ query: text }),
           signal: controller.signal,
         })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to create chat");
-            return res.json();
+          .then(async (res) => {
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
+
+            return data;
           })
           .then((data) => {
             navigate(`/c/${data.id}`, { replace: true });
@@ -94,7 +100,7 @@ export const useChat = () => {
           })
           .catch((err) => {
             console.error(err);
-            const errMsg: Message = { text: "Error: failed to create chat.", role: "ASSISTANT" };
+            const errMsg: Message = { text: err.message, role: "ASSISTANT" };
             setMessages((s) => [...s, errMsg]);
           });
       } else {
@@ -140,20 +146,23 @@ export const useChat = () => {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch messages");
-          return res.json();
+        .then(async (res) => {
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.message || "Failed to load messages, Please try again later.");
+
+          return data;
         })
         .then((data) => {
           setMessages(data.messages || []);
         })
         .catch((err) => {
           console.error(err);
-          setMessages([{ text: "Failed to load messages.", role: "ASSISTANT" }]);
+          navigate("/");
         })
         .finally(() => setIsFetchingMessages(false));
     });
-  }, [chatId, getToken]);
+  }, [chatId, getToken, navigate]);
 
   return {
     messages,

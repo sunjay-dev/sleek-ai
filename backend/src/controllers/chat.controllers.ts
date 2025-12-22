@@ -1,7 +1,7 @@
 import { type Context } from "hono";
 import { generateTitle, getAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
-import { InternalServerError, NotFoundError } from "../utils/appError.utils.js";
+import { InternalServerError } from "../utils/appError.utils.js";
 
 export async function handleGetUserChats(c: Context) {
   const userId = c.get("user");
@@ -24,7 +24,7 @@ export async function handleGetUserChats(c: Context) {
 
 export async function handleCreateUserChat(c: Context) {
   const userId = c.get("user");
-  const { query } = await c.req.json();
+  const { query } = c.get("body");
 
   try {
     const title = await generateTitle(query);
@@ -42,9 +42,9 @@ export async function handleCreateUserChat(c: Context) {
 }
 
 export async function handleChatResponse(c: Context) {
-  const chatId = c.req.param("chatId");
+  const { chatId } = c.get("param");
   const userId = c.get("user");
-  const { query, model } = await c.req.json();
+  const { query, model } = c.get("body");
 
   try {
     const chat = await prisma.chat.findFirst({
@@ -89,10 +89,8 @@ export async function handleChatResponse(c: Context) {
 }
 
 export async function handleDeleteUserChat(c: Context) {
+  const { chatId } = c.get("param");
   const userId = c.get("user");
-  const chatId = c.req.param("chatId");
-
-  if (!chatId) return c.json({ error: "Missing chat ID" }, 400);
 
   try {
     const result = await prisma.chat.deleteMany({
@@ -105,14 +103,13 @@ export async function handleDeleteUserChat(c: Context) {
 
     return c.json({ success: true });
   } catch (error) {
-    console.error("Delete chat error:", error);
     throw new InternalServerError("Failed to delete chat", { error });
   }
 }
 
 export async function handleGetChatMessages(c: Context) {
   const userId = c.get("user");
-  const chatId = c.req.param("chatId");
+  const { chatId } = c.get("param");
 
   try {
     const chatWithMessages = await prisma.chat.findFirst({
@@ -131,7 +128,7 @@ export async function handleGetChatMessages(c: Context) {
     });
 
     if (!chatWithMessages) {
-      throw new NotFoundError("Chat not found or unauthorized");
+      return c.json({ message: "Chat not found or unauthorized" }, 400);
     }
 
     return c.json(chatWithMessages, 200);
