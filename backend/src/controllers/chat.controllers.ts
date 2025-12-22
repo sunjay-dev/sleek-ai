@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { getAIResponse } from "../utils/model.utils.js";
+import { generateTitle, getAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError, NotFoundError } from "../utils/appError.utils.js";
 
@@ -27,8 +27,7 @@ export async function handleCreateUserChat(c: Context) {
   const { query } = await c.req.json();
 
   try {
-    const title = query?.trim() ? query.trim().slice(0, 30) + "..." : "New Chat";
-
+    const title = await generateTitle(query);
     const newChat = await prisma.chat.create({
       data: {
         userId,
@@ -77,7 +76,7 @@ export async function handleChatResponse(c: Context) {
       await transaction.message.create({
         data: {
           chatId,
-          text: response as string,
+          text: response,
           role: "ASSISTANT",
         },
       });

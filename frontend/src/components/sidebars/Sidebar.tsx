@@ -74,7 +74,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
           <span className="font-semibold text-sm">Chatty-AI</span>
         </div>
         <button onClick={() => setCollapsed(true)} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
-          <PanelLeftClose size={16} />
+          <PanelLeftClose strokeWidth={2.2} size={16} />
         </button>
       </div>
 

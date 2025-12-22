@@ -4,7 +4,7 @@ import tools from "../tools/index.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import checkpointer from "../config/pgCheckpointer.config.js";
 
-const chatAgent = (model: string, temperature = 0) => {
+export const groqChatAgent = (model: string, temperature = 0) => {
   return new ChatGroq({
     model,
     temperature,
@@ -12,8 +12,8 @@ const chatAgent = (model: string, temperature = 0) => {
 };
 
 export const createGroqAgent = (model: string) => {
-  const llm = chatAgent(model);
-  const summarizerLLM = chatAgent("openai/gpt-oss-20b");
+  const llm = groqChatAgent(model);
+  const summarizerLLM = groqChatAgent("groq/compound-mini");
 
   return createAgent({
     model: llm,
@@ -24,7 +24,7 @@ export const createGroqAgent = (model: string) => {
       summarizationMiddleware({
         model: summarizerLLM,
         trigger: {
-          tokens: 3200,
+          tokens: 3000,
           fraction: 0.75,
         },
         keep: { fraction: 0.25 },
