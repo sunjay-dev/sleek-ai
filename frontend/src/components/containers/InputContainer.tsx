@@ -31,6 +31,10 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
     setMessage("");
     setFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -61,21 +65,22 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
 
   return (
     <div className="w-full flex justify-center items-center px-4 pb-4 bg-primary">
-      <div className="w-full max-w-svw sm:max-w-180">
+      <div className="w-full max-w-svw sm:max-w-180 transition-all duration-300 ease-in-out">
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-gray-500/20 px-3 py-2 shadow-md">
             <textarea
+              name="input field"
               ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask Anything"
-              rows={2}
-              className="w-full bg-white py-1 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 no-scrollbar"
+              rows={1}
+              className="w-full bg-white py-2 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 no-scrollbar transition-all duration-200 ease-in-out"
             />
 
             {file && (
-              <div className="space-y-2">
+              <div className="space-y-2 mb-2">
                 {file.type.startsWith("image/") && <img src={URL.createObjectURL(file)} alt="Preview" className="max-h-20 rounded-md" />}
                 <div className="flex items-center gap-2 icon-bg/50 px-2 py-1 rounded-md text-xs text-primary">
                   <Paperclip size={14} />

@@ -21,4 +21,9 @@ Use simple language and explain things naturally, like a knowledgeable human wou
 **2. Math & LaTeX**
 - Inline math: $...$
 - Block math: $$...$$
-- Use valid LaTeX syntax only.`;
+- Use valid LaTeX syntax only.
+
+**3. Markdown Tables**
+- **CRITICAL:** Do NOT use multi-line code blocks (\`\`\`) inside tables. This breaks rendering.
+- Use single backticks (\`) for inline code within table cells.
+- If you need to show a large code block, place it **outside** the table.`;

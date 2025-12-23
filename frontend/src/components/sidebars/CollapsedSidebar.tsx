@@ -12,7 +12,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat }: Props)
         <img src="/logo.png" alt="Chatty-AI Logo" className="w-full h-full object-contain" />
       </div>
 
-      <div className="bg-white rounded-full shadow-md border-primary flex items-center gap-1 px-1.5 py-0.5">
+      <div className="bg-white rounded-full shadow-md border border-gray-500/20 flex items-center gap-1 px-1.5 py-0.5">
         <button
           onClick={() => setCollapsed(false)}
           className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-[#e9e9e980] transition group relative"

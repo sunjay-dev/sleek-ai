@@ -48,7 +48,7 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
   if (messages.length === 0) return <WelcomeScreen sendMessage={sendMessage} />;
 
   return (
-    <div className="flex-1 py-6 px-4 mx-auto w-full max-w-svw sm:max-w-180">
+    <div className="flex-1 py-6 px-4 mx-auto w-full max-w-svw sm:max-w-180 sm:mt-0 mt-2">
       <div className="space-y-6">
         {messages.map((message, index) => {
           const isCopied = copiedIndex === index;

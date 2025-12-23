@@ -9,7 +9,7 @@ export async function handleGetUserChats(c: Context) {
   try {
     const chats = await prisma.chat.findMany({
       where: { userId },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       select: {
         id: true,
         title: true,
@@ -79,6 +79,11 @@ export async function handleChatResponse(c: Context) {
           text: response,
           role: "ASSISTANT",
         },
+      });
+
+      await transaction.chat.update({
+        where: { id: chatId },
+        data: { updatedAt: new Date() },
       });
     });
 

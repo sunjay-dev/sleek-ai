@@ -23,6 +23,18 @@ export const useChat = () => {
     localStorage.setItem("selectedModel", selectedModel);
   }, [selectedModel]);
 
+  const moveChatToTop = (id: string) => {
+    setChats((prev) => {
+      const index = prev.findIndex((c) => c.id === id);
+      if (index <= 0) return prev;
+
+      const newChats = [...prev];
+      const [activeChat] = newChats.splice(index, 1);
+      newChats.unshift(activeChat);
+      return newChats;
+    });
+  };
+
   const sendMessage = (text: string, file?: File | null) => {
     getToken().then((token) => {
       if (!token) return;
@@ -38,6 +50,9 @@ export const useChat = () => {
 
       const handleChatUpdate = (chatIdToUse: string) => {
         setIsGenerating(true);
+
+        moveChatToTop(chatIdToUse);
+
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}`, {
           method: "PUT",
           headers: {
@@ -49,9 +64,7 @@ export const useChat = () => {
         })
           .then(async (res) => {
             const data = await res.json();
-
-            if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
-
+            if (!res.ok) throw new Error(data.message || "Something went wrong.");
             return data;
           })
           .then((data) => {
@@ -87,16 +100,16 @@ export const useChat = () => {
         })
           .then(async (res) => {
             const data = await res.json();
-
-            if (!res.ok) throw new Error(data.message || "Something went wrong, Please try again later.");
-
+            if (!res.ok) throw new Error(data.message || "Something went wrong.");
             return data;
           })
           .then((data) => {
             navigate(`/c/${data.id}`, { replace: true });
-            handleChatUpdate(data.id);
             newlyCreatedChatRef.current = data.id;
+
             setChats((chats) => [data, ...chats]);
+
+            handleChatUpdate(data.id);
           })
           .catch((err) => {
             console.error(err);
@@ -111,9 +124,7 @@ export const useChat = () => {
 
   const resendLastUser = () => {
     const lastUser = [...messages].reverse().find((m) => m.role === "USER");
-
     if (!lastUser) return;
-
     sendMessage(lastUser.text);
   };
 
@@ -142,15 +153,11 @@ export const useChat = () => {
       setIsFetchingMessages(true);
 
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/messages/${chatId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {
           const data = await res.json();
-
-          if (!res.ok) throw new Error(data.message || "Failed to load messages, Please try again later.");
-
+          if (!res.ok) throw new Error(data.message || "Failed to load messages.");
           return data;
         })
         .then((data) => {

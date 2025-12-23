@@ -18,32 +18,38 @@ type Props = {
 
 export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
   function cleanAIMath(text: string) {
-    return text.replace(/\\\[/g, "$$").replace(/\\\]/g, "$$").replace(/\\\\/g, "\\").replace(/\\n/g, "\n").trim();
+    return text
+      .replace(/\\\[/g, "$$")
+      .replace(/\\\]/g, "$$")
+      .replace(/\\\\/g, "\\")
+      .replace(/\\n/g, "\n")
+      .replace(/^\|.*?(`{3,})/gm, (match, group1) => {
+        return match.replace(group1, "`");
+      })
+      .trim();
   }
 
   return (
-    <div className="flex justify-start">
-      <div className="max-w-full text-sm py-4 rounded-xl">
-        <div className={styles.markdown}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[rehypeHighlight, rehypeKatex]}
-            components={{
-              pre: CodeBlock,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              table: ({ node, ...props }) => (
-                <div className={styles.tableWrapper}>
-                  <table {...props} />
-                </div>
-              ),
-            }}
-          >
-            {cleanAIMath(text)}
-          </ReactMarkdown>
-        </div>
-
-        <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
+    <div className="max-w-full text-sm py-4 rounded-xl">
+      <div className={styles.markdown}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeHighlight, rehypeKatex]}
+          components={{
+            pre: CodeBlock,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            table: ({ node, ...props }) => (
+              <div className={styles.tableWrapper}>
+                <table {...props} />
+              </div>
+            ),
+          }}
+        >
+          {cleanAIMath(text)}
+        </ReactMarkdown>
       </div>
+
+      <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
     </div>
   );
 }
