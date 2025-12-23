@@ -14,9 +14,16 @@ const MemoUserMessage = memo(UserMessage);
 const MemoModelMessage = memo(ModelMessage);
 
 export default function MessagesContainer({ messages, sendMessage, onResend, isGenerating, isFetchingMessages }: Props) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const copyTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages.length, isGenerating]);
 
   useEffect(() => {
     return () => {
@@ -25,13 +32,15 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
   }, []);
 
   const handleCopy = useCallback(async (text: string, index: number) => {
+    if (!text) return;
     try {
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
+
       if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
-      copyTimeoutRef.current = window.setTimeout(() => setCopiedIndex(null), 1500);
+      copyTimeoutRef.current = window.setTimeout(() => setCopiedIndex(null), 2000);
     } catch (e) {
-      console.error("copy failed", e);
+      console.error("Failed to copy text", e);
     }
   }, []);
 
@@ -39,23 +48,29 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
   if (messages.length === 0) return <WelcomeScreen sendMessage={sendMessage} />;
 
   return (
-    <div ref={containerRef} className="flex-1 py-6 px-4 mx-auto w-full max-w-svw sm:max-w-180">
-      <div className="space-y-4">
-        {messages.map((message, index) => (
-          <div key={index}>
-            {message.role === "ASSISTANT" ? (
-              <MemoModelMessage
-                text={message.text}
-                isCopied={copiedIndex === index}
-                onCopy={() => handleCopy(message.text, index)}
-                onResend={onResend}
-              />
-            ) : (
-              <MemoUserMessage text={message.text} isCopied={copiedIndex === index} onCopy={() => handleCopy(message.text, index)} />
-            )}
+    <div className="flex-1 py-6 px-4 mx-auto w-full max-w-svw sm:max-w-180">
+      <div className="space-y-6">
+        {messages.map((message, index) => {
+          const isCopied = copiedIndex === index;
+
+          return (
+            <div key={index}>
+              {message.role === "ASSISTANT" ? (
+                <MemoModelMessage text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, index)} onResend={onResend} />
+              ) : (
+                <MemoUserMessage text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, index)} />
+              )}
+            </div>
+          );
+        })}
+
+        {isGenerating && (
+          <div className="pl-1">
+            <MessageLoader />
           </div>
-        ))}
-        {isGenerating && <MessageLoader />}
+        )}
+
+        <div ref={bottomRef} className="h-1" />
       </div>
     </div>
   );
