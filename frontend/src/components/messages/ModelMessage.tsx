@@ -21,10 +21,11 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
     return text
       .replace(/\\\[/g, "$$")
       .replace(/\\\]/g, "$$")
-      .replace(/\\\\/g, "\\")
+      .replace(/\\\(/g, "$")
+      .replace(/\\\)/g, "$")
       .replace(/\\n/g, "\n")
-      .replace(/^\|.*?(`{3,})/gm, (match, group1) => {
-        return match.replace(group1, "`");
+      .replace(/^\|.*$/gm, (line) => {
+        return line.includes("```") ? line.replace(/```/g, "`") : line;
       })
       .trim();
   }

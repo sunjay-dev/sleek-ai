@@ -76,7 +76,7 @@ export default function ChatPage() {
       <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} />
 
       <main className="flex flex-col flex-1 min-h-0">
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary md:no-scrollbar">
+        <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
           <MessagesContainer
             messages={messages}
             sendMessage={sendMessage}

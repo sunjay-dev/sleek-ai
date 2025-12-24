@@ -19,3 +19,47 @@
 .codeBlockContent::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+#sideBar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+#sideBar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#sideBar::-webkit-scrollbar-thumb {
+  background-color: rgba(28, 28, 28, 0.15);
+  border-radius: 3px;
+}
+
+#sideBar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(28, 28, 28, 0.3);
+}
+
+#sideBar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+#messageContainer::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+#messageContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#messageContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(28, 28, 28, 0.15);
+  border-radius: 3px;
+}
+
+#messageContainer::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(28, 28, 28, 0.3);
+}
+
+#messageContainer::-webkit-scrollbar-corner {
+  background: transparent;
+}

@@ -18,7 +18,7 @@ export default defineConfig({
         name: "Chatty AI",
         short_name: "Chatty AI",
         description: "Your friendly AI chat companion—talk, ask, and explore ideas anytime.",
-        theme_color: "#8C8C8C",
+        theme_color: "#1c1c1c",
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
@@ -26,7 +26,7 @@ export default defineConfig({
         orientation: "portrait-primary",
         icons: [
           {
-            src: "/icons/icon-512-512.png",
+            src: "/logo.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",

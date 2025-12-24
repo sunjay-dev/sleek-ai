@@ -85,7 +85,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
         </button>
       </div>
 
-      <nav className="px-3 py-2 overflow-y-auto grow space-y-1">
+      <nav id="sideBar" className="px-3 py-2 overflow-y-auto grow space-y-1">
         {loading && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
 
         {!loading && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
