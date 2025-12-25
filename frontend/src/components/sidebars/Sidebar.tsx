@@ -24,6 +24,9 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
 
   const userBtnRef = useRef<HTMLDivElement>(null);
 
+  // 1. Create a ref for the sidebar container
+  const sidebarRef = useRef<HTMLElement>(null);
+
   const openClerkMenu = () => {
     const btn = userBtnRef.current?.querySelector("button");
     btn?.click();
@@ -55,6 +58,20 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
     if (isMobile) setCollapsed(true);
   }, [isMobile]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isMobile && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setCollapsed(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobile]);
+
   const createChat = () => {
     navigate("/");
     if (isMobile) setCollapsed(true);
@@ -67,102 +84,108 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} />;
 
   return (
-    <aside className="fixed md:relative h-dvh w-64 bg-white border-r border-secondary flex flex-col z-30 shrink-0">
-      <div className="px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" className="h-6 w-6" />
-          <span className="font-semibold text-sm">Chatty-AI</span>
+    <>
+      {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
+      <aside
+        ref={sidebarRef}
+        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-white border-r border-gray-500/20 flex flex-col z-30 shrink-0"
+      >
+        <div className="px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" className="h-6 w-6" />
+            <span className="font-semibold text-sm">Chatty-AI</span>
+          </div>
+          <button onClick={() => setCollapsed(true)} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
+            <PanelLeftClose strokeWidth={2.2} size={16} />
+          </button>
         </div>
-        <button onClick={() => setCollapsed(true)} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
-          <PanelLeftClose strokeWidth={2.2} size={16} />
-        </button>
-      </div>
 
-      <div className="px-3 pb-2 border-b border-secondary">
-        <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
-          <BadgePlus size={16} />
-          New chat
-        </button>
-      </div>
+        <div className="px-3 pb-2 border-b border-secondary">
+          <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
+            <BadgePlus size={16} />
+            New chat
+          </button>
+        </div>
 
-      <nav id="sideBar" className="px-3 py-2 overflow-y-auto grow space-y-1">
-        {loading && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
+        <nav id="sideBar" className="px-3 py-2 overflow-y-auto grow space-y-1">
+          {loading && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
 
-        {!loading && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
+          {!loading && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
 
-        {chats.map((chat) => {
-          const isMenuOpen = openMenuId === chat.id;
+          {chats.map((chat) => {
+            const isMenuOpen = openMenuId === chat.id;
 
-          return (
-            <NavLink
-              key={chat.id}
-              to={`/c/${chat.id}`}
-              onClick={() => {
-                setOpenMenuId(null);
-                closeSidebarOnMobile();
-              }}
-              className={({ isActive }) =>
-                [
-                  "group relative flex items-center justify-between px-3 py-1.5 rounded-lg text-xs",
-                  "hover:bg-gray-50",
-                  isActive ? "font-medium bg-gray-100" : "",
-                ].join(" ")
-              }
-            >
-              <span className="flex-1 truncate">{chat.title || "Untitled chat"}</span>
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setOpenMenuId(isMenuOpen ? null : chat.id);
+            return (
+              <NavLink
+                key={chat.id}
+                to={`/c/${chat.id}`}
+                onClick={() => {
+                  setOpenMenuId(null);
+                  closeSidebarOnMobile();
                 }}
-                className={[
-                  "p-1 rounded-md hover:bg-gray-200 transition",
-                  isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-                ].join(" ")}
-                aria-label="Open chat menu"
+                className={({ isActive }) =>
+                  [
+                    "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs",
+                    "hover:bg-gray-50",
+                    isActive ? "font-medium bg-gray-100" : "",
+                  ].join(" ")
+                }
               >
-                <MoreHorizontal size={16} />
-              </button>
+                <span className="flex-1 truncate">{chat.title || "Untitled chat"}</span>
 
-              {isMenuOpen && (
-                <div
-                  className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    setOpenMenuId(isMenuOpen ? null : chat.id);
                   }}
+                  className={[
+                    "p-1 rounded-md hover:bg-gray-200 transition",
+                    isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                  ].join(" ")}
+                  aria-label="Open chat menu"
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setOpenMenuId(null);
-                      onDeleteRequest(chat.id);
+                  <MoreHorizontal size={16} />
+                </button>
+
+                {isMenuOpen && (
+                  <div
+                    className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                     }}
-                    className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50"
                   >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
-                </div>
-              )}
-            </NavLink>
-          );
-        })}
-      </nav>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenMenuId(null);
+                        onDeleteRequest(chat.id);
+                      }}
+                      className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
 
-      <div
-        onClick={openClerkMenu}
-        className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-50 cursor-pointer"
-      >
-        <span className="text-sm truncate max-w-[140px]">{user?.fullName ?? user?.username ?? "User"}</span>
+        <div
+          onClick={openClerkMenu}
+          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-50 cursor-pointer"
+        >
+          <span className="text-sm truncate max-w-[140px]">{user?.fullName ?? user?.username ?? "User"}</span>
 
-        <div ref={userBtnRef}>
-          <UserButton />
+          <div ref={userBtnRef}>
+            <UserButton />
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
