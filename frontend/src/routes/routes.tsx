@@ -1,10 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
-import { ChatPage, AuthPage } from "@/page";
 import ProtectedRoute from "./ProtectedRoutes";
+import { lazy, Suspense } from "react";
+import { Loader } from "@/components";
+
+const ChatPage = lazy(() => import("@/page/ChatPage.tsx"));
+const AuthPage = lazy(() => import("@/page/AuthPage.tsx"));
 
 export const routes = createBrowserRouter([
   {
-    element: <ProtectedRoute />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute />
+      </Suspense>
+    ),
     children: [
       {
         path: "/",
@@ -18,6 +26,10 @@ export const routes = createBrowserRouter([
   },
   {
     path: "/auth/*",
-    element: <AuthPage />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <AuthPage />
+      </Suspense>
+    ),
   },
 ]);

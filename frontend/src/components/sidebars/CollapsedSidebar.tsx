@@ -9,7 +9,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat }: Props)
   return (
     <div className="fixed top-3 left-3 flex items-center gap-2 z-50">
       <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-7 h-7 cursor-pointer">
-        <img src="/logo.png" alt="Chatty-AI Logo" className="w-full h-full object-contain" />
+        <img src="/logo.webp" alt="Chatty-AI Logo" className="w-full h-full object-contain" />
       </div>
 
       <div className="bg-white rounded-full shadow-md border border-gray-500/20 flex items-center gap-1 px-1.5 py-0.5">

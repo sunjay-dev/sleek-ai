@@ -93,7 +93,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsPersona
       >
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" className="h-6 w-6" />
+            <img src="/logo.webp" className="h-6 w-6" />
             <span className="font-semibold text-sm">Chatty-AI</span>
           </div>
           <button onClick={() => setCollapsed(true)} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100">

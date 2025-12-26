@@ -5,8 +5,8 @@ export default function AuthPage() {
     <div className="flex min-h-screen bg-neutral-50 ">
       <div className="hidden md:flex md:w-1/2 bg-neutral-50 items-center justify-center p-8 text-primary relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute bottom-0 left-[-20%] right-[-10%] top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
-          <div className="absolute bottom-[-20%] right-[0%] top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
+          <div className="absolute bottom-0 left-[-20%] right-[-10%] top-[-10%] h-125 w-125 rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
+          <div className="absolute bottom-[-20%] right-[0%] top-[-10%] h-125 w-125 rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
         </div>
 
         <div className="relative z-10 text-center">

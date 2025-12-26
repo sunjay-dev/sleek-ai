@@ -26,9 +26,9 @@ export default defineConfig({
         orientation: "portrait-primary",
         icons: [
           {
-            src: "/logo.png",
+            src: "/logo.webp",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/webp",
             purpose: "any maskable",
           },
         ],
