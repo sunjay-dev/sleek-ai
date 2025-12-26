@@ -1,65 +1,41 @@
-.codeBlockContent::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.codeBlockContent::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.codeBlockContent::-webkit-scrollbar-thumb {
-  background-color: rgba(28, 28, 28, 0.15);
-  border-radius: 3px;
-}
-
-.codeBlockContent::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(28, 28, 28, 0.3);
-}
-
-.codeBlockContent::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-#sideBar::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-#sideBar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-#sideBar::-webkit-scrollbar-thumb {
-  background-color: rgba(28, 28, 28, 0.15);
-  border-radius: 3px;
-}
-
-#sideBar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(28, 28, 28, 0.3);
-}
-
-#sideBar::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
+.codeBlockContent::-webkit-scrollbar,
+#personalizationModel::-webkit-scrollbar,
+#memoryModel::-webkit-scrollbar,
+#sideBar::-webkit-scrollbar,
 #messageContainer::-webkit-scrollbar {
   height: 6px;
   width: 6px;
 }
 
+.codeBlockContent::-webkit-scrollbar-track,
+#personalizationModel::-webkit-scrollbar-track,
+#memoryModel::-webkit-scrollbar-track,
+#sideBar::-webkit-scrollbar-track,
 #messageContainer::-webkit-scrollbar-track {
   background: transparent;
 }
 
+.codeBlockContent::-webkit-scrollbar-thumb,
+#personalizationModel::-webkit-scrollbar-thumb,
+#memoryModel::-webkit-scrollbar-thumb,
+#sideBar::-webkit-scrollbar-thumb,
 #messageContainer::-webkit-scrollbar-thumb {
   background-color: rgba(28, 28, 28, 0.15);
   border-radius: 3px;
 }
 
+.codeBlockContent::-webkit-scrollbar-thumb:hover,
+#personalizationModel::-webkit-scrollbar-thumb:hover,
+#memoryModel::-webkit-scrollbar-thumb:hover,
+#sideBar::-webkit-scrollbar-thumb:hover,
 #messageContainer::-webkit-scrollbar-thumb:hover {
   background-color: rgba(28, 28, 28, 0.3);
 }
 
+.codeBlockContent::-webkit-scrollbar-corner,
+#personalizationModel::-webkit-scrollbar-corner,
+#memoryModel::-webkit-scrollbar-corner,
+#sideBar::-webkit-scrollbar-corner,
 #messageContainer::-webkit-scrollbar-corner {
   background: transparent;
 }

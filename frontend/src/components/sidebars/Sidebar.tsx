@@ -1,5 +1,5 @@
 import { UserButton, useUser, useAuth } from "@clerk/clerk-react";
-import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2 } from "lucide-react";
+import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
@@ -10,9 +10,10 @@ type Props = {
   onDeleteRequest: (chatId: string) => void;
   chats: Chat[];
   setChats: (chats: Chat[]) => void;
+  setIsPersonalizationOpen: (value: boolean) => void;
 };
 
-export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
+export default function Sidebar({ chats, setChats, onDeleteRequest, setIsPersonalizationOpen }: Props) {
   const { user } = useUser();
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -100,10 +101,18 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
           </button>
         </div>
 
-        <div className="px-3 pb-2 border-b border-secondary">
+        <div className="px-3 pb-2 border-b border-secondary space-y-1">
           <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
             <BadgePlus size={16} />
             New chat
+          </button>
+
+          <button
+            onClick={() => setIsPersonalizationOpen(true)}
+            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100"
+          >
+            <Sparkles size={16} />
+            Personalization
           </button>
         </div>
 
@@ -179,7 +188,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest }: Props) {
           onClick={openClerkMenu}
           className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-50 cursor-pointer"
         >
-          <span className="text-sm truncate max-w-[140px]">{user?.fullName ?? user?.username ?? "User"}</span>
+          <span className="text-sm truncate max-w-35">{user?.fullName ?? user?.username ?? "User"}</span>
 
           <div ref={userBtnRef}>
             <UserButton />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar, DeleteChat } from "@/components";
+import { MessagesContainer, InputContainer, Sidebar, DeleteChat, PersonalizationModal } from "@/components";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ export default function ChatPage() {
 
   const [deleteChatId, setDeleteChatId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
 
   useEffect(() => {
     async function getUserChats() {
@@ -73,7 +74,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-dvh overflow-hidden text-primary">
-      <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} />
+      <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} setIsPersonalizationOpen={setIsPersonalizationOpen} />
 
       <main className="flex flex-col flex-1 min-h-0">
         <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
@@ -94,6 +95,8 @@ export default function ChatPage() {
           onModelChange={setSelectedModel}
         />
       </main>
+
+      <PersonalizationModal isOpen={isPersonalizationOpen} onClose={() => setIsPersonalizationOpen(false)} />
 
       <DeleteChat open={deleteChatId !== null} onCancel={() => setDeleteChatId(null)} onConfirm={confirmDelete} loading={deleting} />
     </div>
