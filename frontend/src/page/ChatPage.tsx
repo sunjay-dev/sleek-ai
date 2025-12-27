@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar, DeleteChat, Loader } from "@/components";
+import { MessagesContainer, InputContainer, Sidebar, DeleteChat } from "@/components";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
@@ -99,7 +99,7 @@ export default function ChatPage() {
       </main>
 
       {isSettingsOpen && (
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={null}>
           <SettingsModal onClose={() => setIsSettingsOpen(false)} />
         </Suspense>
       )}

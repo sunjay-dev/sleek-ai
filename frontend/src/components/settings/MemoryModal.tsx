@@ -12,7 +12,7 @@ export default function MemoryModal({ isOpen, onClose, memories, onClear }: Memo
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-0">
-      <div className="absolute inset-0 bg-gray-200/50 backdrop-blur-[1px] transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-gray-200/50" onClick={onClose} />
 
       <div className="relative bg-white w-full max-w-xl rounded-xl border border-secondary flex flex-col max-h-[90dvh] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="px-4 py-3 border-b border-secondary flex items-center justify-between">

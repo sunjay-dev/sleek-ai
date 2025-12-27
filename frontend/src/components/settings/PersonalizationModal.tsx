@@ -22,7 +22,7 @@ export default function PersonalizationSettings() {
   return (
     <>
       <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <div className="overflow-y-auto space-y-5 px-1 no-scrollbar">
+        <div id="personalizationModal" className="overflow-y-auto space-y-5 px-1">
           <div className="mb-6">
             <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4">Personalization</h3>
             <p className="text-xs text-gray-lab leading-relaxed">Customize your profile details and how the AI behaves during conversations.</p>
@@ -82,7 +82,7 @@ export default function PersonalizationSettings() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-2.5 border border-secondary rounded-lg bg-primary">
+              <div className="flex items-center justify-between p-2.5 border border-gray-500/20 rounded-lg bg-[#fcfbfb] mb-6">
                 <div>
                   <span className="block text-[13px] font-medium text-primary">Memory</span>
                   <span className="text-[11px] text-gray-lab">{memories.length} facts learned</span>

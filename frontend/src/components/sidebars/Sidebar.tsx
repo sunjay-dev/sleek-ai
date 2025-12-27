@@ -88,7 +88,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
-        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-white border-r border-gray-500/20 flex flex-col z-30 shrink-0"
+        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-[#fcfbfb] border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
                 className={({ isActive }) =>
                   [
                     "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs",
-                    "hover:bg-gray-50",
+                    "hover:bg-gray-100/80",
                     isActive ? "font-medium bg-gray-100" : "",
                   ].join(" ")
                 }
@@ -156,7 +156,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
 
                 {isMenuOpen && (
                   <div
-                    className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                    className="absolute right-3 top-full mt-1 w-32 bg-[#fcfbfb] border border-secondary shadow-lg rounded-md z-50"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -182,7 +182,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
 
         <div
           onClick={openClerkMenu}
-          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-50 cursor-pointer"
+          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-100 cursor-pointer"
         >
           <span className="text-sm truncate max-w-35">{user?.fullName ?? user?.username ?? "User"}</span>
 

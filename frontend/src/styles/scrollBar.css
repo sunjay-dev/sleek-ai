@@ -6,6 +6,11 @@
   width: 6px;
 }
 
+#personalizationModal::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
 textarea::-webkit-scrollbar {
   height: 3px;
   width: 3px;
@@ -14,6 +19,7 @@ textarea::-webkit-scrollbar {
 .codeBlockContent::-webkit-scrollbar-track,
 textarea::-webkit-scrollbar-track,
 #memoryModel::-webkit-scrollbar-track,
+#personalizationModal::-webkit-scrollbar-track,
 #sideBar::-webkit-scrollbar-track,
 #messageContainer::-webkit-scrollbar-track {
   background: transparent;
@@ -22,6 +28,7 @@ textarea::-webkit-scrollbar-track,
 .codeBlockContent::-webkit-scrollbar-thumb,
 textarea::-webkit-scrollbar-thumb,
 #memoryModel::-webkit-scrollbar-thumb,
+#personalizationModal::-webkit-scrollbar-thumb,
 #sideBar::-webkit-scrollbar-thumb,
 #messageContainer::-webkit-scrollbar-thumb {
   background-color: rgba(28, 28, 28, 0.15);
@@ -31,6 +38,7 @@ textarea::-webkit-scrollbar-thumb,
 .codeBlockContent::-webkit-scrollbar-thumb:hover,
 textarea::-webkit-scrollbar-thumb:hover,
 #memoryModel::-webkit-scrollbar-thumb:hover,
+#personalizationModal::-webkit-scrollbar-thumb:hover,
 #sideBar::-webkit-scrollbar-thumb:hover,
 #messageContainer::-webkit-scrollbar-thumb:hover {
   background-color: rgba(28, 28, 28, 0.3);
@@ -39,6 +47,7 @@ textarea::-webkit-scrollbar-thumb:hover,
 .codeBlockContent::-webkit-scrollbar-corner,
 textarea::-webkit-scrollbar-corner,
 #memoryModel::-webkit-scrollbar-corner,
+#personalizationModal::-webkit-scrollbar-corner,
 #sideBar::-webkit-scrollbar-corner,
 #messageContainer::-webkit-scrollbar-corner {
   background: transparent;
