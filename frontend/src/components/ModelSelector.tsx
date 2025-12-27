@@ -47,7 +47,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
         `}
       >
         <Sparkles size={14} className={isOpen || selectedModel ? "text-primary" : "text-gray-400"} />
-        <span className="truncate max-w-[120px]">{currentModel?.name || "Select Model"}</span>
+        <span className="truncate max-w-30">{currentModel?.name || "Select Model"}</span>
         <ChevronDown size={12} className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
@@ -65,7 +65,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
                   key={model.id}
                   onClick={() => handleSelect(model.id)}
                   className={`
-                    w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors
+                    w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between
                     ${isActive ? "bg-primary/5 text-primary" : "text-gray-600 hover:bg-gray-100"}
                   `}
                 >

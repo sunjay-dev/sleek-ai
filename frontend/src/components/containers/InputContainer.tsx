@@ -76,7 +76,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               onKeyDown={handleKeyDown}
               placeholder="Ask Anything"
               rows={1}
-              className="w-full bg-white py-2 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 no-scrollbar transition-all duration-200 ease-in-out"
+              className="w-full bg-white py-2 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"
             />
 
             {file && (
@@ -97,7 +97,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" id="file-upload" />
                 <label
                   htmlFor="file-upload"
-                  className="flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent hover:bg-[#e9e9e980] text-primary cursor-pointer transition-colors"
+                  className="flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent hover:bg-[#e9e9e980] text-primary cursor-pointer"
                   title="Attach file"
                 >
                   <Paperclip size={16} strokeWidth={1.8} />

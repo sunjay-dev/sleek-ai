@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar, DeleteChat, PersonalizationModal } from "@/components";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { MessagesContainer, InputContainer, Sidebar, DeleteChat, Loader } from "@/components";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
+
+const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
 
 export default function ChatPage() {
   const {
@@ -23,7 +25,7 @@ export default function ChatPage() {
 
   const [deleteChatId, setDeleteChatId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     async function getUserChats() {
@@ -74,7 +76,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-dvh overflow-hidden text-primary">
-      <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} setIsPersonalizationOpen={setIsPersonalizationOpen} />
+      <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} setIsSettingsOpen={setIsSettingsOpen} />
 
       <main className="flex flex-col flex-1 min-h-0">
         <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
@@ -96,7 +98,11 @@ export default function ChatPage() {
         />
       </main>
 
-      <PersonalizationModal isOpen={isPersonalizationOpen} onClose={() => setIsPersonalizationOpen(false)} />
+      {isSettingsOpen && (
+        <Suspense fallback={<Loader />}>
+          <SettingsModal onClose={() => setIsSettingsOpen(false)} />
+        </Suspense>
+      )}
 
       <DeleteChat open={deleteChatId !== null} onCancel={() => setDeleteChatId(null)} onConfirm={confirmDelete} loading={deleting} />
     </div>

@@ -12,3 +12,5 @@ export type Chat = {
   id: string;
   title: string | null;
 };
+
+export type Tab = "personalization" | "data";

@@ -10,12 +10,12 @@ import MessageLoader from "./loaders/MessageLoader";
 import ModelMessageToolTip from "./tooltips/ModelMessageToolTip";
 import UserMessageToolTip from "./tooltips/UserMessageToolTip";
 import DeleteChat from "./common/DeleteChat";
-import PersonalizationModal from "./PersonalizationModal";
+import SettingsModal from "./settings/SettingsModal";
 
 export {
   InputContainer,
-  PersonalizationModal,
   MessagesContainer,
+  SettingsModal,
   ModelMessage,
   UserMessageToolTip,
   ModelMessageToolTip,

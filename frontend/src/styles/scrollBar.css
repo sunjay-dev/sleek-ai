@@ -1,5 +1,4 @@
 .codeBlockContent::-webkit-scrollbar,
-#personalizationModel::-webkit-scrollbar,
 #memoryModel::-webkit-scrollbar,
 #sideBar::-webkit-scrollbar,
 #messageContainer::-webkit-scrollbar {
@@ -7,8 +6,13 @@
   width: 6px;
 }
 
+textarea::-webkit-scrollbar {
+  height: 3px;
+  width: 3px;
+}
+
 .codeBlockContent::-webkit-scrollbar-track,
-#personalizationModel::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track,
 #memoryModel::-webkit-scrollbar-track,
 #sideBar::-webkit-scrollbar-track,
 #messageContainer::-webkit-scrollbar-track {
@@ -16,7 +20,7 @@
 }
 
 .codeBlockContent::-webkit-scrollbar-thumb,
-#personalizationModel::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb,
 #memoryModel::-webkit-scrollbar-thumb,
 #sideBar::-webkit-scrollbar-thumb,
 #messageContainer::-webkit-scrollbar-thumb {
@@ -25,7 +29,7 @@
 }
 
 .codeBlockContent::-webkit-scrollbar-thumb:hover,
-#personalizationModel::-webkit-scrollbar-thumb:hover,
+textarea::-webkit-scrollbar-thumb:hover,
 #memoryModel::-webkit-scrollbar-thumb:hover,
 #sideBar::-webkit-scrollbar-thumb:hover,
 #messageContainer::-webkit-scrollbar-thumb:hover {
@@ -33,7 +37,7 @@
 }
 
 .codeBlockContent::-webkit-scrollbar-corner,
-#personalizationModel::-webkit-scrollbar-corner,
+textarea::-webkit-scrollbar-corner,
 #memoryModel::-webkit-scrollbar-corner,
 #sideBar::-webkit-scrollbar-corner,
 #messageContainer::-webkit-scrollbar-corner {

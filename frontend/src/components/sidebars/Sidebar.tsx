@@ -1,5 +1,5 @@
 import { UserButton, useUser, useAuth } from "@clerk/clerk-react";
-import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Sparkles } from "lucide-react";
+import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
@@ -10,10 +10,10 @@ type Props = {
   onDeleteRequest: (chatId: string) => void;
   chats: Chat[];
   setChats: (chats: Chat[]) => void;
-  setIsPersonalizationOpen: (value: boolean) => void;
+  setIsSettingsOpen: (value: boolean) => void;
 };
 
-export default function Sidebar({ chats, setChats, onDeleteRequest, setIsPersonalizationOpen }: Props) {
+export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSettingsOpen }: Props) {
   const { user } = useUser();
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsPersona
 
   const userBtnRef = useRef<HTMLDivElement>(null);
 
-  // 1. Create a ref for the sidebar container
   const sidebarRef = useRef<HTMLElement>(null);
 
   const openClerkMenu = () => {
@@ -107,12 +106,9 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsPersona
             New chat
           </button>
 
-          <button
-            onClick={() => setIsPersonalizationOpen(true)}
-            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100"
-          >
-            <Sparkles size={16} />
-            Personalization
+          <button onClick={() => setIsSettingsOpen(true)} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
+            <Settings size={16} />
+            Settings
           </button>
         </div>
 

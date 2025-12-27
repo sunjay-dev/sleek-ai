@@ -12,7 +12,7 @@ export default function MemoryModal({ isOpen, onClose, memories, onClear }: Memo
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4 sm:p-0">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-xs transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-gray-200/50 backdrop-blur-[1px] transition-opacity" onClick={onClose} />
 
       <div className="relative bg-white w-full max-w-xl rounded-xl border border-secondary flex flex-col max-h-[90dvh] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="px-4 py-3 border-b border-secondary flex items-center justify-between">
@@ -42,12 +42,6 @@ export default function MemoryModal({ isOpen, onClose, memories, onClear }: Memo
           ) : (
             <p className="text-center py-8 text-gray-lab text-xs">No memories saved yet.</p>
           )}
-        </div>
-
-        <div className="px-4 py-3 border-t border-secondary rounded-t-none rounded-2xl flex justify-end bg-gray-50/30">
-          <button onClick={onClose} className="px-3 py-1.5 text-xs font-medium bg-secondary text-white hover:opacity-90 rounded-lg">
-            Done
-          </button>
         </div>
       </div>
     </div>
