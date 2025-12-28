@@ -1,5 +1,5 @@
 import { UserButton, useUser } from "@clerk/clerk-react";
-import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Settings } from "lucide-react";
+import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Settings, Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
@@ -8,13 +8,14 @@ import type { Chat } from "@/types";
 
 type Props = {
   onDeleteRequest: (chatId: string) => void;
+  onRenameRequest: (chat: Chat) => void;
   chats: Chat[];
   isFetchingChats: boolean;
   setChats: (chats: Chat[]) => void;
-  setIsSettingsOpen: (value: boolean) => void;
+  setIsSettingsModalOpen: (value: boolean) => void;
 };
 
-export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, setIsSettingsOpen }: Props) {
+export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, setIsSettingsModalOpen }: Props) {
   const { user } = useUser();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -83,7 +84,10 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, setIs
             New chat
           </button>
 
-          <button onClick={() => setIsSettingsOpen(true)} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
+          <button
+            onClick={() => setIsSettingsModalOpen(true)}
+            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100"
+          >
             <Settings size={16} />
             Settings
           </button>
@@ -108,8 +112,8 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, setIs
                 className={({ isActive }) =>
                   [
                     "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs",
-                    "hover:bg-gray-100/80",
-                    isActive ? "font-medium bg-gray-100" : "",
+                    "hover:bg-gray-100",
+                    isActive ? "font-medium bg-gray-200/60" : "",
                   ].join(" ")
                 }
               >
@@ -139,6 +143,18 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, setIs
                       e.stopPropagation();
                     }}
                   >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenMenuId(null);
+                        onRenameRequest(chat);
+                      }}
+                      className="w-full px-3 py-2 text-xs text-primary flex items-center gap-2 hover:bg-gray-100"
+                    >
+                      <Pencil size={14} />
+                      Rename
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => {

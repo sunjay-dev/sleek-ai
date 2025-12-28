@@ -27,7 +27,7 @@ export default function WelcomeScreen({ sendMessage }: Props) {
             <button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="bg-primary-gradient border border-gray-500/10 text-primary text-xs sm:text-sm font-medium rounded-lg px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="bg-[#fbfbfb] border border-gray-500/20 text-xs sm:text-sm font-medium rounded-lg px-4 py-2"
             >
               {suggestion}
             </button>

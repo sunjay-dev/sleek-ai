@@ -1,16 +1,26 @@
 import { lazy, Suspense, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar, DeleteModal } from "@/components";
+import { MessagesContainer, InputContainer, Sidebar } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages } from "@/hooks";
+import type { Chat } from "@/types";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
+const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.tsx"));
+const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
 
 export default function ChatPage() {
-  const { chats, setChats, moveChatToTop, isFetchingChats } = useChat();
+  const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
   const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages(moveChatToTop);
-
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { intent, isDeleting, requestDeleteChat, requestDeleteAll, confirm, cancel } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
+
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [activeChat, setActiveChat] = useState<Chat | null>(null);
+
+  const onRenameRequest = (chat: Chat) => {
+    setActiveChat(chat);
+    setIsRenameModalOpen(true);
+  };
 
   return (
     <div className="flex h-dvh overflow-hidden text-primary">
@@ -19,7 +29,8 @@ export default function ChatPage() {
         chats={chats}
         setChats={setChats}
         onDeleteRequest={requestDeleteChat}
-        setIsSettingsOpen={setIsSettingsOpen}
+        setIsSettingsModalOpen={setIsSettingsModalOpen}
+        onRenameRequest={onRenameRequest}
       />
 
       <main className="flex flex-col flex-1 min-h-0">
@@ -42,14 +53,30 @@ export default function ChatPage() {
         />
       </main>
 
-      {isSettingsOpen && (
+      {isRenameModalOpen && (
         <Suspense fallback={null}>
-          <SettingsModal onClose={() => setIsSettingsOpen(false)} requestDeleteAll={requestDeleteAll} />
+          <RenameChatModal
+            onClose={() => setIsRenameModalOpen(false)}
+            currentTitle={activeChat?.title ?? ""}
+            onRename={(newTitle) => {
+              if (!activeChat) return;
+              handleRenameChat(activeChat.id, newTitle);
+              setIsRenameModalOpen(false);
+            }}
+          />
+        </Suspense>
+      )}
+
+      {isSettingsModalOpen && (
+        <Suspense fallback={null}>
+          <SettingsModal onClose={() => setIsSettingsModalOpen(false)} requestDeleteAll={requestDeleteAll} />
         </Suspense>
       )}
 
       {intent && (
-        <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
+        <Suspense fallback={null}>
+          <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
+        </Suspense>
       )}
     </div>
   );

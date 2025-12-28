@@ -112,9 +112,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                   disabled={!isGenerating && !hasContent}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
-                  ${
-                    isGenerating || hasContent ? "bg-neutral-800 text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"
-                  }
+                  ${isGenerating || hasContent ? "bg-secondary text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"}
                 `}
                 >
                   {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}

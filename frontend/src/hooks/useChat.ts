@@ -36,5 +36,29 @@ export default function useChat() {
     });
   };
 
-  return { chats, setChats, isFetchingChats, moveChatToTop };
+  const handleRenameChat = async (chatId: string, newTitle: string) => {
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
+
+      if (!res.ok) throw new Error("Failed to rename chat");
+      const updatedChat: Chat = await res.json();
+
+      // update frontend state
+      setChats((prev) => prev.map((c) => (c.id === chatId ? updatedChat : c)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return { chats, setChats, isFetchingChats, moveChatToTop, handleRenameChat };
 }

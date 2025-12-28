@@ -15,7 +15,7 @@ export default function SettingsModal({ onClose, requestDeleteAll }: Props) {
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4">
-        <div className="absolute inset-0 bg-gray-200/50" onClick={onClose} />
+        <div className="absolute inset-0 backdrop-blur-[1px] bg-gray-200/80" onClick={onClose} />
 
         <div className="relative w-full max-w-3xl h-[85vh] md:h-150 max-h-[90dvh] rounded-t-2xl md:rounded-lg rounded-b-none border border-gray-500/20 flex flex-col overflow-hidden bg-white">
           <div className="flex flex-col md:flex-row flex-1 min-h-0">

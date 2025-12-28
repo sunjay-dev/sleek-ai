@@ -11,6 +11,7 @@ import ModelMessageToolTip from "./tooltips/ModelMessageToolTip";
 import UserMessageToolTip from "./tooltips/UserMessageToolTip";
 import DeleteModal from "./common/DeleteModal";
 import SettingsModal from "./settings/SettingsModal";
+import RenameChatModal from "./common/RenameChatModal";
 
 export {
   InputContainer,
@@ -26,4 +27,5 @@ export {
   MessageLoader,
   WelcomeScreen,
   DeleteModal,
+  RenameChatModal,
 };
