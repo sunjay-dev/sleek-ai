@@ -1,9 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import type { Message } from "@/types";
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from "react";
+import type { Chat, Message } from "@/types";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function useMessages(moveChatToTop: (id: string) => void) {
+type Props = {
+  moveChatToTop: (id: string) => void;
+  setChats: Dispatch<SetStateAction<Chat[]>>;
+};
+
+export default function useMessages({ moveChatToTop, setChats }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFetchingMessages, setIsFetchingMessages] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -29,8 +34,8 @@ export default function useMessages(moveChatToTop: (id: string) => void) {
         setIsGenerating(true);
         moveChatToTop(chatIdToUse);
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}`, {
-          method: "PUT",
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}/message`, {
+          method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           body: JSON.stringify({ query: text, model: selectedModel, file }),
           signal: controller.signal,
@@ -38,6 +43,9 @@ export default function useMessages(moveChatToTop: (id: string) => void) {
           .then(async (res) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Something went wrong");
+            return data;
+          })
+          .then((data) => {
             const aiMsg: Message = { text: data ?? "Sorry, no response.", role: "ASSISTANT" };
             setMessages((s) => [...s, aiMsg]);
           })
@@ -64,8 +72,13 @@ export default function useMessages(moveChatToTop: (id: string) => void) {
           .then(async (res) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Something went wrong");
+            return data;
+          })
+          .then((data) => {
             newlyCreatedChatRef.current = data.id;
             handleChatUpdate(data.id);
+            setChats((prev) => [data, ...prev]);
+            navigate(`/c/${data.id}`, { replace: true });
           })
           .catch((err) => {
             const msg: Message = { text: err.message, role: "ASSISTANT" };
@@ -103,7 +116,7 @@ export default function useMessages(moveChatToTop: (id: string) => void) {
       if (!token) return;
       setIsFetchingMessages(true);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/messages/${chatId}`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {

@@ -18,6 +18,10 @@ export const chatResponseSchema = z.object({
   model: z.enum(modelsList, { message: "Please choose a correct model" }),
 });
 
+export const chatRenameSchema = z.object({
+  title: z.string().trim().min(1, { message: "Please enter a valid title" }),
+});
+
 export const chatIdParamSchema = z.object({
   chatId: z.uuid({ message: "Please provide correct chatId" }),
 });

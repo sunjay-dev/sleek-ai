@@ -69,6 +69,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-gray-500/20 px-3 py-2 shadow-md">
             <textarea
+              autoFocus={true}
               name="input field"
               ref={textareaRef}
               value={message}

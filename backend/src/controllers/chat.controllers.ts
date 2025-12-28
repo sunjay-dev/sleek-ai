@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { generateTitle, getAIResponse } from "../utils/model.utils.js";
+import { generateTitle } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError } from "../utils/appError.utils.js";
 
@@ -41,55 +41,24 @@ export async function handleCreateUserChat(c: Context) {
   }
 }
 
-export async function handleChatResponse(c: Context) {
+export async function handleRenameUserChat(c: Context) {
   const { chatId } = c.get("param");
+  const { title } = c.get("body");
   const userId = c.get("user");
-  const { query, model } = c.get("body");
 
   try {
-    const chat = await prisma.chat.findFirst({
+    const chat = await prisma.chat.updateMany({
       where: { id: chatId, userId },
-      select: { id: true },
+      data: { title },
     });
 
-    if (!chat) {
+    if (chat.count === 0) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const threadId = `${userId}:${chatId}`;
-
-    const response = await getAIResponse(query, threadId, model);
-
-    if (!response) {
-      throw new Error("Empty AI response");
-    }
-
-    await prisma.$transaction(async (transaction) => {
-      await transaction.message.create({
-        data: {
-          chatId,
-          text: query,
-          role: "USER",
-        },
-      });
-
-      await transaction.message.create({
-        data: {
-          chatId,
-          text: response,
-          role: "ASSISTANT",
-        },
-      });
-
-      await transaction.chat.update({
-        where: { id: chatId },
-        data: { updatedAt: new Date() },
-      });
-    });
-
-    return c.json(response, 200);
+    return c.json({ success: true });
   } catch (error) {
-    throw new InternalServerError("Error occured while handling AI response", { error });
+    throw new InternalServerError("Something went wrong, please try again later.", { error });
   }
 }
 
@@ -109,35 +78,5 @@ export async function handleDeleteUserChat(c: Context) {
     return c.json({ success: true });
   } catch (error) {
     throw new InternalServerError("Failed to delete chat", { error });
-  }
-}
-
-export async function handleGetChatMessages(c: Context) {
-  const userId = c.get("user");
-  const { chatId } = c.get("param");
-
-  try {
-    const chatWithMessages = await prisma.chat.findFirst({
-      where: { id: chatId, userId },
-      select: {
-        id: true,
-        title: true,
-        messages: {
-          orderBy: { createdAt: "asc" },
-          select: {
-            text: true,
-            role: true,
-          },
-        },
-      },
-    });
-
-    if (!chatWithMessages) {
-      return c.json({ message: "Chat not found or unauthorized" }, 400);
-    }
-
-    return c.json(chatWithMessages, 200);
-  } catch (error) {
-    throw new InternalServerError("Error fetching chat messages", { error });
   }
 }

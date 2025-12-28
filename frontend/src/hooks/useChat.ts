@@ -41,20 +41,23 @@ export default function useChat() {
       const token = await getToken();
       if (!token) return;
 
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ title: newTitle }),
-      });
-
-      if (!res.ok) throw new Error("Failed to rename chat");
-      const updatedChat: Chat = await res.json();
-
-      // update frontend state
-      setChats((prev) => prev.map((c) => (c.id === chatId ? updatedChat : c)));
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Failed to rename chat");
+          return data;
+        })
+        .then(() => {
+          console.log("c", chatId, newTitle);
+          setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
+        });
     } catch (err) {
       console.error(err);
     }

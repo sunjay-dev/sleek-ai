@@ -9,7 +9,7 @@ const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
 
 export default function ChatPage() {
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
-  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages(moveChatToTop);
+  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({ moveChatToTop, setChats });
   const { intent, isDeleting, requestDeleteChat, requestDeleteAll, confirm, cancel } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
 
