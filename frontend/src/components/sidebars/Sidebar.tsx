@@ -1,26 +1,25 @@
-import { UserButton, useUser, useAuth } from "@clerk/clerk-react";
+import { UserButton, useUser } from "@clerk/clerk-react";
 import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks";
 import type { Chat } from "@/types";
 
 type Props = {
   onDeleteRequest: (chatId: string) => void;
   chats: Chat[];
+  isFetchingChats: boolean;
   setChats: (chats: Chat[]) => void;
   setIsSettingsOpen: (value: boolean) => void;
 };
 
-export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSettingsOpen }: Props) {
+export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, setIsSettingsOpen }: Props) {
   const { user } = useUser();
-  const { getToken } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   const [collapsed, setCollapsed] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const userBtnRef = useRef<HTMLDivElement>(null);
@@ -31,28 +30,6 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
     const btn = userBtnRef.current?.querySelector("button");
     btn?.click();
   };
-
-  useEffect(() => {
-    setLoading(true);
-
-    getToken()
-      .then((token) => {
-        if (!token) return;
-
-        return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      })
-      .then((res) => {
-        if (!res?.ok) throw new Error("Failed to fetch chats");
-        return res.json();
-      })
-      .then((data) => {
-        if (data) setChats(data);
-      })
-      .catch((err) => console.error("failed to fetch chats", err))
-      .finally(() => setLoading(false));
-  }, [getToken, setChats]);
 
   useEffect(() => {
     if (isMobile) setCollapsed(true);
@@ -88,7 +65,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
-        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-[#fcfbfb] border-r border-gray-500/20 flex flex-col z-30 shrink-0"
+        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-[#fbfbfb] border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -113,9 +90,9 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
         </div>
 
         <nav id="sideBar" className="px-3 py-2 overflow-y-auto grow space-y-1">
-          {loading && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
+          {isFetchingChats && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
 
-          {!loading && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
+          {!isFetchingChats && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
 
           {chats.map((chat) => {
             const isMenuOpen = openMenuId === chat.id;
@@ -156,7 +133,7 @@ export default function Sidebar({ chats, setChats, onDeleteRequest, setIsSetting
 
                 {isMenuOpen && (
                   <div
-                    className="absolute right-3 top-full mt-1 w-32 bg-[#fcfbfb] border border-secondary shadow-lg rounded-md z-50"
+                    className="absolute right-3 top-full mt-1 w-32 bg-[#fbfbfb] border border-secondary shadow-lg rounded-md z-50"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

@@ -53,10 +53,17 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
         {messages.map((message, index) => {
           const isCopied = copiedIndex === index;
 
+          const isLastAIMessage = message.role === "ASSISTANT" && messages.slice(index + 1).every((m) => m.role !== "ASSISTANT");
+
           return (
             <div key={index}>
               {message.role === "ASSISTANT" ? (
-                <MemoModelMessage text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, index)} onResend={onResend} />
+                <MemoModelMessage
+                  text={message.text}
+                  isCopied={isCopied}
+                  onCopy={() => handleCopy(message.text, index)}
+                  onResend={isLastAIMessage ? onResend : undefined}
+                />
               ) : (
                 <MemoUserMessage text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, index)} />
               )}

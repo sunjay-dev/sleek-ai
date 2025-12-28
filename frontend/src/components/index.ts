@@ -9,7 +9,7 @@ import WelcomeScreen from "./WelcomeScreen";
 import MessageLoader from "./loaders/MessageLoader";
 import ModelMessageToolTip from "./tooltips/ModelMessageToolTip";
 import UserMessageToolTip from "./tooltips/UserMessageToolTip";
-import DeleteChat from "./common/DeleteChat";
+import DeleteModal from "./common/DeleteModal";
 import SettingsModal from "./settings/SettingsModal";
 
 export {
@@ -25,5 +25,5 @@ export {
   Loader,
   MessageLoader,
   WelcomeScreen,
-  DeleteChat,
+  DeleteModal,
 };

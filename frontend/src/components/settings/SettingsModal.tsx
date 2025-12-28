@@ -6,9 +6,10 @@ import type { Tab } from "@/types";
 
 type Props = {
   onClose: () => void;
+  requestDeleteAll: () => void;
 };
 
-export default function SettingsModal({ onClose }: Props) {
+export default function SettingsModal({ onClose, requestDeleteAll }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("personalization");
 
   return (
@@ -20,10 +21,12 @@ export default function SettingsModal({ onClose }: Props) {
           <div className="flex flex-col md:flex-row flex-1 min-h-0">
             <SettingsSidebar activeTab={activeTab} setActiveTab={setActiveTab} onClose={onClose} />
 
-            <main className="flex-1 overflow-y-auto p-4 md:px-6 bg-white relative">
-              {activeTab === "personalization" && <PersonalizationModal />}
+            <main className="flex-1 overflow-y-auto bg-white relative">
+              <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                {activeTab === "personalization" && <PersonalizationModal />}
 
-              {activeTab === "data" && <DataPrivacy />}
+                {activeTab === "data" && <DataPrivacy requestDeleteAll={requestDeleteAll} />}
+              </div>
             </main>
           </div>
         </div>

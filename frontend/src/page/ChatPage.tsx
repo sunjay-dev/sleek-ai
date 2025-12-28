@@ -1,89 +1,33 @@
-import { lazy, Suspense, useEffect, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar, DeleteChat } from "@/components";
-import { useChat } from "@/hooks/useChat";
-import { useAuth } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import { lazy, Suspense, useState } from "react";
+import { MessagesContainer, InputContainer, Sidebar, DeleteModal } from "@/components";
+import { useChat, useChatDeletion, useModel, useMessages } from "@/hooks";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
 
 export default function ChatPage() {
-  const {
-    chats,
-    setChats,
-    messages,
-    sendMessage,
-    resendLastUser,
-    isFetchingMessages,
-    isGenerating,
-    selectedModel,
-    setSelectedModel,
-    stopGeneration,
-  } = useChat();
+  const { chats, setChats, moveChatToTop, isFetchingChats } = useChat();
+  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages(moveChatToTop);
 
-  const { getToken } = useAuth();
-  const navigate = useNavigate();
-
-  const [deleteChatId, setDeleteChatId] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
-  useEffect(() => {
-    async function getUserChats() {
-      getToken().then((token) => {
-        if (!token) return;
-
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch chats");
-            return res.json();
-          })
-          .then((data) => setChats(data))
-          .catch((error) => console.error("Failed to fetch chats", error));
-      });
-    }
-    getUserChats();
-  }, [getToken, setChats]);
-
-  const confirmDelete = () => {
-    if (!deleteChatId) return;
-
-    setDeleting(true);
-
-    getToken()
-      .then((token) => {
-        if (!token) throw new Error("No token");
-
-        return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${deleteChatId}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      })
-      .then((res) => {
-        if (!res.ok) throw new Error("Delete failed");
-
-        setChats((prev) => prev.filter((c) => c.id !== deleteChatId));
-
-        if (window.location.pathname.includes(deleteChatId)) navigate("/");
-      })
-      .catch((err) => console.error(err))
-      .finally(() => {
-        setDeleting(false);
-        setDeleteChatId(null);
-      });
-  };
+  const { intent, isDeleting, requestDeleteChat, requestDeleteAll, confirm, cancel } = useChatDeletion(setChats);
+  const { selectedModel, setSelectedModel } = useModel();
 
   return (
     <div className="flex h-dvh overflow-hidden text-primary">
-      <Sidebar chats={chats} setChats={setChats} onDeleteRequest={setDeleteChatId} setIsSettingsOpen={setIsSettingsOpen} />
+      <Sidebar
+        isFetchingChats={isFetchingChats}
+        chats={chats}
+        setChats={setChats}
+        onDeleteRequest={requestDeleteChat}
+        setIsSettingsOpen={setIsSettingsOpen}
+      />
 
       <main className="flex flex-col flex-1 min-h-0">
         <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
           <MessagesContainer
             messages={messages}
-            sendMessage={sendMessage}
-            onResend={resendLastUser}
+            onResend={() => resendLastUser(selectedModel)}
+            sendMessage={(text, file) => sendMessage(text, selectedModel, file)}
             isFetchingMessages={isFetchingMessages}
             isGenerating={isGenerating}
           />
@@ -100,11 +44,13 @@ export default function ChatPage() {
 
       {isSettingsOpen && (
         <Suspense fallback={null}>
-          <SettingsModal onClose={() => setIsSettingsOpen(false)} />
+          <SettingsModal onClose={() => setIsSettingsOpen(false)} requestDeleteAll={requestDeleteAll} />
         </Suspense>
       )}
 
-      <DeleteChat open={deleteChatId !== null} onCancel={() => setDeleteChatId(null)} onConfirm={confirmDelete} loading={deleting} />
+      {intent && (
+        <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
+      )}
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ArrowUp, Loader2, Paperclip, X } from "lucide-react";
 import ModelSelector from "@/components/ModelSelector";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "@/hooks";
 import { models } from "@/data/models";
 
 type Props = {
-  sendMessage: (text: string, file?: File | null) => void;
+  sendMessage: (text: string, selectedModel: string, file?: File | null) => void;
   isGenerating: boolean;
   selectedModel: string;
   onStop: () => void;
@@ -27,7 +27,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
     }
     if (!message.trim() && !file) return;
 
-    sendMessage(message.trim(), file);
+    sendMessage(message.trim(), selectedModel, file);
     setMessage("");
     setFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";

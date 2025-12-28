@@ -14,3 +14,5 @@ export type Chat = {
 };
 
 export type Tab = "personalization" | "data";
+
+export type DeleteIntent = { type: "single"; chatId: string } | { type: "all" } | null;

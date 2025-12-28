@@ -7,7 +7,6 @@ import styles from "@/styles/modelMessage.module.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import ModelMessageToolTip from "../tooltips/ModelMessageToolTip";
-import "@/styles/scrollBar.css";
 
 type Props = {
   text: string;
