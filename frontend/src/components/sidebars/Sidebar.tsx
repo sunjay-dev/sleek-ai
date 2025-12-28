@@ -73,20 +73,23 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
             <img src="/logo.webp" className="h-6 w-6" />
             <span className="font-semibold text-sm">Chatty-AI</span>
           </div>
-          <button onClick={() => setCollapsed(true)} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100">
+          <button
+            onClick={() => setCollapsed(true)}
+            className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100 active:bg-gray-100"
+          >
             <PanelLeftClose strokeWidth={2.2} size={16} />
           </button>
         </div>
 
         <div className="px-3 pb-2 border-b border-secondary space-y-1">
-          <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100">
+          <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100">
             <BadgePlus size={16} />
             New chat
           </button>
 
           <button
             onClick={() => setIsSettingsModalOpen(true)}
-            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100"
+            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
           >
             <Settings size={16} />
             Settings
@@ -111,8 +114,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                 }}
                 className={({ isActive }) =>
                   [
-                    "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs",
-                    "hover:bg-gray-100",
+                    "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs hover:bg-gray-100 active:bg-gray-100",
                     isActive ? "font-medium bg-gray-200/60" : "",
                   ].join(" ")
                 }
@@ -127,8 +129,8 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                     setOpenMenuId(isMenuOpen ? null : chat.id);
                   }}
                   className={[
-                    "p-1 rounded-md hover:bg-gray-200 transition",
-                    isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                    "p-1 rounded-md hover:bg-gray-200 active:bg-gray-200 transition",
+                    isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-active:opacity-100",
                   ].join(" ")}
                   aria-label="Open chat menu"
                 >
@@ -149,7 +151,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                         setOpenMenuId(null);
                         onRenameRequest(chat);
                       }}
-                      className="w-full px-3 py-2 text-xs text-primary flex items-center gap-2 hover:bg-gray-100"
+                      className="w-full px-3 py-2 text-xs text-primary flex items-center gap-2 hover:bg-gray-100 active:bg-gray-100"
                     >
                       <Pencil size={14} />
                       Rename
@@ -161,7 +163,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                         setOpenMenuId(null);
                         onDeleteRequest(chat.id);
                       }}
-                      className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50"
+                      className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50 active:bg-red-50"
                     >
                       <Trash2 size={14} />
                       Delete
@@ -175,7 +177,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
         <div
           onClick={openClerkMenu}
-          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-100 cursor-pointer"
+          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-100 active:bg-gray-100 rounded-r-3xl cursor-pointer"
         >
           <span className="text-sm truncate max-w-35">{user?.fullName ?? user?.username ?? "User"}</span>
 

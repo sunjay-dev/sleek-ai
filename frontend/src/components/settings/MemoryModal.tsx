@@ -27,7 +27,10 @@ export default function MemoryModal({ isOpen, onClose, memories, onClear }: Memo
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-lab uppercase tracking-wide">{memories.length} items learned</span>
-                <button onClick={onClear} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1 hover:underline">
+                <button
+                  onClick={onClear}
+                  className="text-xs text-red-500 hover:text-red-600 active:text-red-600 flex items-center gap-1 hover:underline active:underline"
+                >
                   <Trash2 size={12} /> Clear All
                 </button>
               </div>

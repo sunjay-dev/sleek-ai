@@ -15,7 +15,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat }: Props)
       <div className="bg-white rounded-full shadow-md border border-gray-500/20 flex items-center gap-1 px-1.5 py-0.5">
         <button
           onClick={() => setCollapsed(false)}
-          className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-[#e9e9e980] transition"
+          className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-[#e9e9e980] active:bg-[#e9e9e980] transition"
           title="Open sidebar"
         >
           <PanelLeftOpen strokeWidth={2} size={15} className="text-primary" />
@@ -23,7 +23,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat }: Props)
 
         <button
           onClick={createNewChat}
-          className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-[#e9e9e980] transition"
+          className="flex items-center justify-center h-7 w-7 rounded-full hover:bg-[#e9e9e980] active:bg-[#e9e9e980] transition"
           title="New chat"
         >
           <BadgePlus strokeWidth={2} size={15} className="text-primary" />

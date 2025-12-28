@@ -10,17 +10,17 @@ type Props = {
 export default function SettingsSidebar({ activeTab, setActiveTab, onClose }: Props) {
   const navItemBase = "text-left px-3 py-2 text-xs font-medium rounded-lg flex items-center gap-2.5";
   const activeNav = "bg-white border border-gray-500/20 text-primary";
-  const inactiveNav = "text-gray-lab hover:bg-gray-200/50";
+  const inactiveNav = "text-gray-lab hover:bg-gray-200/50 active:bg-gray-200/50";
 
   return (
     <aside className="w-full md:w-43 border-b-[1.3px] md:border-b-0 md:border-r border-gray-500/20 bg-[#fbfbfb] p-3 flex flex-col gap-1 shrink-0 h-auto md:overflow-y-auto">
       <div className="px-1 pb-2 mb-2 flex justify-end md:justify-start">
         <button
           onClick={onClose}
-          className="p-1 text-gray-lab hover:text-primary hover:bg-gray-200/50 rounded-md transition-colors"
+          className="p-1 text-gray-lab hover:text-primary hover:bg-gray-200/50  active:bg-gray-200/50 rounded-md transition-colors"
           aria-label="Close Settings"
         >
-          <X size={18} />
+          <X size={20} />
         </button>
       </div>
 

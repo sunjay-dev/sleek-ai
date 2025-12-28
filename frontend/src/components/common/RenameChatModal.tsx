@@ -32,11 +32,11 @@ export default function RenameChatModal({ onClose, onRename, currentTitle }: Ren
         />
 
         <div className="flex justify-end gap-3 text-sm">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md hover:bg-gray-100">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md hover:bg-gray-100 active:bg-gray-100">
             Cancel
           </button>
 
-          <button type="submit" className="px-4 py-2 rounded-md bg-secondary text-white">
+          <button type="submit" className="px-4 py-2 rounded-md bg-[#1c1c1c]/90 hover:opacity-90 active:opacity-90 text-white">
             Rename
           </button>
         </div>

@@ -86,7 +86,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                 <div className="flex items-center gap-2 icon-bg/50 px-2 py-1 rounded-md text-xs text-primary">
                   <Paperclip size={14} />
                   <span className="truncate flex-1">{file.name}</span>
-                  <button type="button" onClick={handleRemoveFile} className="p-1 hover:bg-[#e9e9e980] rounded-full">
+                  <button type="button" onClick={handleRemoveFile} className="p-1 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full">
                     <X size={14} />
                   </button>
                 </div>
@@ -98,7 +98,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" id="file-upload" />
                 <label
                   htmlFor="file-upload"
-                  className="flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent hover:bg-[#e9e9e980] text-primary cursor-pointer"
+                  className="flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent active:border-transparent hover:bg-[#e9e9e980] active:bg-[#e9e9e980] text-primary cursor-pointer"
                   title="Attach file"
                 >
                   <Paperclip size={16} strokeWidth={1.8} />
@@ -113,7 +113,11 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                   disabled={!isGenerating && !hasContent}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
-                  ${isGenerating || hasContent ? "bg-secondary text-white hover:bg-neutral-700" : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"}
+                  ${
+                    isGenerating || hasContent
+                      ? "bg-secondary text-white hover:bg-neutral-700 active:bg-neutral-700"
+                      : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"
+                  }
                 `}
                 >
                   {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}

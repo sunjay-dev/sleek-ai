@@ -41,7 +41,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
           ${
             isOpen
               ? "bg-gray-100 border-gray-300 text-primary"
-              : "bg-transparent border-transparent hover:bg-gray-100 text-gray-500 hover:text-primary"
+              : "bg-transparent border-transparent text-gray-500 hover:bg-gray-100 active:bg-gray-100"
           }
           ${isGenerating ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         `}
@@ -66,7 +66,7 @@ export default function ModelSelector({ models, selectedModel, onModelChange, is
                   onClick={() => handleSelect(model.id)}
                   className={`
                     w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between
-                    ${isActive ? "bg-primary/5 text-primary" : "text-gray-600 hover:bg-gray-100"}
+                    ${isActive ? "bg-primary/5 text-primary" : "text-gray-600 hover:bg-gray-100 active:bg-gray-100"}
                   `}
                 >
                   <div className="flex items-center gap-2">
