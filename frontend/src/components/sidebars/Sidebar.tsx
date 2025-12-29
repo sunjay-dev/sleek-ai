@@ -60,47 +60,64 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
     if (isMobile) setCollapsed(true);
   };
 
+  const [scrolled, setScrolled] = useState(false);
+  const chatNavRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const nav = chatNavRef.current;
+    if (!nav) return;
+
+    const handleScroll = () => {
+      setScrolled(nav.scrollTop > 0);
+    };
+
+    nav.addEventListener("scroll", handleScroll);
+    return () => nav.removeEventListener("scroll", handleScroll);
+  }, []);
+
   if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} />;
 
   return (
     <>
-      {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
+      {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-10" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
         className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-[#fbfbfb] border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
-        <div className="px-4 py-3 flex items-center justify-between">
+        <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
           <div className="flex items-center gap-2">
-            <img src="/logo.webp" className="h-6 w-6" />
-            <span className="font-semibold text-sm">Chatty-AI</span>
+            <img className="h-7 w-7 md:h-6 md:w-6" src="/logo.webp" alt="Logo" />
+            <span className="font-semibold text-base md:text-sm">Chatty-AI</span>
           </div>
           <button
             onClick={() => setCollapsed(true)}
             className="h-8 w-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-100"
           >
-            <RoundedPanelLeft size="16" />
+            <RoundedPanelLeft size={isMobile ? "18" : "16"} />
           </button>
         </div>
 
-        <div className="px-3 pb-2 border-b border-secondary space-y-1">
-          <button onClick={createChat} className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100">
-            <BadgePlus size={16} />
-            New chat
-          </button>
+        <nav ref={chatNavRef} id="sideBar" className="px-3 py-1.5 overflow-y-auto grow space-y-1">
+          <div className="pb-2 border-b border-secondary space-y-1">
+            <button onClick={createChat} className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100">
+              <BadgePlus size={16} />
+              New chat
+            </button>
 
-          <button
-            onClick={() => setIsSettingsModalOpen(true)}
-            className="w-full px-3 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
-          >
-            <Settings size={16} />
-            Settings
-          </button>
-        </div>
+            <button
+              onClick={() => setIsSettingsModalOpen(true)}
+              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
+            >
+              <Settings size={16} />
+              Settings
+            </button>
+          </div>
 
-        <nav id="sideBar" className="px-3 py-2 overflow-y-auto grow space-y-1">
+          <p className="text-xs text-gray-400 p-1.5">Your chats</p>
+
           {isFetchingChats && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
 
-          {!isFetchingChats && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet</div>}
+          {!isFetchingChats && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet.</div>}
 
           {chats.map((chat) => {
             const isMenuOpen = openMenuId === chat.id;

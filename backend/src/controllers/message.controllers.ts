@@ -26,28 +26,18 @@ export async function handleUserMessageResponse(c: Context) {
       throw new Error("Empty AI response");
     }
 
-    await prisma.$transaction(async (transaction) => {
-      await transaction.message.create({
-        data: {
-          chatId,
-          text: query,
-          role: "USER",
-        },
-      });
-
-      await transaction.message.create({
-        data: {
-          chatId,
-          text: response,
-          role: "ASSISTANT",
-        },
-      });
-
-      await transaction.chat.update({
+    await prisma.$transaction([
+      prisma.message.create({
+        data: { chatId, text: query, role: "USER" },
+      }),
+      prisma.message.create({
+        data: { chatId, text: response, role: "ASSISTANT" },
+      }),
+      prisma.chat.update({
         where: { id: chatId },
         data: { updatedAt: new Date() },
-      });
-    });
+      }),
+    ]);
 
     return c.json(response, 200);
   } catch (error) {
