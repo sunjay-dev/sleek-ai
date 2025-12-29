@@ -1,10 +1,11 @@
 import { UserButton, useUser } from "@clerk/clerk-react";
-import { PanelLeftClose, BadgePlus, MoreHorizontal, Trash2, Settings, Pencil } from "lucide-react";
+import { BadgePlus, MoreHorizontal, Trash2, Settings, Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
 import { useIsMobile } from "@/hooks";
 import type { Chat } from "@/types";
+import { RoundedPanelLeft } from "../icons/RoundedPanelLeft";
 
 type Props = {
   onDeleteRequest: (chatId: string) => void;
@@ -75,9 +76,9 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
           </div>
           <button
             onClick={() => setCollapsed(true)}
-            className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-gray-100 active:bg-gray-100"
+            className="h-8 w-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-100"
           >
-            <PanelLeftClose strokeWidth={2.2} size={16} />
+            <RoundedPanelLeft size="16" />
           </button>
         </div>
 
