@@ -32,8 +32,11 @@ export default function PersonalizationSettings() {
 
           <div className="space-y-3">
             <div>
-              <label className={labelBase}>Nickname</label>
+              <label htmlFor="nickname" className={labelBase}>
+                Nickname
+              </label>
               <input
+                name="nickname"
                 type="text"
                 className={inputBase}
                 placeholder="What should I call you?"
@@ -43,8 +46,11 @@ export default function PersonalizationSettings() {
             </div>
 
             <div>
-              <label className={labelBase}>Occupation</label>
+              <label htmlFor="occupation" className={labelBase}>
+                Occupation
+              </label>
               <input
+                name="occupation"
                 type="text"
                 className={inputBase}
                 placeholder="e.g. Student, Designer"
@@ -54,8 +60,11 @@ export default function PersonalizationSettings() {
             </div>
 
             <div>
-              <label className={labelBase}>More about you</label>
+              <label htmlFor="about" className={labelBase}>
+                More about you
+              </label>
               <textarea
+                name="about"
                 className={`${inputBase} h-16 resize-none`}
                 placeholder="Hobbies, interests, goals..."
                 value={moreAbout}
@@ -70,7 +79,9 @@ export default function PersonalizationSettings() {
 
           <div className="space-y-3">
             <div>
-              <label className={labelBase}>Custom Instructions</label>
+              <label htmlFor="customInstructionTextArea" className={labelBase}>
+                Custom Instructions
+              </label>
               <textarea
                 name="customInstructionTextArea"
                 id="customInstructionTextArea"

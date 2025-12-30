@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
-import { MessagesContainer, InputContainer, Sidebar } from "@/components";
+import { ErrorBoundary } from "react-error-boundary";
+import { MessagesContainer, InputContainer, Sidebar, ErrorPage } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages } from "@/hooks";
 import type { Chat } from "@/types";
 
@@ -54,29 +55,35 @@ export default function ChatPage() {
       </main>
 
       {isRenameModalOpen && (
-        <Suspense fallback={null}>
-          <RenameChatModal
-            onClose={() => setIsRenameModalOpen(false)}
-            currentTitle={activeChat?.title ?? ""}
-            onRename={(newTitle) => {
-              if (!activeChat) return;
-              handleRenameChat(activeChat.id, newTitle);
-              setIsRenameModalOpen(false);
-            }}
-          />
-        </Suspense>
+        <ErrorBoundary FallbackComponent={ErrorPage}>
+          <Suspense fallback={null}>
+            <RenameChatModal
+              onClose={() => setIsRenameModalOpen(false)}
+              currentTitle={activeChat?.title ?? ""}
+              onRename={(newTitle) => {
+                if (!activeChat) return;
+                handleRenameChat(activeChat.id, newTitle);
+                setIsRenameModalOpen(false);
+              }}
+            />
+          </Suspense>
+        </ErrorBoundary>
       )}
 
       {isSettingsModalOpen && (
-        <Suspense fallback={null}>
-          <SettingsModal onClose={() => setIsSettingsModalOpen(false)} requestDeleteAll={requestDeleteAll} />
-        </Suspense>
+        <ErrorBoundary FallbackComponent={ErrorPage}>
+          <Suspense fallback={null}>
+            <SettingsModal onClose={() => setIsSettingsModalOpen(false)} requestDeleteAll={requestDeleteAll} />
+          </Suspense>
+        </ErrorBoundary>
       )}
 
       {intent && (
-        <Suspense fallback={null}>
-          <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
-        </Suspense>
+        <ErrorBoundary FallbackComponent={ErrorPage}>
+          <Suspense fallback={null}>
+            <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
+          </Suspense>
+        </ErrorBoundary>
       )}
     </div>
   );

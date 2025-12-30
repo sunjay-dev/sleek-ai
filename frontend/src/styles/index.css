@@ -101,3 +101,8 @@ button:active {
 .animate-shimmer {
   animation: shimmer 2.5s infinite;
 }
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
