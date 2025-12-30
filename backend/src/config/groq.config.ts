@@ -3,6 +3,7 @@ import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import checkpointer from "../config/pgCheckpointer.config.js";
+import { MODELS } from "../models.js";
 
 export const groqChatAgent = (model: string, temperature = 0) => {
   return new ChatGroq({
@@ -15,6 +16,9 @@ export const createGroqAgent = (model: string) => {
   const llm = groqChatAgent(model);
   const summarizerLLM = groqChatAgent("groq/compound-mini");
 
+  const modelConfig = MODELS.get(model);
+  const triggerTokens = modelConfig ? Math.floor(modelConfig.tpm * 0.5) : 3000;
+
   return createAgent({
     model: llm,
     tools,
@@ -24,7 +28,7 @@ export const createGroqAgent = (model: string) => {
       summarizationMiddleware({
         model: summarizerLLM,
         trigger: {
-          tokens: 3000,
+          tokens: triggerTokens,
           fraction: 0.75,
         },
         keep: { fraction: 0.25 },

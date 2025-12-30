@@ -195,7 +195,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
         <div
           onClick={openClerkMenu}
-          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-100 active:bg-gray-100 rounded-r-3xl cursor-pointer"
+          className="border-t border-secondary px-4 py-3 flex items-center justify-between mt-auto hover:bg-gray-100 active:bg-gray-100 sm:rounded-none rounded-r-3xl cursor-pointer"
         >
           <span className="text-sm truncate max-w-35">{user?.fullName ?? user?.username ?? "User"}</span>
 

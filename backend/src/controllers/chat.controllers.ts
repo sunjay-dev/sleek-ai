@@ -80,3 +80,17 @@ export async function handleDeleteUserChat(c: Context) {
     throw new InternalServerError("Failed to delete chat", { error });
   }
 }
+
+export async function handleDeleteAllUserChat(c: Context) {
+  const userId = c.get("user");
+
+  try {
+    const count = await prisma.chat.deleteMany({
+      where: { userId },
+    });
+
+    return c.json({ success: true, deleted: count });
+  } catch (error) {
+    throw new InternalServerError("Failed to delete chats", { error });
+  }
+}

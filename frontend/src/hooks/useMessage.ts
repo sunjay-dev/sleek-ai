@@ -27,6 +27,15 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
       const userMsg: Message = { text, role: "USER" };
       setMessages((s) => [...s, userMsg]);
 
+      if (text.length > 2000) {
+        const msg: Message = {
+          text: "Please keep messages under 2000 characters.",
+          role: "ASSISTANT",
+        };
+        setMessages((s) => [...s, msg]);
+        return;
+      }
+
       const controller = new AbortController();
       abortControllerRef.current = controller;
 

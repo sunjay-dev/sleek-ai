@@ -1,16 +1,8 @@
 import { z } from "zod";
-
-const modelsList = [
-  "openai/gpt-oss-120b",
-  "openai/gpt-oss-20b",
-  "qwen/qwen3-32b",
-  "meta-llama/llama-4-scout-17b-16e-instruct",
-  "moonshotai/kimi-k2-instruct-0905",
-  "llama-3.3-70b-versatile",
-];
+import { modelsList } from "../models.js";
 
 export const querySchema = z.object({
-  query: z.string().trim().min(1, { message: "Please enter the valid query" }),
+  query: z.string().trim().min(1, { message: "Please enter the valid query" }).max(2000, { message: "Please keep messages under 2000 characters." }),
 });
 
 export const chatResponseSchema = z.object({
