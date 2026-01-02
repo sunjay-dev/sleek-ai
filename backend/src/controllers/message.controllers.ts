@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { getAIResponse } from "../utils/model.utils.js";
+import { generateAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError } from "../utils/appError.utils.js";
 
@@ -9,18 +9,16 @@ export async function handleUserMessageResponse(c: Context) {
   const { query, model } = c.get("body");
 
   try {
-    const chat = await prisma.chat.findFirst({
-      where: { id: chatId, userId },
-      select: { id: true },
-    });
+    const [chat, preferences] = await Promise.all([
+      prisma.chat.findFirst({ where: { id: chatId, userId }, select: { id: true } }),
+      prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
+    ]);
 
     if (!chat) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const threadId = `${userId}:${chatId}`;
-
-    const response = await getAIResponse(query, threadId, model);
+    const response = await generateAIResponse(query, chatId, model, preferences);
 
     if (!response) {
       throw new Error("Empty AI response");

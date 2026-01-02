@@ -28,7 +28,7 @@ export default function MemorySettings({ inputBase }: Props) {
   const filteredMemories = memories.filter((m) => m.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="p-4 md:px-6 space-y-6 h-full flex flex-col">
+    <div className="py-4 px-6 space-y-6 h-full flex flex-col">
       <div>
         <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4 flex items-center gap-2">Memory</h3>
         <p className="text-xs text-gray-500 leading-relaxed">

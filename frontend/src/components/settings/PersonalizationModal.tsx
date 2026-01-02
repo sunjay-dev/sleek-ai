@@ -28,7 +28,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const hasChanges = JSON.stringify(preferences) !== JSON.stringify(initialPreferences);
+  const isDirty = JSON.stringify(preferences) !== JSON.stringify(initialPreferences);
 
   useEffect(() => {
     async function handleGetUserPreferences() {
@@ -99,8 +99,8 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
   }
 
   return (
-    <div className="relative h-full flex flex-col">
-      <div id="personalizationModal" className="flex-1 overflow-y-auto p-4 md:px-6">
+    <div className="relative h-dvh flex flex-col">
+      <div id="personalizationModal" className="flex-1 overflow-y-auto py-4 px-6 ">
         <div className="mb-6">
           <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4">Personalization</h3>
           <p className="text-xs text-gray-lab leading-relaxed">Customize your profile details and how the AI behaves during conversations.</p>
@@ -115,6 +115,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                   Nickname
                 </label>
                 <input
+                  id="nickname"
                   name="nickname"
                   autoComplete="name"
                   placeholder="What should I call you?"
@@ -131,6 +132,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                 </label>
                 <input
                   name="occupation"
+                  id="occupation"
                   autoComplete="organization-title"
                   placeholder="e.g. Student, Designer"
                   type="text"
@@ -159,7 +161,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
 
         <section>
           <h3 className={sectionHeader}>AI Behavior</h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
               <label htmlFor="customInstructions" className={labelBase}>
                 Custom Instructions
@@ -177,12 +179,12 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
         </section>
       </div>
 
-      {hasChanges && (
-        <div className="py-3 px-2 border-t border-gray-500/20 bg-white/80 backdrop-blur-sm flex justify-end sticky bottom-0 z-10 animate-in slide-in-from-bottom-2 duration-200">
+      {isDirty && (
+        <div className="py-2.5 px-2 border-t border-gray-500/20 bg-white/80 backdrop-blur-sm flex justify-end sticky bottom-0 z-10 animate-in slide-in-from-bottom-2 duration-200">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all shadow-sm bg-gray-900 text-white hover:bg-gray-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg transition-all shadow-sm bg-gray-900 text-white hover:bg-gray-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
