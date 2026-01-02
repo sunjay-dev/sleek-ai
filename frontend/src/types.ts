@@ -13,6 +13,6 @@ export type Chat = {
   title: string | null;
 };
 
-export type Tab = "personalization" | "data";
+export type Tab = "personalization" | "data" | "memory";
 
 export type DeleteIntent = { type: "single"; chatId: string } | { type: "all" } | null;

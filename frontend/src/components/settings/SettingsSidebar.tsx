@@ -1,10 +1,10 @@
 import type { Tab } from "@/types";
-import { Shield, Sparkles, X } from "lucide-react";
+import { Brain, Shield, Sparkles, X } from "lucide-react";
 
 type Props = {
   onClose: () => void;
   setActiveTab: (tab: Tab) => void;
-  activeTab: string;
+  activeTab: Tab;
 };
 
 export default function SettingsSidebar({ activeTab, setActiveTab, onClose }: Props) {
@@ -30,6 +30,10 @@ export default function SettingsSidebar({ activeTab, setActiveTab, onClose }: Pr
           className={`${navItemBase} ${activeTab === "personalization" ? activeNav : inactiveNav}`}
         >
           <Sparkles size={14} className="shrink-0" /> <span className="whitespace-nowrap">Personalization</span>
+        </button>
+
+        <button onClick={() => setActiveTab("memory")} className={`${navItemBase} ${activeTab === "memory" ? activeNav : inactiveNav}`}>
+          <Brain size={14} className="shrink-0" /> <span className="whitespace-nowrap">Memory</span>
         </button>
 
         <button onClick={() => setActiveTab("data")} className={`${navItemBase} ${activeTab === "data" ? activeNav : inactiveNav}`}>

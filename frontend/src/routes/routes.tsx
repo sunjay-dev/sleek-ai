@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
 import { lazy, Suspense } from "react";
-import { ErrorPage, Loader } from "@/components";
+import { ErrorPage, LoaderContainer } from "@/components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ChatPage = lazy(() => import("@/page/ChatPage.tsx"));
@@ -11,7 +11,7 @@ export const routes = createBrowserRouter([
   {
     element: (
       <ErrorBoundary FallbackComponent={ErrorPage}>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<LoaderContainer />}>
           <ProtectedRoute />
         </Suspense>
       </ErrorBoundary>
@@ -31,7 +31,7 @@ export const routes = createBrowserRouter([
     path: "/auth/*",
     element: (
       <ErrorBoundary FallbackComponent={ErrorPage}>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<LoaderContainer />}>
           <AuthPage />
         </Suspense>
       </ErrorBoundary>

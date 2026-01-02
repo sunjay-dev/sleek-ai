@@ -1,11 +1,11 @@
 import { useAuth } from "@clerk/clerk-react";
 import { Navigate, Outlet } from "react-router-dom";
-import { Loader } from "@/components";
+import { LoaderContainer } from "@/components";
 
 export default function ProtectedRoute() {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return <Loader />;
+  if (!isLoaded) return <LoaderContainer />;
 
   if (isSignedIn) return <Outlet />;
 

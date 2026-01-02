@@ -3,6 +3,7 @@ import MessagesContainer from "./containers/MessagesContainer";
 import ModelMessage from "./messages/ModelMessage";
 import ModelSelector from "./ModelSelector";
 import UserMessage from "./messages/UserMessage";
+import LoaderContainer from "./loaders/LoaderContainer";
 import Loader from "./loaders/Loader";
 import Sidebar from "./sidebars/Sidebar";
 import WelcomeScreen from "./WelcomeScreen";
@@ -23,8 +24,9 @@ export {
   ModelMessageToolTip,
   ModelSelector,
   Sidebar,
-  UserMessage,
   Loader,
+  UserMessage,
+  LoaderContainer,
   MessageLoader,
   WelcomeScreen,
   DeleteModal,

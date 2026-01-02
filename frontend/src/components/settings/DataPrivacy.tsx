@@ -8,7 +8,7 @@ export default function DataPrivacy({ requestDeleteAll }: Props) {
 
       <p className="text-xs text-gray-lab mb-6 leading-relaxed">Manage your conversation history and data retention settings.</p>
 
-      <div className="flex items-center justify-between py-3 border border-secondary rounded-lg p-3">
+      <div className="flex items-center justify-between py-3 border border-gray-500/20 rounded-lg p-3">
         <div className="pr-4">
           <h4 className="text-sm font-medium text-primary mb-0.5">Delete all chats</h4>
           <p className="text-xs text-gray-lab leading-relaxed">Permanently delete all conversation history.</p>
