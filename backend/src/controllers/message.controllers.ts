@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { generateAIResponse } from "../utils/model.utils.js";
+import { extractFactualMemory, generateAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError } from "../utils/appError.utils.js";
 
@@ -9,22 +9,33 @@ export async function handleUserMessageResponse(c: Context) {
   const { query, model } = c.get("body");
 
   try {
-    const [chat, preferences] = await Promise.all([
+    const [chat, preferences, memories] = await Promise.all([
       prisma.chat.findFirst({ where: { id: chatId, userId }, select: { id: true } }),
       prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
+      prisma.userMemory.findMany({ where: { userId }, select: { content: true } }),
     ]);
 
     if (!chat) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const response = await generateAIResponse(query, chatId, model, preferences);
+    const [response, newMemories] = await Promise.all([
+      generateAIResponse({
+        query,
+        threadId: chatId,
+        modelName: model,
+        preferences,
+        memories,
+      }),
+
+      extractFactualMemory(query, memories),
+    ]);
 
     if (!response) {
       throw new Error("Empty AI response");
     }
 
-    await prisma.$transaction([
+    const transactionOperations = [
       prisma.message.create({
         data: { chatId, text: query, role: "USER" },
       }),
@@ -35,7 +46,17 @@ export async function handleUserMessageResponse(c: Context) {
         where: { id: chatId },
         data: { updatedAt: new Date() },
       }),
-    ]);
+    ];
+
+    if (newMemories.length > 0) {
+      transactionOperations.push(
+        prisma.userMemory.createMany({
+          data: newMemories.map((m) => ({ userId, content: m.content })),
+        }) as any,
+      );
+    }
+
+    await prisma.$transaction(transactionOperations);
 
     return c.json(response, 200);
   } catch (error) {

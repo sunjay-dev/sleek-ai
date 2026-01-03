@@ -1,6 +1,7 @@
-import { UserPreference } from "../generated/prisma/client.js";
+import type { UserPreference } from "../generated/prisma/client.js";
+import { Memories } from "../utils/model.utils.js";
 
-export const systemPrompt = (preferences: UserPreference) => {
+export const systemPrompt = (preferences: UserPreference, memories: Memories[]) => {
   const { nickname, occupation, about, customInstructions } = preferences;
 
   const userContextLines = [
@@ -15,12 +16,14 @@ export const systemPrompt = (preferences: UserPreference) => {
 
   const userContext = userContextLines.join("\n");
 
+  const memoryContext = memories.map((m) => `- ${m.content}`);
+
   return `You are a helpful, intelligent AI assistant. Aim to be accurate, practical, and easy to understand, but do not be overly rigid or formal.
 
 Use simple language and explain things naturally, like a knowledgeable human would. It is okay to make reasonable assumptions when the intent is clear.
 
 ${userContext ? `### USER CONTEXT\n${userContext}` : ""}
-
+${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("\n")}` : ""}
 ### TOOL USAGE
 - You have access to tools. Use them when they clearly add value (e.g. real-time data, calculations, external lookups).
 - If a tool fails, explain what went wrong and proceed with best-effort reasoning when possible.

@@ -65,10 +65,10 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
   };
 
   async function handleSave() {
-    setSaving(true);
     const token = await getToken();
     if (!token) return;
 
+    setSaving(true);
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
