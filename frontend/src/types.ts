@@ -13,6 +13,18 @@ export type Chat = {
   title: string | null;
 };
 
+export type UserPreferences = {
+  nickname: string;
+  occupation: string;
+  about: string;
+  customInstructions: string;
+};
+
+export type UserMemory = {
+  id: string;
+  content: string;
+};
+
 export type Tab = "personalization" | "data" | "memory";
 
 export type DeleteIntent = { type: "single"; chatId: string } | { type: "all" } | null;

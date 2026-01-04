@@ -2,7 +2,7 @@ import { useState } from "react";
 import PersonalizationModal from "./PersonalizationModal";
 import DataPrivacy from "./DataPrivacy";
 import SettingsSidebar from "./SettingsSidebar";
-import type { Tab } from "@/types";
+import type { Tab, UserMemory, UserPreferences } from "@/types";
 import MemoryModal from "./MemoryModal";
 
 type Props = {
@@ -12,6 +12,11 @@ type Props = {
 
 export default function SettingsModal({ onClose, requestDeleteAll }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("personalization");
+
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
+  const [initialPreferences, setInitialPreferences] = useState<UserPreferences | null>(null);
+
+  const [memories, setMemories] = useState<UserMemory[] | null>(null);
 
   const inputBase = "w-full px-3 py-2 text-xs bg-white border border-gray-500/20 rounded-lg outline-none focus:border-primary/50 transition";
   const labelBase = "text-xs font-medium mb-1.5 block text-gray-700";
@@ -27,9 +32,19 @@ export default function SettingsModal({ onClose, requestDeleteAll }: Props) {
 
           <main className="flex-1 overflow-y-auto bg-white relative">
             <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
-              {activeTab === "personalization" && <PersonalizationModal inputBase={inputBase} labelBase={labelBase} sectionHeader={sectionHeader} />}
+              {activeTab === "personalization" && (
+                <PersonalizationModal
+                  inputBase={inputBase}
+                  labelBase={labelBase}
+                  sectionHeader={sectionHeader}
+                  preferences={preferences}
+                  setPreferences={setPreferences}
+                  initialPreferences={initialPreferences}
+                  setInitialPreferences={setInitialPreferences}
+                />
+              )}
 
-              {activeTab === "memory" && <MemoryModal inputBase={inputBase} />}
+              {activeTab === "memory" && <MemoryModal inputBase={inputBase} memories={memories} setMemories={setMemories} />}
 
               {activeTab === "data" && <DataPrivacy requestDeleteAll={requestDeleteAll} />}
             </div>

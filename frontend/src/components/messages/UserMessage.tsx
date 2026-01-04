@@ -18,7 +18,7 @@ export default function UserMessage({ text, isCopied, onCopy }: Props) {
 
   return (
     <div className="flex flex-col gap-2 justify-end items-end group">
-      <div className="user-message-color text-primary border border-gray-300/20 px-3 py-2.5 rounded-tr-none rounded-2xl max-w-md whitespace-pre-wrap break-words leading-relaxed relative transition-all">
+      <div className="user-message-color text-primary border border-gray-300/20 px-3 py-2.5 rounded-tr-none rounded-2xl max-w-xs sm:max-w-lg relative transition-all">
         {isLongText && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -36,7 +36,7 @@ export default function UserMessage({ text, isCopied, onCopy }: Props) {
           </button>
         )}
 
-        <p className="text-sm">{displayedText}</p>
+        <p className="text-sm leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
       </div>
       <UserMessageToolTip isCopied={isCopied} onCopy={onCopy} />
     </div>

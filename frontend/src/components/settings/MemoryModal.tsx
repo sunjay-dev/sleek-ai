@@ -1,25 +1,30 @@
 import { useAuth } from "@clerk/clerk-react";
 import { Trash2, Search, Brain } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import Loader from "../loaders/Loader";
-
-type Memory = {
-  id: string;
-  content: string;
-};
+import type { UserMemory } from "@/types";
 
 type Props = {
   inputBase: string;
+  memories: UserMemory[] | null;
+  setMemories: Dispatch<SetStateAction<UserMemory[] | null>>;
 };
 
-export default function MemorySettings({ inputBase }: Props) {
-  const [memories, setMemories] = useState<Memory[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
+export default function MemorySettings({ inputBase, memories, setMemories }: Props) {
   const { getToken } = useAuth();
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(!memories);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const data = memories || [];
+
   useEffect(() => {
+    if (memories) {
+      setIsLoading(false);
+      return;
+    }
+
     async function handleGetUserMemories() {
       const token = await getToken();
       if (!token) return;
@@ -37,7 +42,7 @@ export default function MemorySettings({ inputBase }: Props) {
         .finally(() => setIsLoading(false));
     }
     handleGetUserMemories();
-  }, [getToken]);
+  }, [getToken, memories, setMemories]);
 
   const handleClearAll = async () => {
     if (!confirm("Are you sure you want to clear all learned memories? This cannot be undone.")) {
@@ -55,7 +60,6 @@ export default function MemorySettings({ inputBase }: Props) {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to clear");
-        setMemories([]);
       })
       .catch((error) => {
         console.error("Failed to clear memories:", error);
@@ -65,8 +69,8 @@ export default function MemorySettings({ inputBase }: Props) {
   };
 
   const handleDeleteOne = async (id: string) => {
-    const previousMemories = [...memories];
-    setMemories((prev) => prev.filter((m) => m.id !== id));
+    const previousMemories = [...data];
+    setMemories((prev) => (prev ? prev.filter((m) => m.id !== id) : []));
 
     const token = await getToken();
     if (!token) return;
@@ -85,7 +89,8 @@ export default function MemorySettings({ inputBase }: Props) {
       });
   };
 
-  const filteredMemories = memories.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredMemories = data.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()));
+
   return (
     <div className="py-4 px-6 space-y-6 h-full flex flex-col">
       <div>
@@ -110,8 +115,8 @@ export default function MemorySettings({ inputBase }: Props) {
         </div>
 
         <div className="flex items-center justify-between px-1">
-          <span className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">{memories.length} facts stored</span>
-          {memories.length > 0 && (
+          <span className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">{data.length} facts stored</span>
+          {data.length > 0 && (
             <button
               onClick={handleClearAll}
               disabled={isDeleting}

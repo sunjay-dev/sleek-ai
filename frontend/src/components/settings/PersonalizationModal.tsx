@@ -1,54 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { Loader } from "@/components";
+import type { UserPreferences } from "@/types";
 
 type Props = {
   inputBase: string;
   labelBase: string;
   sectionHeader: string;
+  preferences: UserPreferences | null;
+  setPreferences: Dispatch<React.SetStateAction<UserPreferences | null>>;
+  initialPreferences: UserPreferences | null;
+  setInitialPreferences: Dispatch<React.SetStateAction<UserPreferences | null>>;
 };
 
-export default function PersonalizationSettings({ inputBase, labelBase, sectionHeader }: Props) {
+export default function PersonalizationSettings({
+  inputBase,
+  labelBase,
+  sectionHeader,
+  preferences,
+  setPreferences,
+  initialPreferences,
+  setInitialPreferences,
+}: Props) {
   const { getToken } = useAuth();
 
-  const [preferences, setPreferences] = useState({
-    nickname: "",
-    occupation: "",
-    about: "",
-    customInstructions: "",
-  });
-
-  const [initialPreferences, setInitialPreferences] = useState({
-    nickname: "",
-    occupation: "",
-    about: "",
-    customInstructions: "",
-  });
-
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!preferences);
   const [saving, setSaving] = useState(false);
+
+  const data = preferences || { nickname: "", occupation: "", about: "", customInstructions: "" };
 
   const isDirty = JSON.stringify(preferences) !== JSON.stringify(initialPreferences);
 
   useEffect(() => {
+    if (preferences) {
+      setLoading(false);
+      return;
+    }
+
     async function handleGetUserPreferences() {
       const token = await getToken();
       if (!token) return;
+
+      setLoading(true);
 
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data?.message || "Failed to fetch preferences");
-          return data;
+          const resData = await res.json();
+          if (!res.ok) throw new Error(resData?.message || "Failed to fetch preferences");
+          return resData;
         })
-        .then((data) => {
+        .then((resData) => {
           const fetchedData = {
-            nickname: data.nickname || "",
-            occupation: data.occupation || "",
-            about: data.about || "",
-            customInstructions: data.customInstructions || "",
+            nickname: resData.nickname || "",
+            occupation: resData.occupation || "",
+            about: resData.about || "",
+            customInstructions: resData.customInstructions || "",
           };
           setPreferences(fetchedData);
           setInitialPreferences(fetchedData);
@@ -56,15 +64,17 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
         .catch((err) => console.error(err))
         .finally(() => setLoading(false));
     }
+
     handleGetUserPreferences();
-  }, [getToken]);
+  }, [getToken, preferences, setInitialPreferences, setPreferences]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setPreferences((prev) => ({ ...prev, [name]: value }));
+    setPreferences((prev) => (prev ? { ...prev, [name]: value } : { ...data, [name]: value }));
   };
 
   async function handleSave() {
+    if (!preferences) return;
     const token = await getToken();
     if (!token) return;
 
@@ -75,9 +85,9 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
       body: JSON.stringify(preferences),
     })
       .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data?.message || "Failed to save preferences");
-        return data;
+        const resData = await res.json();
+        if (!res.ok) throw new Error(resData?.message || "Failed to save preferences");
+        return resData;
       })
       .then(() => {
         setInitialPreferences(preferences);
@@ -121,7 +131,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                   placeholder="What should I call you?"
                   type="text"
                   className={inputBase}
-                  value={preferences.nickname}
+                  value={data.nickname}
                   onChange={handleChange}
                 />
               </div>
@@ -137,7 +147,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                   placeholder="e.g. Student, Designer"
                   type="text"
                   className={inputBase}
-                  value={preferences.occupation}
+                  value={data.occupation}
                   onChange={handleChange}
                 />
               </div>
@@ -152,7 +162,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                 autoComplete="off"
                 placeholder="Hobbies, interests, goals..."
                 className={`${inputBase} h-20 resize-none`}
-                value={preferences.about}
+                value={data.about}
                 onChange={handleChange}
               />
             </div>
@@ -171,7 +181,7 @@ export default function PersonalizationSettings({ inputBase, labelBase, sectionH
                 autoComplete="off"
                 placeholder="e.g. 'Explain things simply' or 'Reply in JSON'"
                 className={`${inputBase} h-24 resize-none`}
-                value={preferences.customInstructions}
+                value={data.customInstructions}
                 onChange={handleChange}
               />
             </div>

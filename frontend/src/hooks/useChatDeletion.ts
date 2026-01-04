@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import type { Chat, DeleteIntent } from "@/types";
 
-export default function useChatDeletion(setChats: React.Dispatch<React.SetStateAction<Chat[]>>) {
+export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
