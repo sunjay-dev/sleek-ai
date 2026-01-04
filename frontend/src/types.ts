@@ -27,4 +27,4 @@ export type UserMemory = {
 
 export type Tab = "personalization" | "data" | "memory";
 
-export type DeleteIntent = { type: "single"; chatId: string } | { type: "all" } | null;
+export type DeleteChatIntent = { type: "single"; chatId: string } | { type: "all" } | null;

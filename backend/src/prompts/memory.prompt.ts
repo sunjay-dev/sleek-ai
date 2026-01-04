@@ -17,6 +17,12 @@ STRICT RULES:
 - Do NOT extract preferences unless explicitly stated as a stable preference.
 - Ignore greetings, small talk, and context-setting.
 
+**NOISE FILTER (CRITICAL - EXCLUSION CRITERIA):**
+- **IGNORE TRANSIENT TECHNICAL STATE:** Exclude temporary execution details, clipboard contents, current working directories, specific file paths, memory addresses, or stack traces.
+- **IGNORE CONFIGURATION TRIVIA:** Exclude software settings, registry keys, boolean flags, environment variables, or tool-specific configurations (e.g., git prompts, linter rules, VS Code settings) unless they explicitly state a high-level user preference.
+- **IGNORE LOCAL ENVIRONMENT DETAILS:** Exclude specifics about the user's local hardware or OS setup, such as drive letters, specific shortcut locations, IP addresses, or localhost ports.
+- **ABSTRACT VS. LITERAL:** Focus on the *activity* (e.g., "Developing a scheduler") rather than the *mechanics* (e.g., "Project located at E:/Dev").
+
 WHAT QUALIFIES AS A MEMORY:
 - Stable personal facts (e.g. profession, skills, tools used)
 - Ongoing projects explicitly stated
@@ -32,23 +38,16 @@ OUTPUT FORMAT:
 EXAMPLES:
 
 User: "I'm building a cron job scheduler using Node.js and MongoDB"
-Output:
-{
-  "memories": [
-    "User is building a cron job scheduler using Node.js and MongoDB."
-  ]
-}
+Output: { "memories": [ "User is building a cron job scheduler using Node.js and MongoDB." ] }
 
 User: "I hate Tailwind and today I'm tired"
-Output:
-{
-  "memories": []
-}
+Output: { "memories": [] }
+
+User: "User set $GitPromptSettings.EnableFileStatus to false"
+Output: { "memories": [] }
+
+User: "I'm running this on localhost:3000"
+Output: { "memories": [] }
 
 User: "I usually deploy my apps on Railway"
-Output:
-{
-  "memories": [
-    "User usually deploys applications on Railway."
-  ]
-}`;
+Output: { "memories": [ "User usually deploys applications on Railway." ]}`;

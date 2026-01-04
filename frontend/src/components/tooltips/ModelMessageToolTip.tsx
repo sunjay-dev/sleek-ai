@@ -10,6 +10,7 @@ export default function ModelMessageToolTip({ isCopied, onCopy, onResend }: Prop
   return (
     <div className="mt-2 ml-1 flex items-center justify-start gap-2">
       <button
+        title="copy"
         type="button"
         onClick={onCopy}
         className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full"
@@ -20,6 +21,7 @@ export default function ModelMessageToolTip({ isCopied, onCopy, onResend }: Prop
 
       {onResend && (
         <button
+          title="resend"
           type="button"
           onClick={onResend}
           className="mr-1 p-1 text-[#1c1c1c]/80 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full"

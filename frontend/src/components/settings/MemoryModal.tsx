@@ -8,14 +8,15 @@ type Props = {
   inputBase: string;
   memories: UserMemory[] | null;
   setMemories: Dispatch<SetStateAction<UserMemory[] | null>>;
+  requestDeleteMemory: (id: string) => void;
+  requestDeleteAllMemories: () => void;
 };
 
-export default function MemorySettings({ inputBase, memories, setMemories }: Props) {
+export default function MemorySettings({ inputBase, memories, setMemories, requestDeleteMemory, requestDeleteAllMemories }: Props) {
   const { getToken } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(!memories);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const data = memories || [];
 
@@ -43,51 +44,6 @@ export default function MemorySettings({ inputBase, memories, setMemories }: Pro
     }
     handleGetUserMemories();
   }, [getToken, memories, setMemories]);
-
-  const handleClearAll = async () => {
-    if (!confirm("Are you sure you want to clear all learned memories? This cannot be undone.")) {
-      return;
-    }
-
-    const token = await getToken();
-    if (!token) return;
-
-    setIsDeleting(true);
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to clear");
-      })
-      .catch((error) => {
-        console.error("Failed to clear memories:", error);
-        alert("Failed to clear memories. Please try again.");
-      })
-      .finally(() => setIsDeleting(false));
-  };
-
-  const handleDeleteOne = async (id: string) => {
-    const previousMemories = [...data];
-    setMemories((prev) => (prev ? prev.filter((m) => m.id !== id) : []));
-
-    const token = await getToken();
-    if (!token) return;
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to delete");
-      })
-      .catch((error) => {
-        console.error("Failed to delete memory:", error);
-        setMemories(previousMemories);
-        alert("Failed to delete memory.");
-      });
-  };
 
   const filteredMemories = data.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -118,11 +74,10 @@ export default function MemorySettings({ inputBase, memories, setMemories }: Pro
           <span className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">{data.length} facts stored</span>
           {data.length > 0 && (
             <button
-              onClick={handleClearAll}
-              disabled={isDeleting}
+              onClick={requestDeleteAllMemories}
               className="text-[11px] text-red-500 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition flex items-center gap-1.5 disabled:opacity-50"
             >
-              {isDeleting ? "Clearing..." : "Clear All"}
+              Clear All
             </button>
           )}
         </div>
@@ -142,7 +97,7 @@ export default function MemorySettings({ inputBase, memories, setMemories }: Pro
             >
               <p className="text-[13px] text-gray-700 leading-relaxed mr-3">{memory.content}</p>
               <button
-                onClick={() => handleDeleteOne(memory.id)}
+                onClick={() => requestDeleteMemory(memory.id)}
                 className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition"
                 title="Delete this fact"
               >

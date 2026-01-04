@@ -1,7 +1,7 @@
 type Props = {
-  requestDeleteAll: () => void;
+  DeleteChatIntent: () => void;
 };
-export default function DataPrivacy({ requestDeleteAll }: Props) {
+export default function DataPrivacy({ DeleteChatIntent }: Props) {
   return (
     <section className="py-4 px-6">
       <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4">Data Privacy</h3>
@@ -15,7 +15,7 @@ export default function DataPrivacy({ requestDeleteAll }: Props) {
         </div>
 
         <button
-          onClick={requestDeleteAll}
+          onClick={DeleteChatIntent}
           className="shrink-0 whitespace-nowrap px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:opacity-80"
         >
           Delete all

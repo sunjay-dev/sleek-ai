@@ -99,12 +99,17 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
         <nav ref={chatNavRef} id="sideBar" className="px-3 py-1.5 overflow-y-auto grow space-y-1">
           <div className="pb-2 border-b border-secondary space-y-1">
-            <button onClick={createChat} className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100">
+            <button
+              title="create new chat"
+              onClick={createChat}
+              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
+            >
               <BadgePlus size={16} />
               New chat
             </button>
 
             <button
+              title="open settings"
               onClick={() => setIsSettingsModalOpen(true)}
               className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
             >

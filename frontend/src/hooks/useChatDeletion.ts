@@ -1,46 +1,46 @@
 import { useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import type { Chat, DeleteIntent } from "@/types";
+import type { Chat, DeleteChatIntent } from "@/types";
 
 export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
-  const [intent, setIntent] = useState<DeleteIntent>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [chatIntent, setchatIntent] = useState<DeleteChatIntent>(null);
+  const [isDeletingChat, setIsDeletingChat] = useState(false);
 
-  const requestDeleteChat = (chatId: string) => setIntent({ type: "single", chatId });
+  const requestDeleteChat = (chatId: string) => setchatIntent({ type: "single", chatId });
 
-  const requestDeleteAll = () => setIntent({ type: "all" });
+  const requestDeleteAllChat = () => setchatIntent({ type: "all" });
 
-  const cancel = () => setIntent(null);
+  const cancelDeleteChat = () => setchatIntent(null);
 
-  const confirm = () => {
-    if (!intent) return;
+  const confirmDeleteChat = () => {
+    if (!chatIntent) return;
 
-    setIsDeleting(true);
+    setIsDeletingChat(true);
 
     getToken()
       .then((token) => {
         if (!token) throw new Error("No token");
 
-        if (intent.type === "single") {
-          return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${intent.chatId}`, {
+        if (chatIntent.type === "single") {
+          return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIntent.chatId}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
           }).then((res) => {
             if (!res.ok) throw new Error("Delete failed");
 
-            setChats((prev) => prev.filter((c) => c.id !== intent.chatId));
+            setChats((prev) => prev.filter((c) => c.id !== chatIntent.chatId));
 
-            if (location.pathname.includes(intent.chatId)) {
+            if (location.pathname.includes(chatIntent.chatId)) {
               navigate("/");
             }
           });
         }
 
-        if (intent.type === "all") {
+        if (chatIntent.type === "all") {
           return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
@@ -56,17 +56,17 @@ export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<
         console.error(err);
       })
       .finally(() => {
-        setIsDeleting(false);
-        setIntent(null);
+        setIsDeletingChat(false);
+        setchatIntent(null);
       });
   };
 
   return {
-    intent,
-    isDeleting,
+    chatIntent,
+    isDeletingChat,
     requestDeleteChat,
-    requestDeleteAll,
-    confirm,
-    cancel,
+    requestDeleteAllChat,
+    confirmDeleteChat,
+    cancelDeleteChat,
   };
 }

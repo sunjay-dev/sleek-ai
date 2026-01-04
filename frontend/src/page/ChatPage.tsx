@@ -11,7 +11,7 @@ const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
 export default function ChatPage() {
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
   const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({ moveChatToTop, setChats });
-  const { intent, isDeleting, requestDeleteChat, requestDeleteAll, confirm, cancel } = useChatDeletion(setChats);
+  const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -73,15 +73,20 @@ export default function ChatPage() {
       {isSettingsModalOpen && (
         <ErrorBoundary FallbackComponent={ErrorPage}>
           <Suspense fallback={null}>
-            <SettingsModal onClose={() => setIsSettingsModalOpen(false)} requestDeleteAll={requestDeleteAll} />
+            <SettingsModal onClose={() => setIsSettingsModalOpen(false)} DeleteChatIntent={requestDeleteAllChat} />
           </Suspense>
         </ErrorBoundary>
       )}
 
-      {intent && (
+      {chatIntent && (
         <ErrorBoundary FallbackComponent={ErrorPage}>
           <Suspense fallback={null}>
-            <DeleteModal variant={intent.type === "all" ? "delete-all" : "delete-chat"} loading={isDeleting} onCancel={cancel} onConfirm={confirm} />
+            <DeleteModal
+              variant={chatIntent.type === "all" ? "delete-all" : "delete-chat"}
+              loading={isDeletingChat}
+              onCancel={cancelDeleteChat}
+              onConfirm={confirmDeleteChat}
+            />
           </Suspense>
         </ErrorBoundary>
       )}
