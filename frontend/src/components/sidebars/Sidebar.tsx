@@ -137,7 +137,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                 }}
                 className={({ isActive }) =>
                   [
-                    "group relative flex items-center justify-between px-2 py-1.5 rounded-lg text-xs hover:bg-gray-100 active:bg-gray-100",
+                    "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-100 active:bg-gray-100",
                     isActive ? "font-medium bg-gray-200/60" : "",
                   ].join(" ")
                 }

@@ -2,7 +2,7 @@ import { useState, isValidElement } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, ExternalLink } from "lucide-react";
 import styles from "@/styles/modelMessage.module.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -37,6 +37,16 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
           rehypePlugins={[rehypeHighlight, rehypeKatex]}
           components={{
             pre: CodeBlock,
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            a: ({ node, children, href, ...props }) => {
+              return (
+                <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} {...props}>
+                  {children}
+                  <ExternalLink size={10} className="inline ml-0.5 mb-0.5 opacity-60" />
+                </a>
+              );
+            },
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             table: ({ node, ...props }) => (
               <div className={styles.tableWrapper}>

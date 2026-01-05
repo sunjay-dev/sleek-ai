@@ -24,13 +24,14 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     getToken().then((token) => {
       if (!token || (!text.trim() && !file)) return;
 
-      const userMsg: Message = { text, role: "USER" };
+      const userMsg: Message = { text, role: "USER", id: crypto.randomUUID() };
       setMessages((s) => [...s, userMsg]);
 
       if (text.length > 2000) {
         const msg: Message = {
           text: "Please keep messages under 2000 characters.",
           role: "ASSISTANT",
+          id: crypto.randomUUID(),
         };
         setMessages((s) => [...s, msg]);
         return;
@@ -55,13 +56,14 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             return data;
           })
           .then((data) => {
-            const aiMsg: Message = { text: data ?? "Sorry, no response.", role: "ASSISTANT" };
+            const aiMsg: Message = { text: data ?? "Sorry, no response.", role: "ASSISTANT", id: crypto.randomUUID() };
             setMessages((s) => [...s, aiMsg]);
           })
           .catch((err) => {
             const msg: Message = {
               text: err.name === "AbortError" ? "Generation stopped." : err.message,
               role: "ASSISTANT",
+              id: crypto.randomUUID(),
             };
             setMessages((s) => [...s, msg]);
           })
@@ -90,7 +92,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             navigate(`/c/${data.id}`, { replace: true });
           })
           .catch((err) => {
-            const msg: Message = { text: err.message, role: "ASSISTANT" };
+            const msg: Message = { text: err.message, role: "ASSISTANT", id: crypto.randomUUID() };
             setMessages((s) => [...s, msg]);
           });
       } else handleChatUpdate(chatId);

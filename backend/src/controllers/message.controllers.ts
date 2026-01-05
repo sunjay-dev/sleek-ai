@@ -77,6 +77,7 @@ export async function handleGetAllChatMessages(c: Context) {
         messages: {
           orderBy: { createdAt: "asc" },
           select: {
+            id: true,
             text: true,
             role: true,
           },
