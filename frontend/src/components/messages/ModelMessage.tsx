@@ -1,4 +1,4 @@
-import { useState, isValidElement } from "react";
+import { useState, isValidElement, memo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -13,9 +13,11 @@ type Props = {
   isCopied: boolean;
   onCopy: () => void;
   onResend?: () => void;
+  hideToolTip?: boolean;
+  isGenerating?: boolean;
 };
 
-export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props) {
+export default memo(function ModelMessage({ text, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
   function cleanAIMath(text: string) {
     return text
       .replace(/\\\[/g, "$$")
@@ -31,38 +33,42 @@ export default function ModelMessage({ text, isCopied, onCopy, onResend }: Props
 
   return (
     <div className="max-w-full text-sm py-4 rounded-xl">
-      <div className={styles.markdown}>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[rehypeHighlight, rehypeKatex]}
-          components={{
-            pre: CodeBlock,
+      {isGenerating && text.length === 0 ? (
+        <span className="inline-block animate-pulse font-bold">▍</span>
+      ) : (
+        <div className={`${styles.markdown} ${isGenerating && styles.streamingCursor}`}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeHighlight, rehypeKatex]}
+            components={{
+              pre: CodeBlock,
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            a: ({ node, children, href, ...props }) => {
-              return (
-                <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} {...props}>
-                  {children}
-                  <ExternalLink size={10} className="inline ml-0.5 mb-0.5 opacity-60" />
-                </a>
-              );
-            },
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            table: ({ node, ...props }) => (
-              <div className={styles.tableWrapper}>
-                <table {...props} />
-              </div>
-            ),
-          }}
-        >
-          {cleanAIMath(text)}
-        </ReactMarkdown>
-      </div>
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              a: ({ node, children, href, ...props }) => {
+                return (
+                  <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} {...props}>
+                    {children}
+                    <ExternalLink size={10} className="inline ml-0.5 mb-0.5 opacity-60" />
+                  </a>
+                );
+              },
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              table: ({ node, ...props }) => (
+                <div className={styles.tableWrapper}>
+                  <table {...props} />
+                </div>
+              ),
+            }}
+          >
+            {cleanAIMath(text)}
+          </ReactMarkdown>
+        </div>
+      )}
 
-      <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />
+      {!hideToolTip && <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />}
     </div>
   );
-}
+});
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const extractText = (node: any): string => {

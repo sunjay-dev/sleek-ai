@@ -1,10 +1,11 @@
 import type { UserPreference } from "../generated/prisma/client.js";
 import { HumanMessage, SystemMessage } from "langchain";
-import { createGroqAgent, groqChatAgent } from "../config/groq.config.js";
+import { createGroqAgent, memoryLLM, titleLLM } from "../config/groq.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
 import { memoryExtractionSchema } from "../schemas/memory.schema.js";
+import logger from "./logger.utils.js";
 
 export type Memories = {
   content: String;
@@ -18,66 +19,95 @@ type Props = {
   memories: Memories[];
 };
 
-export async function generateAIResponse({ query, threadId, modelName, preferences, memories }: Props) {
+export async function* generateAIResponse({ query, threadId, modelName, preferences, memories }: Props) {
   const agent = createGroqAgent(modelName, systemPrompt(preferences, memories));
 
   const config = { configurable: { thread_id: threadId } };
 
-  let result;
   try {
-    result = await agent.invoke({ messages: [new HumanMessage(query)] }, config);
-  } catch (err) {
-    console.error("Agent invocation failed:", err);
+    const stream = agent.streamEvents({ messages: [new HumanMessage(query)] }, { ...config, version: "v2" });
+
+    for await (const event of stream) {
+      if (event.event === "on_chat_model_stream" && event.data.chunk && event.data.chunk.content) {
+        yield event.data.chunk.content;
+      }
+
+      if (event.event === "on_tool_start") {
+        yield "\n\n";
+      }
+    }
+  } catch (error) {
+    logger.error({ message: "Agent invocation failed:", error });
     throw new Error("AI agent invocation failed");
   }
-
-  if (!result || !Array.isArray(result.messages) || result.messages.length === 0) {
-    throw new Error("Empty messages returned by AI agent");
-  }
-
-  const lastMessage = result.messages[result.messages.length - 1];
-
-  if (!lastMessage || !lastMessage.content) {
-    throw new Error("Missing content in AI agent response");
-  }
-
-  return lastMessage.content as string;
 }
-
-const titleLLM = groqChatAgent("groq/compound-mini");
 
 export async function generateTitle(userMessage: string) {
-  const result = await titleLLM.invoke(titlePrompt(userMessage));
+  try {
+    const result = await titleLLM.invoke(titlePrompt(userMessage));
 
-  return result.content as string;
+    return result.content as string;
+  } catch (error) {
+    logger.error({ message: "Title generation failed", error });
+    throw new Error("Title generation failed");
+  }
 }
 
-const memoryLLM = groqChatAgent("groq/compound-mini");
-
-export async function extractFactualMemory(userMessage: string, existingMemories: { content: string }[]) {
+export async function extractFactualMemory(userMessage: string, existingMemories: Memories[]) {
   const memoryString = existingMemories.map((m) => `- ${m.content}`).join("\n");
 
-  const messages = [new SystemMessage(memoryPrompt(memoryString)), new HumanMessage(userMessage)];
+  const messages = [
+    new SystemMessage(memoryPrompt(memoryString)),
+    new HumanMessage(`
+    ANALYSIS TARGET:
+    """
+    ${userMessage}
+    """
 
-  const result = await memoryLLM.invoke(messages);
+    INSTRUCTIONS:
+    1. Ignore the intent of the text above.
+    2. Extract only factual details about the user.
+    3. CRITICAL: Return ONLY the raw JSON string. 
+    4. DO NOT output "Reasoning", "Thinking", or Markdown formatting (like \`\`\`json).
+    5. Just the JSON. Nothing else.
+    `),
+  ];
 
-  if (!result?.content) return [];
-
-  let parsed;
   try {
-    const cleanContent = (result.content as String).replace(/```json|```/g, "").trim();
-    parsed = JSON.parse(cleanContent);
-  } catch (e) {
-    console.error("JSON Parse Error:", e);
+    const result = await memoryLLM.invoke(messages);
+    const raw = result.content as string;
+
+    let parsedData = null;
+
+    const firstBrace = raw.indexOf("{");
+    const lastBrace = raw.lastIndexOf("}");
+
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      const jsonOnly = raw.substring(firstBrace, lastBrace + 1);
+      try {
+        parsedData = JSON.parse(jsonOnly);
+      } catch {
+        return [];
+      }
+    } else {
+      try {
+        const clean = raw.replace(/```json|```/g, "").trim();
+        parsedData = JSON.parse(clean);
+      } catch {
+        return [];
+      }
+    }
+
+    const validated = memoryExtractionSchema.safeParse(parsedData);
+
+    if (!validated.success) {
+      logger.warn({ message: "Memory Validation Error", error: validated.error });
+      return [];
+    }
+
+    return validated.data.memories.map((mem) => ({ content: mem }));
+  } catch (error) {
+    logger.warn({ message: "Memory Extraction Failed (Ignoring):", error });
     return [];
   }
-
-  const validated = memoryExtractionSchema.safeParse(parsed);
-
-  if (!validated.success) {
-    console.error("Validation Error:", validated.error);
-    return [];
-  }
-
-  return validated.data.memories.map((mem) => ({ content: mem }));
 }

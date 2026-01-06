@@ -83,7 +83,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
             {file && (
               <div className="space-y-2 mb-2">
                 {file.type.startsWith("image/") && <img src={URL.createObjectURL(file)} alt="Preview" className="max-h-20 rounded-md" />}
-                <div className="flex items-center gap-2 icon-bg/50 px-2 py-1 rounded-md text-xs text-primary">
+                <div className="flex items-center gap-2 px-2 py-1 rounded-md text-xs text-primary">
                   <Paperclip size={14} />
                   <span className="truncate flex-1">{file.name}</span>
                   <button type="button" onClick={handleRemoveFile} className="p-1 hover:bg-[#e9e9e980] active:bg-[#e9e9e980] rounded-full">

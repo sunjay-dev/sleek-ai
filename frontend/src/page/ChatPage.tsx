@@ -39,7 +39,7 @@ export default function ChatPage() {
           <MessagesContainer
             messages={messages}
             onResend={() => resendLastUser(selectedModel)}
-            sendMessage={(text, file) => sendMessage(text, selectedModel, file)}
+            sendMessage={(text) => sendMessage(text, selectedModel)}
             isFetchingMessages={isFetchingMessages}
             isGenerating={isGenerating}
           />

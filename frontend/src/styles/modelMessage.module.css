@@ -228,3 +228,20 @@ th code {
   opacity: 1;
   color: #3b82f6;
 }
+
+.streamingCursor > *:last-child::after {
+  content: "▋";
+  display: inline-block;
+  margin-left: 4px;
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

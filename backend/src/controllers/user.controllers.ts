@@ -1,5 +1,6 @@
 import { Context } from "hono";
 import prisma from "../config/prisma.config.js";
+import logger from "../utils/logger.utils.js";
 
 export async function handleGetUserPreferences(c: Context) {
   const userId = c.get("user");
@@ -40,7 +41,7 @@ export async function handleGetUserMemories(c: Context) {
 
     return c.json(memories, 200);
   } catch (error) {
-    console.error("Error fetching memories:", error);
+    logger.error({ message: "Error fetching memories:", error });
     return c.json({ error: "Failed to fetch memories" }, 500);
   }
 }
@@ -63,7 +64,7 @@ export async function handleDeleteUserMemory(c: Context) {
 
     return c.json({ success: true, message: "Memory deleted" }, 200);
   } catch (error) {
-    console.error("Error deleting memory:", error);
+    logger.error({ message: "Error deleting memory:", error });
     return c.json({ error: "Failed to delete memory" }, 500);
   }
 }
@@ -83,7 +84,7 @@ export async function handleDeleteAllMemories(c: Context) {
       200,
     );
   } catch (error) {
-    console.error("Error deleting all user memories:", error);
+    logger.error({ message: "Error deleting all user memories:", error });
     return c.json({ error: "Failed to clear memories" }, 500);
   }
 }

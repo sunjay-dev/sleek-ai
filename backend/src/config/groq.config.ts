@@ -9,14 +9,14 @@ const summarizerCache = new Map();
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {
-    llmCache.set(model, new ChatGroq({ model, temperature: 0 }));
+    llmCache.set(model, groqChatAgent(model));
   }
   return llmCache.get(model);
 };
 
 const getSummarizer = () => {
   if (!summarizerCache.has("compound-mini")) {
-    summarizerCache.set("compound-mini", new ChatGroq({ model: "groq/compound-mini" }));
+    summarizerCache.set("compound-mini", groqChatAgent("groq/compound-mini"));
   }
   return summarizerCache.get("compound-mini");
 };
@@ -52,3 +52,7 @@ export const createGroqAgent = (model: string, systemPrompt: string) => {
     ],
   });
 };
+
+export const memoryLLM = groqChatAgent("groq/compound");
+
+export const titleLLM = groqChatAgent("groq/compound-mini", 0.6);

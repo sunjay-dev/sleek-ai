@@ -2,6 +2,8 @@ import { type Context } from "hono";
 import { extractFactualMemory, generateAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { InternalServerError } from "../utils/appError.utils.js";
+import { streamText } from "hono/streaming";
+import logger from "../utils/logger.utils.js";
 
 export async function handleUserMessageResponse(c: Context) {
   const { chatId } = c.get("param");
@@ -19,46 +21,54 @@ export async function handleUserMessageResponse(c: Context) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const [response, newMemories] = await Promise.all([
-      generateAIResponse({
-        query,
-        threadId: chatId,
-        modelName: model,
-        preferences,
-        memories,
-      }),
+    const memoryExtractionPromise = extractFactualMemory(query, memories);
 
-      extractFactualMemory(query, memories),
-    ]);
+    return streamText(c, async (stream) => {
+      let fullResponse = "";
 
-    if (!response) {
-      throw new Error("Empty AI response");
-    }
+      try {
+        const aiStream = generateAIResponse({
+          query,
+          threadId: chatId,
+          modelName: model,
+          preferences,
+          memories,
+        });
 
-    const transactionOperations = [
-      prisma.message.create({
-        data: { chatId, text: query, role: "USER" },
-      }),
-      prisma.message.create({
-        data: { chatId, text: response, role: "ASSISTANT" },
-      }),
-      prisma.chat.update({
-        where: { id: chatId },
-        data: { updatedAt: new Date() },
-      }),
-    ];
+        for await (const chunk of aiStream) {
+          fullResponse += chunk;
+          await stream.write(chunk);
+        }
 
-    if (newMemories.length > 0) {
-      transactionOperations.push(
-        prisma.userMemory.createMany({
-          data: newMemories.map((m) => ({ userId, content: m.content })),
-        }) as any,
-      );
-    }
+        const newMemories = await memoryExtractionPromise;
 
-    await prisma.$transaction(transactionOperations);
+        const transactionOperations = [
+          prisma.message.create({
+            data: { chatId, text: query, role: "USER" },
+          }),
+          prisma.message.create({
+            data: { chatId, text: fullResponse, role: "ASSISTANT" },
+          }),
+          prisma.chat.update({
+            where: { id: chatId },
+            data: { updatedAt: new Date() },
+          }),
+        ];
 
-    return c.json(response, 200);
+        if (newMemories.length > 0) {
+          transactionOperations.push(
+            prisma.userMemory.createMany({
+              data: newMemories.map((m) => ({ userId, content: m.content })),
+            }) as any,
+          );
+        }
+
+        await prisma.$transaction(transactionOperations);
+      } catch (error) {
+        logger.error({ message: "Streaming error:", error });
+        await stream.write("\n\n[Error: Response generation interrupted]");
+      }
+    });
   } catch (error) {
     throw new InternalServerError("Error occured while handling AI response", { error });
   }

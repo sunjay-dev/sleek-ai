@@ -1,5 +1,5 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { UserMessage, ModelMessage, WelcomeScreen, MessageLoader } from "@/components";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { UserMessage, ModelMessage, WelcomeScreen } from "@/components";
 import type { Message } from "@/types";
 import { useLastAssistantId } from "@/hooks";
 
@@ -10,9 +10,6 @@ type Props = {
   isGenerating: boolean;
   isFetchingMessages: boolean;
 };
-
-const MemoUserMessage = memo(UserMessage);
-const MemoModelMessage = memo(ModelMessage);
 
 export default function MessagesContainer({ messages, sendMessage, onResend, isGenerating, isFetchingMessages }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -52,19 +49,19 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
           const isCopied = copiedId === message.id;
 
           return message.role === "ASSISTANT" ? (
-            <MemoModelMessage
+            <ModelMessage
               key={message.id}
               text={message.text}
               isCopied={isCopied}
               onCopy={() => handleCopy(message.text, message.id)}
               onResend={isLastAI ? onResend : undefined}
+              hideToolTip={isLastAI && isGenerating}
+              isGenerating={isLastAI && isGenerating}
             />
           ) : (
-            <MemoUserMessage key={message.id} text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, message.id)} />
+            <UserMessage key={message.id} text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, message.id)} />
           );
         })}
-
-        {isGenerating && <MessageLoader />}
 
         <div ref={bottomRef} className="h-1" />
       </div>

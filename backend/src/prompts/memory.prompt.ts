@@ -1,4 +1,4 @@
-export const memoryPrompt = (existingMemories: string) => `You are a memory extraction system.
+export const memoryPrompt = (existingMemories: string) => `You are a memory extraction system. You are NOT a chat assistant
 
 Your task is to extract long-term, factual user memories from the USER message.
 

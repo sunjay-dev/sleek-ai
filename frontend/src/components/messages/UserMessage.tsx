@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { UserMessageToolTip } from "@/components";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -10,7 +10,7 @@ type Props = {
 
 const CHAR_LIMIT = 300;
 
-export default function UserMessage({ text, isCopied, onCopy }: Props) {
+export default memo(function UserMessage({ text, isCopied, onCopy }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isLongText = text.length > CHAR_LIMIT;
@@ -41,4 +41,4 @@ export default function UserMessage({ text, isCopied, onCopy }: Props) {
       <UserMessageToolTip isCopied={isCopied} onCopy={onCopy} />
     </div>
   );
-}
+});

@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from "react";
-import type { Chat, Message } from "@/types";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
+import type { Chat, Message } from "@/types";
 
 type Props = {
   moveChatToTop: (id: string) => void;
@@ -12,105 +12,151 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFetchingMessages, setIsFetchingMessages] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const newlyCreatedChatRef = useRef<string | null>(null);
 
   const { chatId } = useParams<{ chatId?: string }>();
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const streamingIdRef = useRef<string | null>(null);
+  const bufferRef = useRef("");
+  const rafPendingRef = useRef(false);
+  const justCreatedChatRef = useRef<string | null>(null);
 
-  const sendMessage = (text: string, selectedModel: string, file?: File | null) => {
-    getToken().then((token) => {
-      if (!token || (!text.trim() && !file)) return;
+  const sendMessage = async (text: string, model: string, file?: File | null) => {
+    if (!text.trim()) return;
 
-      const userMsg: Message = { text, role: "USER", id: crypto.randomUUID() };
-      setMessages((s) => [...s, userMsg]);
+    const token = await getToken();
+    if (!token) return;
 
-      if (text.length > 2000) {
-        const msg: Message = {
-          text: "Please keep messages under 2000 characters.",
-          role: "ASSISTANT",
+    const userMsg: Message = {
+      id: crypto.randomUUID(),
+      role: "USER",
+      text,
+    };
+    setMessages((m) => [...m, userMsg]);
+
+    if (text.length > 2000) {
+      setMessages((m) => [
+        ...m,
+        {
           id: crypto.randomUUID(),
-        };
-        setMessages((s) => [...s, msg]);
-        return;
-      }
+          role: "ASSISTANT",
+          text: "Message too long (2000 char limit).",
+        },
+      ]);
+      return;
+    }
 
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-      const handleChatUpdate = (chatIdToUse: string) => {
-        setIsGenerating(true);
-        moveChatToTop(chatIdToUse);
+    const startStreaming = async (activeChatId: string) => {
+      moveChatToTop(activeChatId);
+      setIsGenerating(true);
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIdToUse}/message`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ query: text, model: selectedModel, file }),
-          signal: controller.signal,
+      const assistantId = crypto.randomUUID();
+      streamingIdRef.current = assistantId;
+      bufferRef.current = "";
+
+      setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "" }]);
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${activeChatId}/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query: text, model, file }),
+        signal: controller.signal,
+      })
+        .then(async (res) => {
+          if (!res.body) throw new Error("Streaming not supported");
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            bufferRef.current += decoder.decode(value, { stream: true });
+
+            if (!rafPendingRef.current) {
+              rafPendingRef.current = true;
+              requestAnimationFrame(() => {
+                setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, text: bufferRef.current } : m)));
+                rafPendingRef.current = false;
+              });
+            }
+          }
         })
-          .then(async (res) => {
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Something went wrong");
+        .catch((err) => {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? {
+                    ...m,
+                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                  }
+                : m,
+            ),
+          );
+        })
+        .finally(() => {
+          setIsGenerating(false);
+          abortRef.current = null;
+          streamingIdRef.current = null;
+        });
+    };
+
+    if (!chatId) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query: text }),
+        signal: controller.signal,
+      })
+        .then((res) =>
+          res.json().then((data) => {
+            if (!res.ok) throw new Error(data.message);
             return data;
-          })
-          .then((data) => {
-            const aiMsg: Message = { text: data ?? "Sorry, no response.", role: "ASSISTANT", id: crypto.randomUUID() };
-            setMessages((s) => [...s, aiMsg]);
-          })
-          .catch((err) => {
-            const msg: Message = {
-              text: err.name === "AbortError" ? "Generation stopped." : err.message,
-              role: "ASSISTANT",
+          }),
+        )
+        .then((data) => {
+          justCreatedChatRef.current = data.id;
+          setChats((c) => [data, ...c]);
+          navigate(`/c/${data.id}`, { replace: true });
+
+          return startStreaming(data.id);
+        })
+        .catch((err) => {
+          setMessages((m) => [
+            ...m,
+            {
               id: crypto.randomUUID(),
-            };
-            setMessages((s) => [...s, msg]);
-          })
-          .finally(() => {
-            setIsGenerating(false);
-            abortControllerRef.current = null;
-          });
-      };
-
-      if (!chatId) {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ query: text }),
-          signal: controller.signal,
-        })
-          .then(async (res) => {
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Something went wrong");
-            return data;
-          })
-          .then((data) => {
-            newlyCreatedChatRef.current = data.id;
-            handleChatUpdate(data.id);
-            setChats((prev) => [data, ...prev]);
-            navigate(`/c/${data.id}`, { replace: true });
-          })
-          .catch((err) => {
-            const msg: Message = { text: err.message, role: "ASSISTANT", id: crypto.randomUUID() };
-            setMessages((s) => [...s, msg]);
-          });
-      } else handleChatUpdate(chatId);
-    });
+              role: "ASSISTANT",
+              text: err.name === "AbortError" ? "Generation stopped." : err.message,
+            },
+          ]);
+        });
+    } else {
+      await startStreaming(chatId);
+    }
   };
 
-  const resendLastUser = (selectedModel: string) => {
+  const resendLastUser = (model: string) => {
     const lastUser = [...messages].reverse().find((m) => m.role === "USER");
-    if (!lastUser) return;
-    sendMessage(lastUser.text, selectedModel);
+    if (lastUser) sendMessage(lastUser.text, model);
   };
 
   const stopGeneration = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-      setIsGenerating(false);
-    }
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setIsGenerating(false);
   };
 
   useEffect(() => {
@@ -118,30 +164,36 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
       setMessages([]);
       return;
     }
-    if (newlyCreatedChatRef.current === chatId) {
-      newlyCreatedChatRef.current = null;
+
+    if (justCreatedChatRef.current === chatId) {
+      justCreatedChatRef.current = null;
       return;
     }
 
-    getToken().then((token) => {
+    async function handleGetAllChatMessages() {
+      const token = await getToken();
       if (!token) return;
-      setIsFetchingMessages(true);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.message || "Failed to load messages");
-          setMessages(data.messages || []);
-        })
-        .catch((err) => {
-          console.error(err);
-          navigate("/");
-        })
-        .finally(() => setIsFetchingMessages(false));
-    });
+      setIsFetchingMessages(true);
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        setMessages(data.messages || []);
+      } catch {
+        navigate("/");
+      } finally {
+        setIsFetchingMessages(false);
+      }
+    }
+    handleGetAllChatMessages();
   }, [chatId, getToken, navigate]);
 
-  return { messages, sendMessage, resendLastUser, stopGeneration, isGenerating, isFetchingMessages };
+  return {
+    messages,
+    sendMessage,
+    resendLastUser,
+    stopGeneration,
+    isGenerating,
+    isFetchingMessages,
+  };
 }

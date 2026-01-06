@@ -19,4 +19,8 @@ app.route("/api/clerk", clerkRouter);
 
 app.onError(errorHandler);
 
-export default app;
+export default {
+  port: 3000,
+  idleTimeout: 30,
+  fetch: app.fetch,
+};

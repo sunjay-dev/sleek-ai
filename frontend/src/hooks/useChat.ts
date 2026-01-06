@@ -37,30 +37,25 @@ export default function useChat() {
   };
 
   const handleRenameChat = async (chatId: string, newTitle: string) => {
-    try {
-      const token = await getToken();
-      if (!token) return;
+    const token = await getToken();
+    if (!token) return;
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title: newTitle }),
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: newTitle }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to rename chat");
+        return data;
       })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.message || "Failed to rename chat");
-          return data;
-        })
-        .then(() => {
-          console.log("c", chatId, newTitle);
-          setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
-        });
-    } catch (err) {
-      console.error(err);
-    }
+      .then(() => {
+        setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
+      });
   };
 
   return { chats, setChats, isFetchingChats, moveChatToTop, handleRenameChat };
