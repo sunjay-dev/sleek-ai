@@ -64,10 +64,10 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
   const hasContent = message.trim().length > 0 || file !== null;
 
   return (
-    <div className="w-full flex justify-center items-center px-4 pb-4 bg-primary">
+    <div className="w-full flex justify-center items-center px-4 pb-4 bg-transparent">
       <div className="w-full max-w-svw sm:max-w-180 transition-all duration-300 ease-in-out">
         <form onSubmit={handleSubmit}>
-          <div className="bg-white rounded-2xl border border-gray-500/20 px-3 py-2 shadow-md">
+          <div className="bg-white rounded-2xl border border-primary px-3 py-2 transition-all duration-200 ease-in-out shadow-md">
             <textarea
               autoFocus={true}
               name="input field"

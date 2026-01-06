@@ -1,39 +1,69 @@
+import { useUser } from "@clerk/clerk-react";
+import { PenTool } from "lucide-react";
+import InputContainer from "./containers/InputContainer";
+
 type Props = {
-  sendMessage: (text: string, file?: File | null) => void;
+  sendMessage: (text: string, selectedModel: string, file?: File | null) => void;
+  isGenerating: boolean;
+  selectedModel: string;
+  onStop: () => void;
+  onModelChange: (modelId: string) => void;
 };
 
-export default function WelcomeScreen({ sendMessage }: Props) {
-  const suggestions = [
-    "Weather in London today",
-    "Latest news on artificial intelligence",
-    "Current trends in web development?",
-    "Weather forecast for New York this week",
-  ];
+const SUGGESTIONS = [
+  {
+    label: "Draft a blog post",
+    prompt: "Write a blog post about productivity tips.",
+    icon: PenTool,
+  },
+  { label: "Debug code", prompt: "Help me find the bug in this code snippet." },
+  { label: "Creative ideas", prompt: "Give me 5 creative ideas for a startup." },
+  { label: "Explain quantum physics", prompt: "Explain quantum physics in simple terms." },
+];
 
-  const handleSuggestionClick = (suggestion: string) => {
-    sendMessage(suggestion);
+export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel, onStop, onModelChange }: Props) {
+  const { user, isLoaded } = useUser();
+
+  const getGreetingName = () => {
+    if (!isLoaded || !user) return "there";
+    return `${user.firstName || ""}`.trim() || "there";
+  };
+
+  const handleSuggestionClick = (prompt: string) => {
+    sendMessage(prompt, selectedModel);
   };
 
   return (
-    <div className="h-full flex items-center justify-center">
-      <div className="max-w-3xl w-full px-6">
-        <div className="text-center mb-8 space-y-2">
-          <h1 className="text-3xl font-semibold text-primary">Hey I'm Chatty AI</h1>
-          <p className="text-md text-gray-lab">How can I assist you today?</p>
+    <div className="flex flex-col h-full w-full max-w-3xl mx-auto">
+      <div className="flex-1 flex flex-col justify-center w-full px-4 space-y-8 min-h-0">
+        <div className="w-full pl-2 md:pl-7 space-y-2">
+          <span className="text-xl text-gray-900/90 font-medium">👋 Hi, {getGreetingName()}</span>
+          <h1 className="text-3xl font-medium text-[#1c1c1c] tracking-tight">Where should we start?</h1>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-          {suggestions.map((suggestion, index) => (
+        <div className="flex flex-wrap gap-2.5 w-full pl-2 md:pl-7">
+          {SUGGESTIONS.map((item, index) => (
             <button
               key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="bg-[#fbfbfb] border border-gray-500/20 text-xs sm:text-sm font-medium rounded-lg px-4 py-2"
+              onClick={() => handleSuggestionClick(item.prompt)}
+              disabled={isGenerating}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white
+                border-primary rounded-full transition-all duration-200 hover:bg-white/90"
             >
-              {suggestion}
+              {item.icon && <item.icon size={16} />}
+              {item.label}
             </button>
           ))}
         </div>
       </div>
+
+      <InputContainer
+        sendMessage={sendMessage}
+        isGenerating={isGenerating}
+        selectedModel={selectedModel}
+        onStop={onStop}
+        onModelChange={onModelChange}
+      />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import LoaderContainer from "./loaders/LoaderContainer";
 import Loader from "./loaders/Loader";
 import Sidebar from "./sidebars/Sidebar";
 import WelcomeScreen from "./WelcomeScreen";
-import MessageLoader from "./loaders/MessageLoader";
 import ModelMessageToolTip from "./tooltips/ModelMessageToolTip";
 import UserMessageToolTip from "./tooltips/UserMessageToolTip";
 import DeleteModal from "./common/DeleteModal";
@@ -27,7 +26,6 @@ export {
   Loader,
   UserMessage,
   LoaderContainer,
-  MessageLoader,
   WelcomeScreen,
   DeleteModal,
   RenameChatModal,

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { MessagesContainer, InputContainer, Sidebar, ErrorPage } from "@/components";
+import { MessagesContainer, InputContainer, Sidebar, ErrorPage, WelcomeScreen } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages } from "@/hooks";
 import type { Chat } from "@/types";
 
@@ -32,26 +32,40 @@ export default function ChatPage() {
         onDeleteRequest={requestDeleteChat}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
         onRenameRequest={onRenameRequest}
+        onWelcomeScreen={messages.length === 0}
       />
 
-      <main className="flex flex-col flex-1 min-h-0">
-        <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
-          <MessagesContainer
-            messages={messages}
-            onResend={() => resendLastUser(selectedModel)}
-            sendMessage={(text) => sendMessage(text, selectedModel)}
-            isFetchingMessages={isFetchingMessages}
-            isGenerating={isGenerating}
-          />
-        </div>
+      <main className="flex flex-col flex-1 min-h-0 relative">
+        {messages.length === 0 ? (
+          <div className="bg-[#fbfbfb] w-full h-full">
+            <WelcomeScreen
+              sendMessage={sendMessage}
+              isGenerating={isGenerating}
+              selectedModel={selectedModel}
+              onStop={stopGeneration}
+              onModelChange={setSelectedModel}
+            />
+          </div>
+        ) : (
+          <>
+            <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
+              <MessagesContainer
+                messages={messages}
+                onResend={() => resendLastUser(selectedModel)}
+                isFetchingMessages={isFetchingMessages}
+                isGenerating={isGenerating}
+              />
+            </div>
 
-        <InputContainer
-          sendMessage={sendMessage}
-          isGenerating={isGenerating}
-          selectedModel={selectedModel}
-          onStop={stopGeneration}
-          onModelChange={setSelectedModel}
-        />
+            <InputContainer
+              sendMessage={sendMessage}
+              isGenerating={isGenerating}
+              selectedModel={selectedModel}
+              onStop={stopGeneration}
+              onModelChange={setSelectedModel}
+            />
+          </>
+        )}
       </main>
 
       {isRenameModalOpen && (

@@ -14,9 +14,10 @@ type Props = {
   isFetchingChats: boolean;
   setChats: (chats: Chat[]) => void;
   setIsSettingsModalOpen: (value: boolean) => void;
+  onWelcomeScreen: boolean;
 };
 
-export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, setIsSettingsModalOpen }: Props) {
+export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, setIsSettingsModalOpen, onWelcomeScreen }: Props) {
   const { user } = useUser();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -75,7 +76,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
     return () => nav.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} />;
+  if (collapsed) return <CollapsedSidebar setCollapsed={setCollapsed} createNewChat={createChat} onWelcomeScreen={onWelcomeScreen} />;
 
   return (
     <>

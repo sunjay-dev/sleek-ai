@@ -27,7 +27,7 @@ export default function RenameChatModal({ onClose, onRename, currentTitle }: Ren
           autoFocus={true}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full border border-gray-500/20 rounded px-3 py-2 text-sm outline-none"
+          className="w-full border-b-[1.5px] border-gray-500/50 p-2 text-sm outline-none"
           placeholder="New chat title"
         />
 

@@ -21,8 +21,6 @@ export async function handleUserMessageResponse(c: Context) {
       return c.json({ error: "Chat not found or unauthorized" }, 404);
     }
 
-    const memoryExtractionPromise = extractFactualMemory(query, memories);
-
     return streamText(c, async (stream) => {
       let fullResponse = "";
 
@@ -40,30 +38,34 @@ export async function handleUserMessageResponse(c: Context) {
           await stream.write(chunk);
         }
 
-        const newMemories = await memoryExtractionPromise;
+        await prisma.chat.update({
+          where: { id: chatId },
+          data: {
+            messages: {
+              create: [
+                { text: query, role: "USER" },
+                { text: fullResponse, role: "ASSISTANT" },
+              ],
+            },
+          },
+        });
 
-        const transactionOperations = [
-          prisma.message.create({
-            data: { chatId, text: query, role: "USER" },
-          }),
-          prisma.message.create({
-            data: { chatId, text: fullResponse, role: "ASSISTANT" },
-          }),
-          prisma.chat.update({
-            where: { id: chatId },
-            data: { updatedAt: new Date() },
-          }),
-        ];
+        setImmediate(() => {
+          extractFactualMemory(query, memories)
+            .then((newMemories) => {
+              if (!newMemories.length) return;
 
-        if (newMemories.length > 0) {
-          transactionOperations.push(
-            prisma.userMemory.createMany({
-              data: newMemories.map((m) => ({ userId, content: m.content })),
-            }) as any,
-          );
-        }
-
-        await prisma.$transaction(transactionOperations);
+              return prisma.userMemory.createMany({
+                data: newMemories.map((memory) => ({
+                  userId,
+                  content: memory.content,
+                })),
+              });
+            })
+            .catch((err) => {
+              logger.error("Memory extraction failed", err);
+            });
+        });
       } catch (error) {
         logger.error({ message: "Streaming error:", error });
         await stream.write("\n\n[Error: Response generation interrupted]");

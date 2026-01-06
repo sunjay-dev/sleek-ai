@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { UserMessage, ModelMessage, WelcomeScreen } from "@/components";
+import { UserMessage, ModelMessage } from "@/components";
 import type { Message } from "@/types";
 import { useLastAssistantId } from "@/hooks";
 
 type Props = {
   messages: Message[];
-  sendMessage: (text: string, file?: File | null) => void;
   onResend?: () => void;
   isGenerating: boolean;
   isFetchingMessages: boolean;
 };
 
-export default function MessagesContainer({ messages, sendMessage, onResend, isGenerating, isFetchingMessages }: Props) {
+export default function MessagesContainer({ messages, onResend, isGenerating, isFetchingMessages }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const copyTimeoutRef = useRef<number | null>(null);
@@ -39,7 +38,6 @@ export default function MessagesContainer({ messages, sendMessage, onResend, isG
   }, []);
 
   if (isFetchingMessages) return null;
-  if (messages.length === 0) return <WelcomeScreen sendMessage={sendMessage} />;
 
   return (
     <div className="flex-1 sm:pt-6 pt-16 pb-6 px-4 mx-auto w-full max-w-svw sm:max-w-180 sm:mt-0 mt-2">
