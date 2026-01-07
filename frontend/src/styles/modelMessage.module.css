@@ -93,7 +93,41 @@ th code {
   padding-left: 0.9rem;
 }
 
-/* --- Tables --- */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 1rem;
+  margin-bottom: 0.35rem;
+  color: inherit;
+}
+
+.markdown h1 {
+  font-size: 1.15rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.markdown h2 {
+  font-size: 1.1rem;
+}
+
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-size: 1rem;
+}
+
+.markdown > *:first-child {
+  margin-top: 0 !important;
+}
+
+/*  Tables  */
 .tableWrapper {
   margin: 1rem 0;
   border-radius: 0.5rem;
@@ -148,7 +182,7 @@ th code {
   word-break: break-all;
 }
 
-/* --- Block Code (Your existing styling, kept safe) --- */
+/*  Block Code (Your existing styling, kept safe)  */
 .codeBlockContainer {
   margin: 0 0 0.5rem 0;
   border-radius: 0.5rem;

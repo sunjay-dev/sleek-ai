@@ -2,7 +2,15 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 const app = new Hono();
 
-app.use("*", cors());
+app.use(
+  "/api/*",
+  cors({
+    origin: process.env.CLIENT_URL!,
+    allowHeaders: ["x-client-timezone", "Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  }),
+);
 
 import serverRoutes from "./routes/server.routes.js";
 import chatRouter from "./routes/chat.routes.js";
