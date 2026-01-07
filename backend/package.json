@@ -1,7 +1,6 @@
 {
-  "name": "backend",
+  "name": "chatty-ai-backend",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "type": "module",
   "scripts": {

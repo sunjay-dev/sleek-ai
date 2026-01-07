@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, isValidElement, memo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,78 +10,39 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import ModelMessageToolTip from "../tooltips/ModelMessageToolTip";
 
-type Props = {
-  text: string;
-  isCopied: boolean;
-  onCopy: () => void;
-  onResend?: () => void;
-  hideToolTip?: boolean;
-  isGenerating?: boolean;
-};
+function cleanAIMath(text: string) {
+  return text
+    .replace(/\\\[/g, "$$")
+    .replace(/\\\]/g, "$$")
+    .replace(/\\\(/g, "$")
+    .replace(/\\\)/g, "$")
+    .replace(/\\n/g, "\n")
+    .replace(/^\|.*$/gm, (line) => {
+      return line.includes("```") ? line.replace(/```/g, "`") : line;
+    })
+    .trim();
+}
 
-export default memo(function ModelMessage({ text, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
-  function cleanAIMath(text: string) {
-    return text
-      .replace(/\\\[/g, "$$")
-      .replace(/\\\]/g, "$$")
-      .replace(/\\\(/g, "$")
-      .replace(/\\\)/g, "$")
-      .replace(/\\n/g, "\n")
-      .replace(/^\|.*$/gm, (line) => {
-        return line.includes("```") ? line.replace(/```/g, "`") : line;
-      })
-      .trim();
-  }
-
-  return (
-    <div className="max-w-full text-sm py-4 rounded-xl">
-      {isGenerating && text.length === 0 ? (
-        <span className="inline-block animate-pulse font-bold">▍</span>
-      ) : (
-        <div className={`${styles.markdown} ${isGenerating && styles.streamingCursor}`}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[rehypeHighlight, rehypeKatex]}
-            components={{
-              pre: CodeBlock,
-
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              a: ({ node, children, href, ...props }) => {
-                return (
-                  <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} {...props}>
-                    {children}
-                    <ExternalLink size={10} className="inline ml-0.5 mb-0.5 opacity-60" />
-                  </a>
-                );
-              },
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              table: ({ node, ...props }) => (
-                <div className={styles.tableWrapper}>
-                  <table {...props} />
-                </div>
-              ),
-            }}
-          >
-            {cleanAIMath(text)}
-          </ReactMarkdown>
-        </div>
-      )}
-
-      {!hideToolTip && <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />}
-    </div>
-  );
-});
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const extractText = (node: any): string => {
-  if (node.type === "text") {
-    return node.value;
-  }
+  if (node.type === "text") return node.value;
   if (node.children && Array.isArray(node.children)) {
     return node.children.map(extractText).join("");
   }
   return "";
 };
+
+const LinkRenderer: Components["a"] = ({ node, children, href, ...props }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" className={styles.link} {...props}>
+    {children}
+    <ExternalLink size={10} className="inline ml-0.5 mb-0.5 opacity-60" />
+  </a>
+);
+
+const TableRenderer: Components["table"] = ({ node, ...props }) => (
+  <div className={styles.tableWrapper}>
+    <table {...props} />
+  </div>
+);
 
 const CodeBlock: Components["pre"] = ({ node, children, ...props }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -87,12 +50,9 @@ const CodeBlock: Components["pre"] = ({ node, children, ...props }) => {
 
   let language = "text";
   if (isValidElement(children)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const className = (children.props as any).className || "";
     const match = /language-(\w+)/.exec(className);
-    if (match) {
-      language = match[1];
-    }
+    if (match) language = match[1];
   }
 
   const handleCopy = () => {
@@ -116,3 +76,45 @@ const CodeBlock: Components["pre"] = ({ node, children, ...props }) => {
     </div>
   );
 };
+
+const MARKDOWN_COMPONENTS: Components = {
+  pre: CodeBlock,
+  a: LinkRenderer,
+  table: TableRenderer,
+};
+
+type Props = {
+  text: string;
+  isCopied: boolean;
+  onCopy: () => void;
+  onResend?: () => void;
+  hideToolTip?: boolean;
+  isGenerating?: boolean;
+};
+
+export default memo(
+  function ModelMessage({ text, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
+    const cleanedText = cleanAIMath(text);
+
+    return (
+      <div className="max-w-full text-sm py-4 rounded-xl">
+        {isGenerating && text.length === 0 ? (
+          <span className="inline-block animate-pulse font-bold">▍</span>
+        ) : (
+          <div className={`${styles.markdown} ${isGenerating && styles.streamingCursor}`}>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeHighlight, rehypeKatex]} components={MARKDOWN_COMPONENTS}>
+              {cleanedText}
+            </ReactMarkdown>
+          </div>
+        )}
+
+        {!hideToolTip && <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />}
+      </div>
+    );
+  },
+  (prev, next) => {
+    return (
+      prev.text === next.text && prev.isCopied === next.isCopied && prev.isGenerating === next.isGenerating && prev.hideToolTip === next.hideToolTip
+    );
+  },
+);

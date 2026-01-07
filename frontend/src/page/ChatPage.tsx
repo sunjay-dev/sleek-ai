@@ -1,12 +1,15 @@
 import { lazy, Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { MessagesContainer, InputContainer, Sidebar, ErrorPage, WelcomeScreen } from "@/components";
+import { Sidebar, ErrorPage } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
 import type { Chat } from "@/types";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
+const MessagesContainer = lazy(() => import("@/components/containers/MessagesContainer.tsx"));
+const InputContainer = lazy(() => import("@/components/containers/InputContainer.tsx"));
 const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.tsx"));
 const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
+const WelcomeScreen = lazy(() => import("@/components/WelcomeScreen.tsx"));
 
 export default function ChatPage() {
   const isMobile = useIsMobile();
@@ -38,34 +41,42 @@ export default function ChatPage() {
 
       <main className="flex flex-col flex-1 overflow-clip min-h-0 relative">
         {messages.length === 0 && !isFetchingMessages ? (
-          <div className="bg-light w-full h-full">
-            <WelcomeScreen
-              sendMessage={sendMessage}
-              isGenerating={isGenerating}
-              selectedModel={selectedModel}
-              onStop={stopGeneration}
-              onModelChange={setSelectedModel}
-            />
-          </div>
+          <ErrorBoundary FallbackComponent={ErrorPage}>
+            <Suspense fallback={null}>
+              <div className="bg-light w-full h-full">
+                <WelcomeScreen
+                  sendMessage={sendMessage}
+                  isGenerating={isGenerating}
+                  selectedModel={selectedModel}
+                  onStop={stopGeneration}
+                  onModelChange={setSelectedModel}
+                />
+              </div>
+            </Suspense>
+          </ErrorBoundary>
         ) : (
           <>
-            <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
-              <MessagesContainer
-                messages={messages}
-                onResend={() => resendLastUser(selectedModel)}
-                isFetchingMessages={isFetchingMessages}
-                isGenerating={isGenerating}
-              />
-            </div>
+            <ErrorBoundary FallbackComponent={ErrorPage}>
+              <Suspense fallback={null}>
+                <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
+                  <MessagesContainer
+                    messages={messages}
+                    onResend={() => resendLastUser(selectedModel)}
+                    isFetchingMessages={isFetchingMessages}
+                    isGenerating={isGenerating}
+                  />
+                </div>
 
-            <InputContainer
-              sendMessage={sendMessage}
-              isGenerating={isGenerating}
-              selectedModel={selectedModel}
-              onStop={stopGeneration}
-              onModelChange={setSelectedModel}
-              autoFocus={!isMobile}
-            />
+                <InputContainer
+                  sendMessage={sendMessage}
+                  isGenerating={isGenerating}
+                  selectedModel={selectedModel}
+                  onStop={stopGeneration}
+                  onModelChange={setSelectedModel}
+                  autoFocus={!isMobile}
+                />
+              </Suspense>
+            </ErrorBoundary>
           </>
         )}
       </main>

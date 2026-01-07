@@ -1,14 +1,13 @@
 {
   "name": "gen-ai",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "lint-all": "pnpm --filter ./backend lint && pnpm --filter ./frontend lint",
     "prepare": "husky"
   },
   "keywords": [],
-  "author": "",
+  "author": "https://github.com/sunjay-dev/",
   "license": "ISC",
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
