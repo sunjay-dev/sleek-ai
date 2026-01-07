@@ -83,7 +83,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-10" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
-        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-[#fbfbfb] border-r border-gray-500/20 flex flex-col z-30 shrink-0"
+        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
           <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
           </div>
           <button
             onClick={() => setCollapsed(true)}
-            className="h-8 w-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-100"
+            className="h-8 w-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-200/60 active:bg-gray-200/60"
           >
             <RoundedPanelLeft size={isMobile ? "18" : "16"} />
           </button>
@@ -103,7 +103,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
             <button
               title="create new chat"
               onClick={createChat}
-              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
+              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
             >
               <BadgePlus size={16} />
               New chat
@@ -112,7 +112,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
             <button
               title="open settings"
               onClick={() => setIsSettingsModalOpen(true)}
-              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-100 active:bg-gray-100"
+              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
             >
               <Settings size={16} />
               Settings
@@ -138,7 +138,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                 }}
                 className={({ isActive }) =>
                   [
-                    "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-100 active:bg-gray-100",
+                    "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-200/60 active:bg-gray-200/60",
                     isActive ? "font-medium bg-gray-200/60" : "",
                   ].join(" ")
                 }
@@ -163,7 +163,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
                 {isMenuOpen && (
                   <div
-                    className="absolute right-3 top-full mt-1 w-32 bg-[#fbfbfb] border border-secondary shadow-lg rounded-md z-50"
+                    className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

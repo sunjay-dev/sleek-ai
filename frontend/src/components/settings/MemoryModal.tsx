@@ -48,7 +48,7 @@ export default function MemorySettings({ inputBase, memories, setMemories, reque
   const filteredMemories = data.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="py-4 px-6 space-y-6 h-full flex flex-col">
+    <div className="sm:py-4 py-6 px-6 space-y-6 h-full flex flex-col">
       <div>
         <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4 flex items-center gap-2">Memory</h3>
         <p className="text-xs text-gray-500 leading-relaxed">

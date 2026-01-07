@@ -1,5 +1,5 @@
 import { tool } from "langchain";
-import * as z from "zod";
+import { z } from "zod";
 
 export const getCurrentTime = tool(
   async ({ timezone = "UTC" }) => {

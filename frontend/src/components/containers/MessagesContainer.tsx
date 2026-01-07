@@ -17,8 +17,30 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
 
   const lastAssistantId = useLastAssistantId(messages);
 
+  const shouldAutoScrollRef = useRef(true);
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const handleScroll = () => {
+      if (!bottomRef.current) return;
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      shouldAutoScrollRef.current = isAtBottom;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!bottomRef.current) return;
+
+    if (shouldAutoScrollRef.current) {
+      bottomRef.current.scrollIntoView({
+        behavior: isGenerating ? "auto" : "smooth",
+        block: "end",
+      });
+    }
   }, [messages.length, isGenerating]);
 
   useEffect(() => {
@@ -40,7 +62,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
   if (isFetchingMessages) return null;
 
   return (
-    <div className="flex-1 sm:pt-6 pt-16 pb-6 px-4 mx-auto w-full max-w-svw sm:max-w-180 sm:mt-0 mt-2">
+    <div className="px-4 mx-auto w-full pb-6 max-w-svw sm:max-w-180 sm:pt-6 pt-16">
       <div className="space-y-6">
         {messages.map((message) => {
           const isLastAI = message.id === lastAssistantId;

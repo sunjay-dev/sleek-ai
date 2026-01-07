@@ -61,11 +61,14 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
       setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "" }]);
 
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${activeChatId}/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "x-client-timezone": userTimeZone,
         },
         body: JSON.stringify({ query: text, model, file }),
         signal: controller.signal,

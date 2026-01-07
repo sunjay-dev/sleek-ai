@@ -10,9 +10,10 @@ type Props = {
   selectedModel: string;
   onStop: () => void;
   onModelChange: (modelId: string) => void;
+  autoFocus: boolean;
 };
 
-export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange }: Props) {
+export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, autoFocus }: Props) {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +70,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-primary px-3 py-2 transition-all duration-200 ease-in-out shadow-md">
             <textarea
-              autoFocus={true}
+              autoFocus={autoFocus}
               name="input field"
               ref={textareaRef}
               value={message}

@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { MessagesContainer, InputContainer, Sidebar, ErrorPage, WelcomeScreen } from "@/components";
-import { useChat, useChatDeletion, useModel, useMessages } from "@/hooks";
+import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
 import type { Chat } from "@/types";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
@@ -9,6 +9,7 @@ const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.t
 const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
 
 export default function ChatPage() {
+  const isMobile = useIsMobile();
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
   const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({ moveChatToTop, setChats });
   const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
@@ -32,12 +33,12 @@ export default function ChatPage() {
         onDeleteRequest={requestDeleteChat}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
         onRenameRequest={onRenameRequest}
-        onWelcomeScreen={messages.length === 0}
+        onWelcomeScreen={messages.length === 0 || isFetchingMessages}
       />
 
-      <main className="flex flex-col flex-1 min-h-0 relative">
-        {messages.length === 0 ? (
-          <div className="bg-[#fbfbfb] w-full h-full">
+      <main className="flex flex-col flex-1 overflow-clip min-h-0 relative">
+        {messages.length === 0 && !isFetchingMessages ? (
+          <div className="bg-light w-full h-full">
             <WelcomeScreen
               sendMessage={sendMessage}
               isGenerating={isGenerating}
@@ -48,7 +49,7 @@ export default function ChatPage() {
           </div>
         ) : (
           <>
-            <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain space-y-2 bg-primary">
+            <div id="messageContainer" className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
               <MessagesContainer
                 messages={messages}
                 onResend={() => resendLastUser(selectedModel)}
@@ -63,6 +64,7 @@ export default function ChatPage() {
               selectedModel={selectedModel}
               onStop={stopGeneration}
               onModelChange={setSelectedModel}
+              autoFocus={!isMobile}
             />
           </>
         )}

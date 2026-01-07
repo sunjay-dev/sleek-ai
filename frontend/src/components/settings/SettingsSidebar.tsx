@@ -13,7 +13,7 @@ export default function SettingsSidebar({ activeTab, setActiveTab, onClose }: Pr
   const inactiveNav = "text-gray-lab hover:bg-gray-200/50 active:bg-gray-200/50";
 
   return (
-    <aside className="w-full md:w-43 border-b-[1.3px] md:border-b-0 md:border-r border-gray-500/20 bg-[#fbfbfb] p-3 flex flex-col gap-1 shrink-0 h-auto md:overflow-y-auto">
+    <aside className="w-full md:w-43 border-b-[1.3px] md:border-b-0 md:border-r border-gray-500/20 bg-darker p-3 flex flex-col gap-1 shrink-0 h-auto md:overflow-y-auto">
       <div className="px-1 pb-2 mb-2 flex justify-end md:justify-start">
         <button
           onClick={onClose}

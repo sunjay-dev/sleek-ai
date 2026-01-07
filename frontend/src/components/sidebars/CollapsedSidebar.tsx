@@ -11,7 +11,7 @@ type Props = {
 export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcomeScreen }: Props) {
   return (
     <>
-      <div className={`fixed top-0 left-0 right-0 z-50 md:hidden ${onWelcomeScreen ? "bg-[#fbfbfb]" : "bg-white"}`}>
+      <div className={`fixed top-0 left-0 right-0 z-50 md:hidden ${onWelcomeScreen ? "bg-light" : "bg-white"}`}>
         <div className="flex items-center justify-between h-15 pt-3 pl-2.5 pr-4.5 pb-1">
           <button
             onClick={() => setCollapsed(false)}

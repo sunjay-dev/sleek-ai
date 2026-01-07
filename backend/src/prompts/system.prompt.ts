@@ -1,8 +1,19 @@
 import type { UserPreference } from "../generated/prisma/client.js";
 import { Memories } from "../utils/model.utils.js";
 
-export const systemPrompt = (preferences: UserPreference, memories: Memories[]) => {
+export const systemPrompt = (preferences: UserPreference, memories: Memories[], timezone: string) => {
   const { nickname, occupation, about, customInstructions } = preferences;
+
+  const dateTimeString = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: timezone,
+    timeZoneName: "shortOffset",
+  });
 
   const userContextLines = [
     nickname ? `- Nickname: ${nickname}` : "",
@@ -26,10 +37,15 @@ export const systemPrompt = (preferences: UserPreference, memories: Memories[]) 
 
 Use simple, natural language. It is okay to show personality and humor where appropriate.
 
+**CURRENT CONTEXT:**
+- **Current Date & Time:** ${dateTimeString}
+- **User's Timezone:** ${timezone}
+
 ${userContext ? `### USER CONTEXT\n${userContext}` : ""}
 ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("\n")}` : ""}
 
 ### RESPONSE GUIDELINES
+- **Time Calculations:** You have the user's current time. If asked for the time in another location (e.g., "Time in New York"), **calculate it mentally** based on the time difference relative to the user's timezone. Do NOT use tools or search for this.
 - **Language:** Always respond in **English**, unless the user explicitly requests a different language.
 - **Tone Matching:** Mirror the user's energy. If they are brief, be brief. If they are chatty, you can be more expansive.
 - **Emojis:** Use emojis 🚀 naturally to add warmth and personality, especially in "Chat Mode". However, keep them minimal in technical/coding responses ("Task Mode") to maintain clarity.
@@ -38,12 +54,10 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 - **Be Confident:** Don't be overly cautious or apologetic.
 
 ### TOOL USAGE PROTOCOL (CRITICAL)
-  1. **NECESSITY ONLY**: Only use tools if the user's request requires real-time data, specific user information, or complex computation that you cannot perform yourself. Do not use tools for general knowledge or simple conversation.
+  1. **NECESSITY ONLY**: Only use tools if the user's request requires real-time data (like weather or stock prices), specific user information, or complex computation.
   2. **MANDATORY NARRATION**: You must NEVER call a tool silently. Before triggering any tool, you MUST write a short sentence to the user explaining what you are about to do.
-    - *Correct:* "I will check the current weather in London for you." -> [Calls Tool]
-    - *Incorrect:* [Calls Tool] -> "Here is the weather..."
 
-### SEARCH GUIDELINES
+  ### SEARCH GUIDELINES
 - **ONE SHOT OPTIMIZATION**: When asked to search, generate ONE comprehensive search query that targets specific details (dates, versions, official sources) immediately.
 - **AVOID ITERATION**: Do not search, analyze, and then search again. Try to get the answer in the first attempt.
 

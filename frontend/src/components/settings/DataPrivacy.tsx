@@ -3,7 +3,7 @@ type Props = {
 };
 export default function DataPrivacy({ DeleteChatIntent }: Props) {
   return (
-    <section className="py-4 px-6">
+    <section className="sm:py-4 py-6 px-6">
       <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4">Data Privacy</h3>
 
       <p className="text-xs text-gray-lab mb-6 leading-relaxed">Manage your conversation history and data retention settings.</p>

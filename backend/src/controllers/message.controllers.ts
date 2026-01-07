@@ -9,6 +9,7 @@ export async function handleUserMessageResponse(c: Context) {
   const { chatId } = c.get("param");
   const userId = c.get("user");
   const { query, model } = c.get("body");
+  const timezone = c.req.header("x-client-timezone") || "UTC";
 
   try {
     const [chat, preferences, memories] = await Promise.all([
@@ -31,6 +32,7 @@ export async function handleUserMessageResponse(c: Context) {
           modelName: model,
           preferences,
           memories,
+          timezone,
         });
 
         for await (const chunk of aiStream) {

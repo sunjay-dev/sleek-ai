@@ -63,6 +63,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel
         selectedModel={selectedModel}
         onStop={onStop}
         onModelChange={onModelChange}
+        autoFocus={true}
       />
     </div>
   );
