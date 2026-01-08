@@ -13,6 +13,7 @@ import DeleteModal from "./common/DeleteModal";
 import SettingsModal from "./settings/SettingsModal";
 import RenameChatModal from "./common/RenameChatModal";
 import ErrorPage from "./common/ErrorPage";
+import LazyLoader from "./LazyLoader";
 
 export {
   InputContainer,
@@ -30,4 +31,5 @@ export {
   DeleteModal,
   RenameChatModal,
   ErrorPage,
+  LazyLoader,
 };

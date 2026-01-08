@@ -110,7 +110,7 @@ export default function PersonalizationSettings({
 
   return (
     <div className="relative h-dvh flex flex-col">
-      <div id="personalizationModal" className="flex-1 overflow-y-auto px-6 sm:py-4 py-6">
+      <div className="flex-1 overflow-y-auto px-6 sm:py-4 py-6 custom-scroll custom-scroll-sm">
         <div className="mb-6">
           <h3 className="text-lg font-normal pb-2 border-b border-gray-500/20 mb-4">Personalization</h3>
           <p className="text-xs text-gray-lab leading-relaxed">Customize your profile details and how the AI behaves during conversations.</p>
@@ -161,7 +161,7 @@ export default function PersonalizationSettings({
                 name="about"
                 autoComplete="off"
                 placeholder="Hobbies, interests, goals..."
-                className={`${inputBase} h-20 resize-none`}
+                className={`${inputBase} h-20 resize-none custom-scroll custom-scroll-xs`}
                 value={data.about}
                 onChange={handleChange}
               />

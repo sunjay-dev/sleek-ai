@@ -35,7 +35,7 @@ export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<
             setChats((prev) => prev.filter((c) => c.id !== chatIntent.chatId));
 
             if (location.pathname.includes(chatIntent.chatId)) {
-              navigate("/");
+              navigate("/", { replace: true });
             }
           });
         }
@@ -48,12 +48,12 @@ export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<
             if (!res.ok) throw new Error("Delete all failed");
 
             setChats([]);
-            navigate("/");
+            navigate("/", { replace: true });
           });
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       })
       .finally(() => {
         setIsDeletingChat(false);

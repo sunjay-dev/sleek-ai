@@ -39,7 +39,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
 
   return (
     <Virtuoso
-      id="messageContainer"
+      className="custom-scroll"
       ref={virtuosoRef}
       data={messages}
       overscan={{ main: 1500, reverse: 1500 }}

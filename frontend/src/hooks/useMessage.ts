@@ -178,16 +178,26 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
       if (!token) return;
 
       setIsFetchingMessages(true);
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, { headers: { Authorization: `Bearer ${token}` } });
-        const data = await res.json();
-        setMessages(data.messages || []);
-      } catch {
-        navigate("/");
-      } finally {
-        setIsFetchingMessages(false);
-      }
+
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => {
+          const data = res.json();
+          if (!res.ok) throw new Error("Something went wrong, Please try again later.");
+          return data;
+        })
+        .then((data) => {
+          setMessages(data.messages || []);
+        })
+        .catch(() => {
+          navigate("/", { replace: true });
+        })
+        .finally(() => {
+          setIsFetchingMessages(false);
+        });
     }
+
     handleGetAllChatMessages();
   }, [chatId, getToken, navigate]);
 

@@ -6,6 +6,8 @@ import { streamText } from "hono/streaming";
 import logger from "../utils/logger.utils.js";
 
 export async function handleUserMessageResponse(c: Context) {
+  const requestStartTime = new Date();
+
   const { chatId } = c.get("param");
   const userId = c.get("user");
   const { query, model } = c.get("body");
@@ -43,9 +45,10 @@ export async function handleUserMessageResponse(c: Context) {
         await prisma.chat.update({
           where: { id: chatId },
           data: {
+            updatedAt: requestStartTime,
             messages: {
               create: [
-                { text: query, role: "USER" },
+                { text: query, role: "USER", createdAt: requestStartTime },
                 { text: fullResponse, role: "ASSISTANT" },
               ],
             },
@@ -83,7 +86,7 @@ export async function handleGetAllChatMessages(c: Context) {
   const { chatId } = c.get("param");
 
   try {
-    const chatWithMessages = await prisma.chat.findFirst({
+    const messages = await prisma.chat.findFirst({
       where: { id: chatId, userId },
       select: {
         id: true,
@@ -99,11 +102,11 @@ export async function handleGetAllChatMessages(c: Context) {
       },
     });
 
-    if (!chatWithMessages) {
+    if (!messages) {
       return c.json({ message: "Chat not found or unauthorized" }, 400);
     }
 
-    return c.json(chatWithMessages, 200);
+    return c.json(messages, 200);
   } catch (error) {
     throw new InternalServerError("Error fetching chat messages", { error });
   }

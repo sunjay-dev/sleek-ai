@@ -26,6 +26,10 @@ th code {
   font-size: 0.9rem;
 }
 
+.markdown strong {
+  font-weight: bold;
+}
+
 .markdown li {
   white-space: normal;
 }
@@ -128,16 +132,17 @@ th code {
 }
 
 /*  Tables  */
-.tableWrapper {
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  font-size: 0.9rem;
+
+  border-collapse: collapse;
+
   margin: 1rem 0;
   border-radius: 0.5rem;
-  overflow-x: auto;
-}
-
-.markdown table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
 }
 
 .markdown table caption {
@@ -182,7 +187,6 @@ th code {
   word-break: break-all;
 }
 
-/*  Block Code (Your existing styling, kept safe)  */
 .codeBlockContainer {
   margin: 0 0 0.5rem 0;
   border-radius: 0.5rem;
@@ -222,7 +226,7 @@ th code {
   color: #000;
 }
 
-.codeBlockContent {
+pre {
   margin: 0;
   padding: 0.5rem;
   overflow-x: auto;
@@ -236,7 +240,7 @@ th code {
   padding: 0.2rem !important;
 }
 
-.link {
+.markdown a {
   color: #1a1a1a;
   font-weight: 600;
 
@@ -248,19 +252,36 @@ th code {
   transition: all 0.2s ease;
 }
 
-.link:hover {
+.markdown a:hover {
   color: #3b82f6;
   text-decoration-color: #3b82f6;
 }
 
-.link svg {
+.markdown a svg {
   opacity: 0.4;
   transition: opacity 0.2s;
 }
 
-.link:hover svg {
+.markdown a:hover svg {
   opacity: 1;
   color: #3b82f6;
+}
+
+.markdown a::after {
+  content: "\2197";
+  display: inline-block;
+  margin-left: 0.2rem;
+  opacity: 1;
+  transition: all 0.2s ease;
+
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.85em;
+  line-height: 1;
+}
+
+.markdown a:hover::after {
+  opacity: 1;
+  transform: translate(1px, -1px);
 }
 
 .streamingCursor > *:last-child::after {

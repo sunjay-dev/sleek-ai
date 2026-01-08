@@ -1,8 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
-import { lazy, Suspense } from "react";
-import { ErrorPage, LoaderContainer } from "@/components";
-import { ErrorBoundary } from "react-error-boundary";
+import { lazy } from "react";
+import { LazyLoader, LoaderContainer } from "@/components";
 
 const ChatPage = lazy(() => import("@/page/ChatPage.tsx"));
 const AuthPage = lazy(() => import("@/page/AuthPage.tsx"));
@@ -10,11 +9,9 @@ const AuthPage = lazy(() => import("@/page/AuthPage.tsx"));
 export const routes = createBrowserRouter([
   {
     element: (
-      <ErrorBoundary FallbackComponent={ErrorPage}>
-        <Suspense fallback={<LoaderContainer />}>
-          <ProtectedRoute />
-        </Suspense>
-      </ErrorBoundary>
+      <LazyLoader fallback={<LoaderContainer />}>
+        <ProtectedRoute />
+      </LazyLoader>
     ),
     children: [
       {
@@ -30,11 +27,9 @@ export const routes = createBrowserRouter([
   {
     path: "/auth/*",
     element: (
-      <ErrorBoundary FallbackComponent={ErrorPage}>
-        <Suspense fallback={<LoaderContainer />}>
-          <AuthPage />
-        </Suspense>
-      </ErrorBoundary>
+      <LazyLoader fallback={<LoaderContainer />}>
+        <AuthPage />
+      </LazyLoader>
     ),
   },
 ]);

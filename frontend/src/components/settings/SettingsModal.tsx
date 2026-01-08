@@ -22,10 +22,9 @@ export default function SettingsModal({ onClose, DeleteChatIntent }: Props) {
 
   const { intent, isDeleting, requestDeleteMemory, requestDeleteAllMemories, confirm, cancel } = useMemoryDeletion(setMemories);
 
-  const inputBase = "w-full px-3 py-2 text-xs bg-white border border-gray-500/20 rounded-lg outline-none focus:border-primary/50 transition";
-  const labelBase = "text-xs font-medium mb-1.5 block text-gray-700";
+  const inputBase = "w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition";
+  const labelBase = "sm:text-xs text-sm font-medium mb-1.5 block text-gray-700";
   const sectionHeader = "text-sm font-semibold text-primary pb-2 border-b border-gray-100 mb-3 mt-1";
-
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4">
@@ -35,7 +34,7 @@ export default function SettingsModal({ onClose, DeleteChatIntent }: Props) {
           <div className="flex flex-col md:flex-row flex-1 min-h-0">
             <SettingsSidebar activeTab={activeTab} setActiveTab={setActiveTab} onClose={onClose} />
 
-            <main className="flex-1 overflow-y-auto bg-white relative">
+            <main className="flex-1 overflow-y-auto bg-white relative custom-scroll">
               <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
                 {activeTab === "personalization" && (
                   <PersonalizationModal

@@ -98,7 +98,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
           </button>
         </div>
 
-        <nav ref={chatNavRef} id="sideBar" className="px-3 py-1.5 overflow-y-auto grow space-y-1">
+        <nav ref={chatNavRef} className="px-3 py-1.5 overflow-y-auto grow space-y-1 custom-scroll">
           <div className="pb-2 border-b border-secondary space-y-1">
             <button
               title="create new chat"

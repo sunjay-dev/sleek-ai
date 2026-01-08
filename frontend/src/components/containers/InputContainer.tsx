@@ -78,7 +78,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               onKeyDown={handleKeyDown}
               placeholder="Ask Anything"
               rows={1}
-              className="w-full bg-white py-2 px-1.5 text-primary text-sm focus:outline-none resize-none placeholder:text-primary overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"
+              className="w-full custom-scroll custom-scroll-xs py-2 px-1.5 text-primary text-sm focus:outline-none resize-none overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"
             />
 
             {file && (

@@ -47,6 +47,15 @@ export default function MemorySettings({ inputBase, memories, setMemories, reque
 
   const filteredMemories = data.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
+        <Loader size="24" />
+        <p className="text-xs">Loading memories...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="sm:py-4 py-6 px-6 space-y-6 h-full flex flex-col">
       <div>
@@ -83,13 +92,8 @@ export default function MemorySettings({ inputBase, memories, setMemories, reque
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-2">
-        {isLoading ? (
-          <div className="flex flex-col items-center space-y-1 justify-center h-40 text-gray-400">
-            <Loader size="24" />
-            <p className="text-xs">Loading memories...</p>
-          </div>
-        ) : filteredMemories.length > 0 ? (
+      <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-2 custom-scroll">
+        {filteredMemories.length > 0 ? (
           filteredMemories.map((memory) => (
             <div
               key={memory.id}
