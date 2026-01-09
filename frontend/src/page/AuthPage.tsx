@@ -44,24 +44,26 @@ export default function AuthPage() {
 
         <div className="flex w-full flex-col items-center justify-center p-4 md:w-1/2">
           <div className="md:hidden flex flex-col items-center mb-8 text-center space-y-2">
-            <div className="flex items-center gap-2 font-semibold sm:font-bold tracking-tighter text-2xl">
+            <div className="flex items-center gap-1 font-semibold sm:font-bold tracking-tighter text-2xl">
               <img src="./logo.webp" alt="Chatty AI Logo" className="h-8 w-8 object-cover" />
               Chatty AI
             </div>
-            <p className="text-sm text-neutral-500">Unlock limitless.</p>
+            <p className="text-sm text-neutral-500">Turn ideas into reality with an AI partner.</p>
           </div>
 
-          <SignIn
-            path="/auth"
-            routing="path"
-            fallbackRedirectUrl="/"
-            forceRedirectUrl="/"
-            appearance={{
-              elements: {
-                footerAction: { display: "none" },
-              },
-            }}
-          />
+          <div className="w-full max-w-sm flex justify-center">
+            <SignIn
+              path="/auth"
+              routing="path"
+              fallbackRedirectUrl="/"
+              forceRedirectUrl="/"
+              appearance={{
+                elements: {
+                  footerAction: { display: "none" },
+                },
+              }}
+            />
+          </div>
 
           <div className="md:hidden mt-8 text-xs text-neutral-400">© {getCurrentYear()} Chatty AI Inc.</div>
         </div>
