@@ -7,6 +7,7 @@ import "highlight.js/styles/atom-one-light.css";
 import "katex/dist/katex.css";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
+const SearchModal = lazy(() => import("@/components/search/SearchModal.tsx"));
 const MessagesContainer = lazy(() => import("@/components/containers/MessagesContainer.tsx"));
 const InputContainer = lazy(() => import("@/components/containers/InputContainer.tsx"));
 const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.tsx"));
@@ -21,6 +22,7 @@ export default function ChatPage() {
   const { selectedModel, setSelectedModel } = useModel();
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
 
@@ -37,6 +39,7 @@ export default function ChatPage() {
         setChats={setChats}
         onDeleteRequest={requestDeleteChat}
         setIsSettingsModalOpen={setIsSettingsModalOpen}
+        setIsSearchModalOpen={setIsSearchModalOpen}
         onRenameRequest={onRenameRequest}
         onWelcomeScreen={messages.length === 0 || isFetchingMessages}
       />
@@ -76,6 +79,12 @@ export default function ChatPage() {
           </LazyLoader>
         )}
       </main>
+
+      {isSearchModalOpen && (
+        <LazyLoader>
+          <SearchModal onClose={() => setIsSearchModalOpen(false)} />
+        </LazyLoader>
+      )}
 
       {isRenameModalOpen && (
         <LazyLoader>

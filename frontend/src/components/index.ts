@@ -14,6 +14,7 @@ import SettingsModal from "./settings/SettingsModal";
 import RenameChatModal from "./common/RenameChatModal";
 import ErrorPage from "./common/ErrorPage";
 import LazyLoader from "./LazyLoader";
+import SearchModal from "./search/SearchModal";
 
 export {
   InputContainer,
@@ -32,4 +33,5 @@ export {
   RenameChatModal,
   ErrorPage,
   LazyLoader,
+  SearchModal,
 };

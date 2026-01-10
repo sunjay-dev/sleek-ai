@@ -26,6 +26,15 @@ export type UserMemory = {
   content: string;
 };
 
+export type SearchResult = {
+  text: string;
+  createdAt: string;
+  chatId: string;
+  chat: {
+    title: string;
+  };
+};
+
 export type Tab = "personalization" | "data" | "memory";
 
 export type DeleteChatIntent = { type: "single"; chatId: string } | { type: "all" } | null;

@@ -1,6 +1,6 @@
 import { Context, Next } from "hono";
 import { z, ZodError } from "zod";
-import { BadRequestError, InternalServerError } from "../utils/appError.utils.js";
+import { BadRequestError } from "../utils/appError.utils.js";
 
 export function validate(schema: z.ZodObject<any, any>) {
   return async (c: Context, next: Next) => {
@@ -15,7 +15,7 @@ export function validate(schema: z.ZodObject<any, any>) {
         throw new BadRequestError(message);
       }
 
-      throw new InternalServerError("Something went wrong. Please try again later.");
+      throw error;
     }
   };
 }
@@ -34,7 +34,26 @@ export function validateParams(schema: z.ZodTypeAny) {
         throw new BadRequestError(message);
       }
 
-      throw new InternalServerError("Something went wrong. Please try again later.");
+      throw error;
+    }
+  };
+}
+
+export function validateQuery(schema: z.ZodTypeAny) {
+  return async (c: Context, next: Next) => {
+    try {
+      const data = schema.parse(c.req.query());
+      c.set("query", data);
+      await next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const isDefaultError = error.issues[0].message.startsWith("Invalid input");
+        const message = isDefaultError ? `${error.issues[0].path}: ${error.issues[0].message}` : error.issues[0].message;
+
+        throw new BadRequestError(message);
+      }
+
+      throw error;
     }
   };
 }

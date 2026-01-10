@@ -1,5 +1,5 @@
 import { UserButton, useUser } from "@clerk/clerk-react";
-import { BadgePlus, MoreHorizontal, Trash2, Settings, Pencil } from "lucide-react";
+import { BadgePlus, MoreHorizontal, Trash2, Settings, Pencil, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
@@ -14,10 +14,19 @@ type Props = {
   isFetchingChats: boolean;
   setChats: (chats: Chat[]) => void;
   setIsSettingsModalOpen: (value: boolean) => void;
+  setIsSearchModalOpen: (value: boolean) => void;
   onWelcomeScreen: boolean;
 };
 
-export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, setIsSettingsModalOpen, onWelcomeScreen }: Props) {
+export default function Sidebar({
+  chats,
+  isFetchingChats,
+  onDeleteRequest,
+  onRenameRequest,
+  setIsSettingsModalOpen,
+  setIsSearchModalOpen,
+  onWelcomeScreen,
+}: Props) {
   const { user } = useUser();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -107,6 +116,15 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
             >
               <BadgePlus size={16} />
               New chat
+            </button>
+
+            <button
+              title="open search"
+              onClick={() => setIsSearchModalOpen(true)}
+              className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
+            >
+              <Search size={16} />
+              Search chats
             </button>
 
             <button
