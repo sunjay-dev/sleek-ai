@@ -5,7 +5,11 @@ import checkpointer from "./redisCheckpointer.config.js";
 import { MODELS } from "../models.js";
 
 const llmCache = new Map();
-const summarizerCache = new Map();
+let summarizerCache: ChatGroq | null = null;
+
+const MEMORY_MODEL = process.env.MEMORY_MODEL! || "groq/compound-mini";
+const TITLE_MODEL = process.env.TITLE_MODEL! || "groq/compound-mini";
+const SUMMARIZER_MODEL = process.env.SUMMARIZER_MODEL! || "groq/compound-mini";
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {
@@ -15,10 +19,10 @@ const getLLM = (model: string) => {
 };
 
 const getSummarizer = () => {
-  if (!summarizerCache.has("compound-mini")) {
-    summarizerCache.set("compound-mini", groqChatAgent("groq/compound-mini"));
+  if (!summarizerCache) {
+    summarizerCache = groqChatAgent(SUMMARIZER_MODEL);
   }
-  return summarizerCache.get("compound-mini");
+  return summarizerCache;
 };
 
 export const groqChatAgent = (model: string, temperature = 0) => {
@@ -53,6 +57,6 @@ export const createGroqAgent = (model: string, systemPrompt: string) => {
   });
 };
 
-export const memoryLLM = groqChatAgent("groq/compound");
+export const memoryLLM = groqChatAgent(MEMORY_MODEL);
 
-export const titleLLM = groqChatAgent("groq/compound-mini", 0.6);
+export const titleLLM = groqChatAgent(TITLE_MODEL, 0.6);

@@ -1,38 +1,38 @@
 import { type Context } from "hono";
 import prisma from "../config/prisma.config.js";
-import { InternalServerError } from "../utils/appError.utils.js";
 
 export async function handleClerkWebHook(c: Context) {
   const evt = c.get("clerkEvent");
   const eventType = evt.type;
   const user = evt.data;
 
-  try {
-    if (eventType === "user.created" || eventType === "user.updated") {
-      await prisma.user.upsert({
-        where: { clerkId: user.id },
-        update: {
-          firstName: user.first_name,
-          lastName: user.last_name,
-          imageUrl: user.profile_image_url,
-        },
-        create: {
-          clerkId: user.id,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          imageUrl: user.profile_image_url,
-        },
-      });
-    } else if (eventType === "user.deleted") {
-      await prisma.user.deleteMany({
-        where: { clerkId: user.id },
-      });
-    } else {
-      return c.json({ ok: false }, 400);
-    }
+  if (eventType === "user.created" || eventType === "user.updated") {
+    const firstName = user.first_name ?? "";
+    const lastName = user.last_name ?? "";
+    const imageUrl = user.profile_image_url || user.image_url;
+    const email = user.email_addresses?.[0]?.email_address;
 
-    return c.json({ ok: true }, 200);
-  } catch {
-    throw new InternalServerError("Error occured while handling Clerk webhook", { ok: false });
+    await prisma.user.upsert({
+      where: { clerkId: user.id },
+      update: {
+        firstName,
+        lastName,
+        imageUrl,
+      },
+      create: {
+        email,
+        clerkId: user.id,
+        firstName,
+        lastName,
+        imageUrl,
+      },
+    });
+  } else if (eventType === "user.deleted") {
+    await prisma.user.deleteMany({
+      where: { clerkId: user.id },
+    });
+
+    return c.json({ message: "User deleted" }, 200);
   }
+  return c.json({ ok: true }, 200);
 }

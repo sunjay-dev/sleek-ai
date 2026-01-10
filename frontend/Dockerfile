@@ -1,4 +1,8 @@
-FROM oven/bun:1.3.3-alpine AS build
+ARG BUN_VERSION=1.3.3-alpine
+
+# ---------------------- base ----------------------
+
+FROM oven/bun:${BUN_VERSION} AS base
 
 WORKDIR /app
 
@@ -8,6 +12,8 @@ RUN bun install
 COPY . .
 
 RUN bun run build
+
+# ---------------------- deploy ----------------------
 
 FROM nginx:1.27-alpine AS deploy
 

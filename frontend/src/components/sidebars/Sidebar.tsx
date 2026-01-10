@@ -153,7 +153,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                     setOpenMenuId(isMenuOpen ? null : chat.id);
                   }}
                   className={[
-                    "p-1 rounded-md hover:bg-gray-200 active:bg-gray-200 transition",
+                    "p-1 rounded-full hover:bg-gray-200 active:bg-gray-200 transition",
                     isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-active:opacity-100",
                   ].join(" ")}
                   aria-label="Open chat menu"

@@ -8,7 +8,6 @@
         "@clerk/backend": "^2.29.0",
         "@hono/clerk-auth": "^3.0.3",
         "@langchain/groq": "^1.0.2",
-        "@langchain/langgraph-checkpoint-postgres": "^1.0.0",
         "@langchain/langgraph-checkpoint-redis": "^1.0.1",
         "@langchain/tavily": "^1.2.0",
         "@prisma/adapter-pg": "^7.2.0",
@@ -102,8 +101,6 @@
     "@langchain/langgraph": ["@langchain/langgraph@1.0.7", "", { "dependencies": { "@langchain/langgraph-checkpoint": "1.0.0", "@langchain/langgraph-sdk": "1.3.1", "uuid": "10.0.0" }, "optionalDependencies": { "zod-to-json-schema": "3.25.0" }, "peerDependencies": { "@langchain/core": "1.1.4", "zod": "4.2.1" } }, "sha512-EBGqNOWoRiEoLUaeuiXRpUM8/DE6QcwiirNyd97XhezStebBoTTilWH8CUt6S94JRGl5zwfBBRHfzotDnZS/eA=="],
 
     "@langchain/langgraph-checkpoint": ["@langchain/langgraph-checkpoint@1.0.0", "", { "dependencies": { "uuid": "10.0.0" }, "peerDependencies": { "@langchain/core": "1.1.4" } }, "sha512-xrclBGvNCXDmi0Nz28t3vjpxSH6UYx6w5XAXSiiB1WEdc2xD2iY/a913I3x3a31XpInUW/GGfXXfePfaghV54A=="],
-
-    "@langchain/langgraph-checkpoint-postgres": ["@langchain/langgraph-checkpoint-postgres@1.0.0", "", { "dependencies": { "pg": "8.16.3" }, "peerDependencies": { "@langchain/core": "1.1.4", "@langchain/langgraph-checkpoint": "1.0.0" } }, "sha512-oTHCbQ9N1Zki2J0B/ulq9g/t2DRPePeQqTTJQdMYkdhpHEuWBbEPhpybSTbtXHD/6iT/UImBkUaum+nmPCIJZw=="],
 
     "@langchain/langgraph-checkpoint-redis": ["@langchain/langgraph-checkpoint-redis@1.0.1", "", { "dependencies": { "redis": "4.7.1", "testcontainers": "10.28.0", "ulid": "2.4.0" }, "peerDependencies": { "@langchain/core": "1.1.4", "@langchain/langgraph-checkpoint": "1.0.0" } }, "sha512-EIAVPPBTarkLTJMNQulKcin82VCBxwR8Cnvl9k1mOHoCQwz/YzUbUq06dOXAL21Z5/YqY6xUNhprgwDLtpaT8w=="],
 

@@ -26,15 +26,13 @@ RUN bunx prisma generate
 
 # ---------------------- final ----------------------
 
-FROM oven/bun:${BUN_VERSION} AS final
+FROM base AS final
 
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
 USER bun
 
-COPY package.json bun.lock ./
-COPY --from=base /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/src ./src
 
 EXPOSE 3000
