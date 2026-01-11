@@ -1,6 +1,11 @@
 import { SignIn } from "@clerk/clerk-react";
+import { useLocation } from "react-router-dom";
 
 export default function AuthPage() {
+  const location = useLocation();
+
+  const redirectUrl = location.state?.from ? `${location.state.from.pathname}${location.state.from.search}` : "/";
+
   function getCurrentYear() {
     return new Date().getFullYear();
   }
@@ -55,8 +60,8 @@ export default function AuthPage() {
             <SignIn
               path="/auth"
               routing="path"
+              forceRedirectUrl={redirectUrl}
               fallbackRedirectUrl="/"
-              forceRedirectUrl="/"
               appearance={{
                 elements: {
                   footerAction: { display: "none" },

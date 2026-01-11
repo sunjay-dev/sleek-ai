@@ -47,7 +47,7 @@ export default function SearchModal({ onClose }: Props) {
     };
 
     fetchResults();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, getToken]);
 
   function HighlightedText(text: string, highlight: string) {
     if (!highlight.trim()) return <>{text}</>;
@@ -82,8 +82,8 @@ export default function SearchModal({ onClose }: Props) {
             className="flex-1 bg-transparent outline-none border-none text-primary placeholder:text-gray-400 text-sm px-2 py-1 rounded-md transition"
           />
 
-          <button onClick={onClose} className="p-1.5 rounded-full text-primary hover:bg-gray-200 active:bg-gray-200 transition">
-            <X className="w-5 h-5 sm:w-4 sm:h-4" />
+          <button onClick={onClose} className="p-1 rounded-full text-primary hover:bg-gray-200 active:bg-gray-200 transition">
+            <X className="w-5 h-5 sm:w-4.5 sm:h-4.5" />
           </button>
         </div>
 

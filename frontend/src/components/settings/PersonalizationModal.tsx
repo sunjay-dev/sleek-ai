@@ -4,24 +4,13 @@ import { Loader } from "@/components";
 import type { UserPreferences } from "@/types";
 
 type Props = {
-  inputBase: string;
-  labelBase: string;
-  sectionHeader: string;
   preferences: UserPreferences | null;
   setPreferences: Dispatch<React.SetStateAction<UserPreferences | null>>;
   initialPreferences: UserPreferences | null;
   setInitialPreferences: Dispatch<React.SetStateAction<UserPreferences | null>>;
 };
 
-export default function PersonalizationSettings({
-  inputBase,
-  labelBase,
-  sectionHeader,
-  preferences,
-  setPreferences,
-  initialPreferences,
-  setInitialPreferences,
-}: Props) {
+export default function PersonalizationSettings({ preferences, setPreferences, initialPreferences, setInitialPreferences }: Props) {
   const { getToken } = useAuth();
 
   const [loading, setLoading] = useState(!preferences);
@@ -117,11 +106,11 @@ export default function PersonalizationSettings({
         </div>
 
         <section className="mb-6">
-          <h3 className={sectionHeader}>About You</h3>
+          <h3 className="text-sm font-semibold text-primary pb-2 border-b border-gray-100 mb-3 mt-1">About You</h3>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="nickname" className={labelBase}>
+                <label htmlFor="nickname" className="sm:text-xs text-sm font-medium mb-1.5 block text-gray-700">
                   Nickname
                 </label>
                 <input
@@ -130,14 +119,14 @@ export default function PersonalizationSettings({
                   autoComplete="name"
                   placeholder="What should I call you?"
                   type="text"
-                  className={inputBase}
+                  className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition"
                   value={data.nickname}
                   onChange={handleChange}
                 />
               </div>
 
               <div>
-                <label htmlFor="occupation" className={labelBase}>
+                <label htmlFor="occupation" className="sm:text-xs text-sm font-medium mb-1.5 block text-gray-700">
                   Occupation
                 </label>
                 <input
@@ -146,7 +135,7 @@ export default function PersonalizationSettings({
                   autoComplete="organization-title"
                   placeholder="e.g. Student, Designer"
                   type="text"
-                  className={inputBase}
+                  className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition"
                   value={data.occupation}
                   onChange={handleChange}
                 />
@@ -154,14 +143,14 @@ export default function PersonalizationSettings({
             </div>
 
             <div>
-              <label htmlFor="about" className={labelBase}>
+              <label htmlFor="about" className="sm:text-xs text-sm font-medium mb-1.5 block text-gray-700">
                 More about you
               </label>
               <textarea
                 name="about"
                 autoComplete="off"
                 placeholder="Hobbies, interests, goals..."
-                className={`${inputBase} h-20 resize-none custom-scroll custom-scroll-xs`}
+                className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition h-20 resize-none custom-scroll custom-scroll-xs"
                 value={data.about}
                 onChange={handleChange}
               />
@@ -170,17 +159,17 @@ export default function PersonalizationSettings({
         </section>
 
         <section>
-          <h3 className={sectionHeader}>AI Behavior</h3>
+          <h3 className="text-sm font-semibold text-primary pb-2 border-b border-gray-100 mb-3 mt-1">AI Behavior</h3>
           <div className="space-y-4">
             <div>
-              <label htmlFor="customInstructions" className={labelBase}>
+              <label htmlFor="customInstructions" className="sm:text-xs text-sm font-medium mb-1.5 block text-gray-700">
                 Custom Instructions
               </label>
               <textarea
                 name="customInstructions"
                 autoComplete="off"
                 placeholder="e.g. 'Explain things simply' or 'Reply in JSON'"
-                className={`${inputBase} h-24 resize-none`}
+                className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition h-24 resize-none"
                 value={data.customInstructions}
                 onChange={handleChange}
               />

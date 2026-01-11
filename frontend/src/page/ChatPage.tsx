@@ -1,10 +1,11 @@
 import { lazy, useState } from "react";
 import { Sidebar, LazyLoader } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
-import type { Chat } from "@/types";
+import type { Chat, Tab } from "@/types";
 import "@/styles/modelMessage.css";
 import "highlight.js/styles/atom-one-light.css";
 import "katex/dist/katex.css";
+import { useSearchParams } from "react-router-dom";
 
 const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
 const SearchModal = lazy(() => import("@/components/search/SearchModal.tsx"));
@@ -15,20 +16,41 @@ const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
 const WelcomeScreen = lazy(() => import("@/components/WelcomeScreen.tsx"));
 
 export default function ChatPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
   const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({ moveChatToTop, setChats });
   const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
 
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const isSettingsModalOpen = searchParams.get("modal") === "settings";
+  const isSearchModalOpen = searchParams.get("modal") === "search";
+
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
 
   const onRenameRequest = (chat: Chat) => {
     setActiveChat(chat);
     setIsRenameModalOpen(true);
+  };
+
+  const openModal = (modalName: string, tabName?: Tab) => {
+    setSearchParams((prev) => {
+      prev.set("modal", modalName);
+
+      if (tabName) prev.set("tab", tabName);
+      else prev.delete("tab");
+
+      return prev;
+    });
+  };
+
+  const closeModal = () => {
+    setSearchParams((prev) => {
+      prev.delete("modal");
+      prev.delete("tab");
+      return prev;
+    });
   };
 
   return (
@@ -38,8 +60,7 @@ export default function ChatPage() {
         chats={chats}
         setChats={setChats}
         onDeleteRequest={requestDeleteChat}
-        setIsSettingsModalOpen={setIsSettingsModalOpen}
-        setIsSearchModalOpen={setIsSearchModalOpen}
+        openModal={openModal}
         onRenameRequest={onRenameRequest}
         onWelcomeScreen={messages.length === 0 || isFetchingMessages}
       />
@@ -82,7 +103,7 @@ export default function ChatPage() {
 
       {isSearchModalOpen && (
         <LazyLoader>
-          <SearchModal onClose={() => setIsSearchModalOpen(false)} />
+          <SearchModal onClose={closeModal} />
         </LazyLoader>
       )}
 
@@ -102,7 +123,7 @@ export default function ChatPage() {
 
       {isSettingsModalOpen && (
         <LazyLoader>
-          <SettingsModal onClose={() => setIsSettingsModalOpen(false)} DeleteChatIntent={requestDeleteAllChat} />
+          <SettingsModal onClose={closeModal} DeleteChatIntent={requestDeleteAllChat} />
         </LazyLoader>
       )}
 

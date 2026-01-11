@@ -5,14 +5,13 @@ import Loader from "../loaders/Loader";
 import type { UserMemory } from "@/types";
 
 type Props = {
-  inputBase: string;
   memories: UserMemory[] | null;
   setMemories: Dispatch<SetStateAction<UserMemory[] | null>>;
   requestDeleteMemory: (id: string) => void;
   requestDeleteAllMemories: () => void;
 };
 
-export default function MemorySettings({ inputBase, memories, setMemories, requestDeleteMemory, requestDeleteAllMemories }: Props) {
+export default function MemorySettings({ memories, setMemories, requestDeleteMemory, requestDeleteAllMemories }: Props) {
   const { getToken } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,7 +72,7 @@ export default function MemorySettings({ inputBase, memories, setMemories, reque
           <input
             type="text"
             placeholder="Search your memories..."
-            className={`${inputBase} pl-9`}
+            className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
