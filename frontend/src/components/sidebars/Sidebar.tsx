@@ -132,80 +132,81 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
           {isFetchingChats && <div className="text-xs text-gray-400 text-center py-4">Loading chats…</div>}
 
-          {!isFetchingChats && chats.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet.</div>}
+          {!isFetchingChats && chats?.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No chats yet.</div>}
 
-          {chats.map((chat) => {
-            const isMenuOpen = openMenuId === chat.id;
+          {Array.isArray(chats) &&
+            chats.map((chat) => {
+              const isMenuOpen = openMenuId === chat.id;
 
-            return (
-              <NavLink
-                key={chat.id}
-                to={`/c/${chat.id}`}
-                onClick={() => {
-                  setOpenMenuId(null);
-                  closeSidebarOnMobile();
-                }}
-                className={({ isActive }) =>
-                  [
-                    "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-200/60 active:bg-gray-200/60",
-                    isActive ? "font-medium bg-gray-200/60" : "",
-                  ].join(" ")
-                }
-              >
-                <span className="flex-1 truncate">{chat.title || "Untitled chat"}</span>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setOpenMenuId(isMenuOpen ? null : chat.id);
+              return (
+                <NavLink
+                  key={chat.id}
+                  to={`/c/${chat.id}`}
+                  onClick={() => {
+                    setOpenMenuId(null);
+                    closeSidebarOnMobile();
                   }}
-                  className={[
-                    "p-1 rounded-full hover:bg-gray-200 active:bg-gray-200 transition",
-                    isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-active:opacity-100",
-                  ].join(" ")}
-                  aria-label="Open chat menu"
+                  className={({ isActive }) =>
+                    [
+                      "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-200/60 active:bg-gray-200/60",
+                      isActive ? "font-medium bg-gray-200/60" : "",
+                    ].join(" ")
+                  }
                 >
-                  <MoreHorizontal size={16} />
-                </button>
+                  <span className="flex-1 truncate">{chat.title || "Untitled chat"}</span>
 
-                {isMenuOpen && (
-                  <div
-                    className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                  <button
+                    type="button"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      setOpenMenuId(isMenuOpen ? null : chat.id);
                     }}
+                    className={[
+                      "p-1 rounded-full hover:bg-gray-200 active:bg-gray-200 transition",
+                      isMenuOpen || isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-active:opacity-100",
+                    ].join(" ")}
+                    aria-label="Open chat menu"
                   >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOpenMenuId(null);
-                        onRenameRequest(chat);
-                      }}
-                      className="w-full px-3 py-2 text-xs text-primary flex items-center gap-2 hover:bg-gray-100 active:bg-gray-100"
-                    >
-                      <Pencil size={14} />
-                      Rename
-                    </button>
+                    <MoreHorizontal size={16} />
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setOpenMenuId(null);
-                        onDeleteRequest(chat.id);
+                  {isMenuOpen && (
+                    <div
+                      className="absolute right-3 top-full mt-1 w-32 bg-white border border-secondary shadow-lg rounded-md z-50"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                       }}
-                      className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50 active:bg-red-50"
                     >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </NavLink>
-            );
-          })}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenMenuId(null);
+                          onRenameRequest(chat);
+                        }}
+                        className="w-full px-3 py-2 text-xs text-primary flex items-center gap-2 hover:bg-gray-100 active:bg-gray-100"
+                      >
+                        <Pencil size={14} />
+                        Rename
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenMenuId(null);
+                          onDeleteRequest(chat.id);
+                        }}
+                        className="w-full px-3 py-2 text-xs text-red-600 flex items-center gap-2 hover:bg-red-50 active:bg-red-50"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </NavLink>
+              );
+            })}
         </nav>
 
         <div

@@ -62,7 +62,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
     }
   }, [message]);
 
-  const hasContent = message.trim().length > 0 || file !== null;
+  const hasContent = message?.trim().length > 0 || file !== null;
 
   return (
     <div className="w-full flex justify-center items-center px-4 pb-4 bg-transparent">

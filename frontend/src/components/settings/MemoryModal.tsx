@@ -3,6 +3,7 @@ import { Trash2, Search, Brain } from "lucide-react";
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import Loader from "../loaders/Loader";
 import type { UserMemory } from "@/types";
+import { apiRequest } from "@/utils/api";
 
 type Props = {
   memories: UserMemory[] | null;
@@ -26,20 +27,17 @@ export default function MemorySettings({ memories, setMemories, requestDeleteMem
     }
 
     async function handleGetUserMemories() {
-      const token = await getToken();
-      if (!token) return;
-
       setIsLoading(true);
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch");
-          return res.json();
-        })
-        .then((data) => setMemories(data))
-        .catch((error) => console.error("Error loading memories:", error))
-        .finally(() => setIsLoading(false));
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("You must be logged in to search memories.");
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setMemories(data);
+      } finally {
+        setIsLoading(false);
+      }
     }
     handleGetUserMemories();
   }, [getToken, memories, setMemories]);
@@ -80,7 +78,7 @@ export default function MemorySettings({ memories, setMemories, requestDeleteMem
 
         <div className="flex items-center justify-between px-1">
           <span className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">{data.length} facts stored</span>
-          {data.length > 0 && (
+          {data?.length > 0 && (
             <button
               onClick={requestDeleteAllMemories}
               className="text-[11px] text-red-500 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded transition flex items-center gap-1.5 disabled:opacity-50"
@@ -92,7 +90,7 @@ export default function MemorySettings({ memories, setMemories, requestDeleteMem
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 pr-1 space-y-2 custom-scroll">
-        {filteredMemories.length > 0 ? (
+        {Array.isArray(filteredMemories) && filteredMemories.length > 0 ? (
           filteredMemories.map((memory) => (
             <div
               key={memory.id}

@@ -44,7 +44,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
       data={messages}
       overscan={{ main: 1500, reverse: 1500 }}
       followOutput={isGenerating ? "auto" : "smooth"}
-      initialTopMostItemIndex={{ index: messages.length - 1, align: "end" }}
+      initialTopMostItemIndex={{ index: messages?.length - 1, align: "end" }}
       itemContent={(_, message) => {
         const isLastAI = message.id === lastAssistantId;
         const isCopied = copiedId === message.id;

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Chat, Message } from "@/types";
+import { apiRequest } from "@/utils/api";
 
 type Props = {
   moveChatToTop: (id: string) => void;
@@ -27,7 +28,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     if (!text.trim()) return;
 
     const token = await getToken();
-    if (!token) return;
+    if (!token) throw new Error("You must be logged in to send message.");
 
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -114,38 +115,33 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     };
 
     if (!chatId) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ query: text }),
-        signal: controller.signal,
-      })
-        .then((res) =>
-          res.json().then((data) => {
-            if (!res.ok) throw new Error(data.message);
-            return data;
-          }),
-        )
-        .then((data) => {
-          justCreatedChatRef.current = data.id;
-          setChats((c) => [data, ...c]);
-          navigate(`/c/${data.id}`, { replace: true });
-
-          return startStreaming(data.id);
-        })
-        .catch((err) => {
-          setMessages((m) => [
-            ...m,
-            {
-              id: crypto.randomUUID(),
-              role: "ASSISTANT",
-              text: err.name === "AbortError" ? "Generation stopped." : err.message,
-            },
-          ]);
+      try {
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query: text }),
+          signal: controller.signal,
         });
+
+        justCreatedChatRef.current = data.id;
+        setChats((c) => [data, ...c]);
+        navigate(`/c/${data.id}`, { replace: true });
+
+        return startStreaming(data.id);
+      } catch (err) {
+        const error = err as Error;
+        setMessages((m) => [
+          ...m,
+          {
+            id: crypto.randomUUID(),
+            role: "ASSISTANT",
+            text: error.name === "AbortError" ? "Generation stopped." : error.message,
+          },
+        ]);
+      }
     } else {
       await startStreaming(chatId);
     }
@@ -174,28 +170,21 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     }
 
     async function handleGetAllChatMessages() {
-      const token = await getToken();
-      if (!token) return;
-
       setIsFetchingMessages(true);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => {
-          const data = res.json();
-          if (!res.ok) throw new Error("Something went wrong, Please try again later.");
-          return data;
-        })
-        .then((data) => {
-          setMessages(data.messages || []);
-        })
-        .catch(() => {
-          navigate("/", { replace: true });
-        })
-        .finally(() => {
-          setIsFetchingMessages(false);
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("You must be logged in to fetch messages.");
+
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        setMessages(data.messages || []);
+      } catch {
+        navigate("/", { replace: true });
+      } finally {
+        setIsFetchingMessages(false);
+      }
     }
 
     handleGetAllChatMessages();

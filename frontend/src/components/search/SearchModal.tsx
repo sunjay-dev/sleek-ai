@@ -5,6 +5,7 @@ import type { SearchResult } from "@/types";
 import SearchSkeleton from "./SearchSkeleton";
 import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
+import { apiRequest } from "@/utils/api";
 
 type Props = {
   onClose: () => void;
@@ -23,28 +24,21 @@ export default function SearchModal({ onClose }: Props) {
       return;
     }
 
-    const fetchResults = async () => {
-      const token = await getToken();
-      if (!token) return;
-
+    async function fetchResults() {
       setIsLoading(true);
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(debouncedQuery)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) {
-            throw new Error("Something went wrong");
-          }
-          return data;
-        })
-        .then((data) => {
-          setResults(data);
-        })
-        .finally(() => {
-          setIsLoading(false);
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("You must be logged in to search.");
+
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(debouncedQuery)}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-    };
+
+        setResults(data);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
     fetchResults();
   }, [debouncedQuery, getToken]);
@@ -88,13 +82,13 @@ export default function SearchModal({ onClose }: Props) {
         </div>
 
         <div className="overflow-y-auto custom-scroll p-3 bg-white">
-          {results.length === 0 && query.length >= 3 && !isLoading && (
+          {results?.length === 0 && query?.length >= 3 && !isLoading && (
             <div className="text-center py-8 text-gray-lab text-xs">No results found for "{query}"</div>
           )}
 
-          {query.length < 3 && <div className="text-center py-8 text-gray-lab text-[10px]">Type at least 3 characters to search</div>}
+          {query?.length < 3 && <div className="text-center py-8 text-gray-lab text-[10px]">Type at least 3 characters to search</div>}
 
-          {isLoading && query.length >= 3 && (
+          {isLoading && query?.length >= 3 && (
             <>
               <SearchSkeleton />
               <SearchSkeleton />
@@ -102,6 +96,7 @@ export default function SearchModal({ onClose }: Props) {
             </>
           )}
           {!isLoading &&
+            Array.isArray(results) &&
             results.map((item) => (
               <Link
                 to={`/c/${item.chatId}`}

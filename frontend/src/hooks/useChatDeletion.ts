@@ -1,64 +1,58 @@
-import { useState, type Dispatch } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { Chat, DeleteChatIntent } from "@/types";
+import { apiRequest } from "@/utils/api";
 
-export default function useChatDeletion(setChats: Dispatch<React.SetStateAction<Chat[]>>) {
+export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [chatIntent, setchatIntent] = useState<DeleteChatIntent>(null);
   const [isDeletingChat, setIsDeletingChat] = useState(false);
 
   const requestDeleteChat = (chatId: string) => setchatIntent({ type: "single", chatId });
-
   const requestDeleteAllChat = () => setchatIntent({ type: "all" });
-
   const cancelDeleteChat = () => setchatIntent(null);
 
-  const confirmDeleteChat = () => {
+  const confirmDeleteChat = async () => {
     if (!chatIntent) return;
 
     setIsDeletingChat(true);
 
-    getToken()
-      .then((token) => {
-        if (!token) throw new Error("No token");
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("You must be logged in to delete chat.");
 
-        if (chatIntent.type === "single") {
-          return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIntent.chatId}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          }).then((res) => {
-            if (!res.ok) throw new Error("Delete failed");
+      if (chatIntent.type === "single") {
+        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIntent.chatId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+          successMessage: "Chat deleted successfully!",
+        });
 
-            setChats((prev) => prev.filter((c) => c.id !== chatIntent.chatId));
+        setChats((prev) => prev.filter((c) => c.id !== chatIntent.chatId));
 
-            if (location.pathname.includes(chatIntent.chatId)) {
-              navigate("/", { replace: true });
-            }
-          });
+        if (location.pathname.includes(chatIntent.chatId)) {
+          navigate("/", { replace: true });
         }
+      }
 
-        if (chatIntent.type === "all") {
-          return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          }).then((res) => {
-            if (!res.ok) throw new Error("Delete all failed");
+      if (chatIntent.type === "all") {
+        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+          successMessage: "Chats deleted successfully!",
+        });
 
-            setChats([]);
-            navigate("/", { replace: true });
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setIsDeletingChat(false);
-        setchatIntent(null);
-      });
+        setChats([]);
+        navigate("/", { replace: true });
+      }
+    } finally {
+      setIsDeletingChat(false);
+      setchatIntent(null);
+    }
   };
 
   return {

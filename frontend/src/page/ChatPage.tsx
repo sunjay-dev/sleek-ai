@@ -62,11 +62,11 @@ export default function ChatPage() {
         onDeleteRequest={requestDeleteChat}
         openModal={openModal}
         onRenameRequest={onRenameRequest}
-        onWelcomeScreen={messages.length === 0 || isFetchingMessages}
+        onWelcomeScreen={messages?.length === 0 || isFetchingMessages}
       />
 
       <main className="flex flex-col flex-1 overflow-clip min-h-0 relative">
-        {messages.length === 0 && !isFetchingMessages ? (
+        {messages?.length === 0 && !isFetchingMessages ? (
           <LazyLoader>
             <div className="bg-light w-full h-full">
               <WelcomeScreen

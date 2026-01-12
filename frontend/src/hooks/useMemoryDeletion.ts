@@ -1,6 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import type { UserMemory } from "@/types";
+import { apiRequest } from "@/utils/api";
 
 export type MemoryDeleteIntent = { type: "single"; id: string } | { type: "all" } | null;
 
@@ -17,42 +18,33 @@ export default function useMemoryDeletion(setMemories: Dispatch<SetStateAction<U
     if (!intent) return;
     setIsDeleting(true);
 
-    const token = await getToken();
-    if (!token) throw new Error("No token found");
-
     try {
+      const token = await getToken();
+      if (!token) throw new Error("You must be logged in to delete memory.");
+
+      let url = "";
       if (intent.type === "single") {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${intent.id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to delete memory");
-            setMemories((prev) => (prev ? prev.filter((m) => m.id !== intent.id) : []));
-            setIntent(null);
-          })
-          .catch((err) => {
-            console.error(err);
-            alert("Failed to delete memory.");
-          });
+        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${intent.id}`;
+      } else {
+        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories`;
       }
-      if (intent.type === "all") {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Failed to clear memories");
-            setMemories([]);
-            setIntent(null);
-          })
-          .catch((err) => {
-            console.error(err);
-            alert("Failed to clear memories.");
-          });
+
+      await apiRequest(url, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+        successMessage: `${intent.type === "single" ? "Memory" : "Memories"} deleted successfully!`,
+      });
+
+      if (intent.type === "single") {
+        setMemories((prev) => (prev ? prev.filter((m) => m.id !== intent.id) : []));
+      } else {
+        setMemories([]);
       }
+
+      setIntent(null);
     } catch (err) {
       console.error(err);
+      alert("Failed to delete memory.");
     } finally {
       setIsDeleting(false);
     }

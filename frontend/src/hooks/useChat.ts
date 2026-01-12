@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Chat } from "@/types";
 import { useAuth } from "@clerk/clerk-react";
+import { apiRequest } from "@/utils/api";
 
 export default function useChat() {
   const [chats, setChats] = useState<Chat[]>([]);
@@ -8,21 +9,21 @@ export default function useChat() {
   const { getToken } = useAuth();
 
   useEffect(() => {
-    setIsFetchingChats(true);
-    getToken()
-      .then((token) => {
-        if (!token) return;
-        return fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+    async function handleFetchChats() {
+      setIsFetchingChats(true);
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("You must be logged in to fetch chats.");
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-      })
-      .then(async (res) => {
-        if (!res?.ok) throw new Error("Failed to fetch chats");
-        return res.json();
-      })
-      .then((data) => data && setChats(data))
-      .catch((err) => console.error("Failed to fetch chats", err))
-      .finally(() => setIsFetchingChats(false));
+
+        setChats(data);
+      } finally {
+        setIsFetchingChats(false);
+      }
+    }
+    handleFetchChats();
   }, [getToken]);
 
   const moveChatToTop = (id: string) => {
@@ -38,24 +39,18 @@ export default function useChat() {
 
   const handleRenameChat = async (chatId: string, newTitle: string) => {
     const token = await getToken();
-    if (!token) return;
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
+    if (!token) throw new Error("You must be logged in to rename chat.");
+    await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ title: newTitle }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to rename chat");
-        return data;
-      })
-      .then(() => {
-        setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
-      });
+      successMessage: "New title locked in.",
+    });
+
+    setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
   };
 
   return { chats, setChats, isFetchingChats, moveChatToTop, handleRenameChat };

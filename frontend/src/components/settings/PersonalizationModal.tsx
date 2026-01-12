@@ -2,6 +2,7 @@ import { useEffect, useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { Loader } from "@/components";
 import type { UserPreferences } from "@/types";
+import { apiRequest } from "@/utils/api";
 
 type Props = {
   preferences: UserPreferences | null;
@@ -27,31 +28,26 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
     }
 
     async function handleGetUserPreferences() {
-      const token = await getToken();
-      if (!token) return;
-
       setLoading(true);
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then(async (res) => {
-          const resData = await res.json();
-          if (!res.ok) throw new Error(resData?.message || "Failed to fetch preferences");
-          return resData;
-        })
-        .then((resData) => {
-          const fetchedData = {
-            nickname: resData.nickname || "",
-            occupation: resData.occupation || "",
-            about: resData.about || "",
-            customInstructions: resData.customInstructions || "",
-          };
-          setPreferences(fetchedData);
-          setInitialPreferences(fetchedData);
-        })
-        .catch((err) => console.error(err))
-        .finally(() => setLoading(false));
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("You must be logged in to get preferences.");
+
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const fetchedData = {
+          nickname: data.nickname || "",
+          occupation: data.occupation || "",
+          about: data.about || "",
+          customInstructions: data.customInstructions || "",
+        };
+        setPreferences(fetchedData);
+        setInitialPreferences(fetchedData);
+      } finally {
+        setLoading(false);
+      }
     }
 
     handleGetUserPreferences();
@@ -64,28 +60,22 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
 
   async function handleSave() {
     if (!preferences) return;
-    const token = await getToken();
-    if (!token) return;
-
     setSaving(true);
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(preferences),
-    })
-      .then(async (res) => {
-        const resData = await res.json();
-        if (!res.ok) throw new Error(resData?.message || "Failed to save preferences");
-        return resData;
-      })
-      .then(() => {
-        setInitialPreferences(preferences);
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Failed to save preferences");
-      })
-      .finally(() => setSaving(false));
+
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("You must be logged in to save changes.");
+
+      await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(preferences),
+        successMessage: "Changes saved successfully!",
+      });
+      setInitialPreferences(preferences);
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (loading) {
