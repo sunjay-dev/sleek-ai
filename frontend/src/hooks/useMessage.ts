@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Chat, Message } from "@/types";
+import type { Chat, Message } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
+import { validate } from "@/utils/validate";
+import { chatIdParamSchema } from "@app/shared/src/schemas/chat.schema";
 
 type Props = {
   moveChatToTop: (id: string) => void;
@@ -172,11 +174,18 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     async function handleGetAllChatMessages() {
       setIsFetchingMessages(true);
 
+      const result = validate(chatIdParamSchema, { chatId: chatId as string }, "Invalid chatId");
+      if (!result) {
+        setIsFetchingMessages(false);
+        navigate("/", { replace: true });
+        return;
+      }
+
       try {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to fetch messages.");
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${result.chatId}/message`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMessages(data.messages || []);

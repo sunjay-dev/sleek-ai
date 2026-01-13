@@ -1,8 +1,10 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import type { Chat, DeleteChatIntent } from "@/types";
+import type { Chat, DeleteChatIntent } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
+import { validate } from "@/utils/validate";
+import { chatIdParamSchema } from "@app/shared/src/schemas/chat.schema.js";
 
 export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();
@@ -26,7 +28,13 @@ export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]
       if (!token) throw new Error("You must be logged in to delete chat.");
 
       if (chatIntent.type === "single") {
-        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatIntent.chatId}`, {
+        const result = validate(chatIdParamSchema, { chatId: chatIntent.chatId }, "Please refresh the page and try again.");
+        if (!result) {
+          setIsDeletingChat(false);
+          return;
+        }
+
+        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${result.chatId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
           successMessage: "Chat deleted successfully!",

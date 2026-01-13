@@ -16,22 +16,24 @@ services:
     container_name: backend
     env_file:
       - ./backend/.env
-    # depends_on:
-    #   - redis
+    depends_on:
+      - redis
     ports:
       - "3000:3000"
     restart: always
 
   frontend:
-    build:  
+    build:
       context: .
       dockerfile: frontend/Dockerfile
     container_name: frontend
     env_file:
       - ./frontend/.env
     restart: always
+    depends_on:
+      - backend
     ports:
-      - "5175:80"
+      - "5173:80"
 
 volumes:
   redis_data:

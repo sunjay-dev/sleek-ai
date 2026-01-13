@@ -1,25 +1,22 @@
 ARG BUN_VERSION=1.3.3-alpine
-
+ARG PNPM_VERSION=10.17.1
 # ---------------------- build ----------------------
 FROM oven/bun:${BUN_VERSION} AS build
 
-RUN bun i -g pnpm
+RUN bun install -g pnpm@${PNPM_VERSION}
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY shared/package.json ./shared/package.json
-COPY frontend/package.json ./frontend/package.json
-COPY backend/package.json ./backend/package.json
-
-ENV HUSKY=0
-
-RUN pnpm install
-
 COPY shared ./shared
 COPY frontend ./frontend
 
+
+RUN pnpm install --filter "@app/frontend..." --frozen-lockfile --ignore-scripts
+
+
 WORKDIR /app/frontend
+
 RUN bun run build
 
 # ---------------------- deploy ----------------------

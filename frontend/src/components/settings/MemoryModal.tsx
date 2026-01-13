@@ -2,7 +2,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { Trash2, Search, Brain } from "lucide-react";
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import Loader from "../loaders/Loader";
-import type { UserMemory } from "@/types";
+import type { UserMemory } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
 
 type Props = {

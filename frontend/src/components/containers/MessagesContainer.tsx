@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { UserMessage, ModelMessage } from "@/components";
-import type { Message } from "@/types";
+import type { Message } from "@app/shared/src/types";
 import { useLastAssistantId } from "@/hooks";
 
 type Props = {

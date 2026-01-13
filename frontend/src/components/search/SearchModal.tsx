@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { X, MessageCircle } from "lucide-react";
 import { useDebounce } from "use-debounce";
-import type { SearchResult } from "@/types";
+import type { SearchResult } from "@app/shared/src/types";
 import SearchSkeleton from "./SearchSkeleton";
 import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { apiRequest } from "@/utils/api";
+import { validate } from "@/utils/validate";
+import { frontendSearchQuerySchema } from "@app/shared/src/schemas/search.schema";
 
 type Props = {
   onClose: () => void;
@@ -24,13 +26,16 @@ export default function SearchModal({ onClose }: Props) {
       return;
     }
 
+    const validated = validate(frontendSearchQuerySchema, { q: debouncedQuery });
+    if (!validated) return;
+
     async function fetchResults() {
       setIsLoading(true);
       try {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to search.");
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(debouncedQuery)}`, {
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(validated?.q as string)}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

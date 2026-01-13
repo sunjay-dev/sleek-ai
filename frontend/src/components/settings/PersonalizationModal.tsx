@@ -1,8 +1,10 @@
-import { useEffect, useState, type Dispatch } from "react";
+import { useEffect, useMemo, useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { Loader } from "@/components";
-import type { UserPreferences } from "@/types";
+import type { UserPreferences } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
+import { validate } from "@/utils/validate";
+import { userPreferencesSchema } from "@app/shared/src/schemas/user.schema";
 
 type Props = {
   preferences: UserPreferences | null;
@@ -17,7 +19,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
   const [loading, setLoading] = useState(!preferences);
   const [saving, setSaving] = useState(false);
 
-  const data = preferences || { nickname: "", occupation: "", about: "", customInstructions: "" };
+  const data = useMemo(() => preferences || { nickname: "", occupation: "", about: "", customInstructions: "" }, [preferences]);
 
   const isDirty = JSON.stringify(preferences) !== JSON.stringify(initialPreferences);
 
@@ -29,6 +31,12 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
 
     async function handleGetUserPreferences() {
       setLoading(true);
+
+      const result = validate(userPreferencesSchema, data, "Please refresh the page and try again.");
+      if (!result) {
+        setLoading(false);
+        return;
+      }
 
       try {
         const token = await getToken();
@@ -51,7 +59,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
     }
 
     handleGetUserPreferences();
-  }, [getToken, preferences, setInitialPreferences, setPreferences]);
+  }, [data, getToken, preferences, setInitialPreferences, setPreferences]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -110,7 +118,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
                   placeholder="What should I call you?"
                   type="text"
                   className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition"
-                  value={data.nickname}
+                  value={data.nickname as string}
                   onChange={handleChange}
                 />
               </div>
@@ -126,7 +134,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
                   placeholder="e.g. Student, Designer"
                   type="text"
                   className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition"
-                  value={data.occupation}
+                  value={data.occupation as string}
                   onChange={handleChange}
                 />
               </div>
@@ -141,7 +149,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
                 autoComplete="off"
                 placeholder="Hobbies, interests, goals..."
                 className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition h-20 resize-none custom-scroll custom-scroll-xs"
-                value={data.about}
+                value={data.about as string}
                 onChange={handleChange}
               />
             </div>
@@ -160,7 +168,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
                 autoComplete="off"
                 placeholder="e.g. 'Explain things simply' or 'Reply in JSON'"
                 className="w-full px-3 py-2 text-sm sm:text-xs border border-gray-500/20 rounded-lg outline-none transition h-24 resize-none"
-                value={data.customInstructions}
+                value={data.customInstructions as string}
                 onChange={handleChange}
               />
             </div>

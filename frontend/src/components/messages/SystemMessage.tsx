@@ -1,4 +1,4 @@
-import type { Message } from "@/types";
+import type { Message } from "@app/shared/src/types";
 import { AlertCircle } from "lucide-react";
 
 type Props = {

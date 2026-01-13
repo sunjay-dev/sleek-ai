@@ -1,17 +1,21 @@
 {
   "name": "gen-ai",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev": "pnpm -r --parallel run dev",
+    "start": "pnpm -r --parallel run start",
+    "lint:backend": "eslint backend/src --ext .ts --fix",
+    "lint:frontend": "eslint frontend/src --ext .ts,.tsx --fix"
   },
   "author": "https://github.com/sunjay-dev/",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "lint-staged": {
-    "backend/src/*.ts": [
-      "bun --cwd backend eslint --fix"
+    "backend/src/**/*.ts": [
+      "pnpm --filter @app/backend run lint:backend"
     ],
-    "frontend/src/*.{ts,tsx}": [
-      "bun --cwd frontend eslint --fix"
+    "frontend/src/**/*.{ts,tsx}": [
+      "pnpm --filter @app/frontend run lint:frontend"
     ]
   },
   "devDependencies": {

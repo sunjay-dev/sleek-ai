@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import type { Chat } from "@/types";
+import type { Chat } from "@app/shared/src/types";
 import { useAuth } from "@clerk/clerk-react";
 import { apiRequest } from "@/utils/api";
+import { chatRenameSchema } from "@app/shared/src/schemas/chat.schema.js";
+import { validate } from "@/utils/validate";
 
 export default function useChat() {
   const [chats, setChats] = useState<Chat[]>([]);
@@ -38,15 +40,19 @@ export default function useChat() {
   };
 
   const handleRenameChat = async (chatId: string, newTitle: string) => {
+    const result = validate(chatRenameSchema, { title: newTitle });
+    if (!result) return;
+
     const token = await getToken();
     if (!token) throw new Error("You must be logged in to rename chat.");
+
     await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ title: newTitle }),
+      body: JSON.stringify(result),
       successMessage: "New title locked in.",
     });
 

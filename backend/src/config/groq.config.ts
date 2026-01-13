@@ -36,7 +36,7 @@ export const createGroqAgent = (model: string, systemPrompt: string) => {
   const llm = getLLM(model);
   const summarizerLLM = getSummarizer();
 
-  const modelConfig = MODELS.get(model);
+  const modelConfig = MODELS.find((m) => model === m.id);
   const triggerTokens = modelConfig ? Math.floor(modelConfig.tpm * 0.5) : 3000;
 
   return createAgent({

@@ -1,7 +1,9 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import type { UserMemory } from "@/types";
+import type { UserMemory } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
+import { validate } from "@/utils/validate";
+import { memoryIdParamSchema } from "@app/shared/src/schemas/memory.schema.js";
 
 export type MemoryDeleteIntent = { type: "single"; id: string } | { type: "all" } | null;
 
@@ -24,7 +26,13 @@ export default function useMemoryDeletion(setMemories: Dispatch<SetStateAction<U
 
       let url = "";
       if (intent.type === "single") {
-        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${intent.id}`;
+        const result = validate(memoryIdParamSchema, { memoryId: intent.id }, "Please refresh the page and try again.");
+        if (!result) {
+          setIsDeleting(false);
+          return;
+        }
+
+        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${result.memoryId}`;
       } else {
         url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories`;
       }

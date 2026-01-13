@@ -2,7 +2,7 @@ import { useState } from "react";
 import PersonalizationModal from "./PersonalizationModal";
 import DataPrivacy from "./DataPrivacy";
 import SettingsSidebar from "./SettingsSidebar";
-import type { Tab, UserMemory, UserPreferences } from "@/types";
+import type { Tab, UserMemory, UserPreferences } from "@app/shared/src/types";
 import MemoryModal from "./MemoryModal";
 import useMemoryDeletion from "@/hooks/useMemoryDeletion";
 import DeleteModal from "../common/DeleteModal";

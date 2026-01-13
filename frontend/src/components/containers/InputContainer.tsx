@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ArrowUp, Loader2, Paperclip, X } from "lucide-react";
 import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks";
-import { models } from "@/data/models";
+import { modelsList } from "@app/shared/src/models";
 
 type Props = {
   sendMessage: (text: string, selectedModel: string, file?: File | null) => void;
@@ -107,7 +107,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               </div>
 
               <div className="flex items-center gap-2">
-                <ModelSelector models={models} selectedModel={selectedModel} onModelChange={onModelChange} isGenerating={isGenerating} />
+                <ModelSelector models={modelsList} selectedModel={selectedModel} onModelChange={onModelChange} isGenerating={isGenerating} />
 
                 <button
                   type="submit"

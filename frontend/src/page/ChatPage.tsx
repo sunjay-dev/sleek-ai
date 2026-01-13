@@ -1,7 +1,7 @@
 import { lazy, useState } from "react";
 import { Sidebar, LazyLoader } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
-import type { Chat, Tab } from "@/types";
+import type { Chat, Tab } from "@app/shared/src/types";
 import "@/styles/modelMessage.css";
 import "highlight.js/styles/atom-one-light.css";
 import "katex/dist/katex.css";

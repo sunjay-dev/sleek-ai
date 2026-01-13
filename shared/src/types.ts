@@ -1,25 +1,21 @@
+import { modelsList } from "./models";
+import { z } from "./index";
+import { userPreferencesSchema } from "./schemas/user.schema";
+
 export type Message = {
   id: string;
   text: string;
   role: "USER" | "ASSISTANT" | "SYSTEM";
 };
 
-export type Model = {
-  id: string;
-  name: string;
-};
+export type Model = (typeof modelsList)[number];
 
 export type Chat = {
   id: string;
   title: string | null;
 };
 
-export type UserPreferences = {
-  nickname: string;
-  occupation: string;
-  about: string;
-  customInstructions: string;
-};
+export type UserPreferences = z.infer<typeof userPreferencesSchema>;
 
 export type UserMemory = {
   id: string;

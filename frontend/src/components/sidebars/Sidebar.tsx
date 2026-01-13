@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
 import { useIsMobile } from "@/hooks";
-import type { Chat, Tab } from "@/types";
+import type { Chat, Tab } from "@app/shared/src/types";
 import { RoundedPanelLeft } from "../icons/RoundedPanelLeft";
 
 type Props = {

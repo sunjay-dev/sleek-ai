@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check, Sparkles, Box } from "lucide-react";
-import type { Model } from "@/types";
+import type { Model } from "@app/shared/src/types";
 
 type Props = {
   models: Model[];
