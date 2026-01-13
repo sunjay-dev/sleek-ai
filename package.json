@@ -1,13 +1,21 @@
 {
   "name": "gen-ai",
   "scripts": {
-    "lint-all": "bun --filter ./backend lint && bun --filter ./frontend lint",
     "prepare": "husky"
   },
   "author": "https://github.com/sunjay-dev/",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
+  "lint-staged": {
+    "backend/src/*.ts": [
+      "bun --cwd backend eslint --fix"
+    ],
+    "frontend/src/*.{ts,tsx}": [
+      "bun --cwd frontend eslint --fix"
+    ]
+  },
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
   }
 }
