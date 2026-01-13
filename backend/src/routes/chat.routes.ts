@@ -9,7 +9,7 @@ import {
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 import { validate, validateParams } from "../middlewares/validate.middlewares.js";
-import { chatIdParamSchema, chatRenameSchema, querySchema } from "../schemas/chat.schema.js";
+import { chatIdParamSchema, chatRenameSchema, querySchema } from "@app/shared/src/schemas/chat.schema.js";
 const router = new Hono();
 
 router.get("/", clerkMiddleware(), checkUser, handleGetUserChats);

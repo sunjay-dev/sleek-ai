@@ -10,18 +10,22 @@ services:
       - "6379:6379"
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: backend
     env_file:
       - ./backend/.env
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     ports:
       - "3000:3000"
     restart: always
 
   frontend:
-    build: ./frontend
+    build:  
+      context: .
+      dockerfile: frontend/Dockerfile
     container_name: frontend
     env_file:
       - ./frontend/.env

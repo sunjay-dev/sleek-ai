@@ -4,7 +4,7 @@ import { createGroqAgent, memoryLLM, titleLLM } from "../config/groq.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
-import { memoryExtractionSchema } from "../schemas/memory.schema.js";
+import { memoryExtractionSchema } from "@app/shared/src/schemas/memory.schema.js";
 import logger from "./logger.utils.js";
 
 export type Memories = {

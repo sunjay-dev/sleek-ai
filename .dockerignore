@@ -18,3 +18,4 @@ logs
 # Docker itself
 Dockerfile
 .dockerignore
+**/src/generated

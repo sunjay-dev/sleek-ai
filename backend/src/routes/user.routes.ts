@@ -9,8 +9,8 @@ import {
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 import { validate, validateParams } from "../middlewares/validate.middlewares.js";
-import { userPreferencesSchema } from "../schemas/user.schema.js";
-import { memoryIdParamSchema } from "../schemas/memory.schema.js";
+import { userPreferencesSchema } from "@app/shared/src/schemas/user.schema.js";
+import { memoryIdParamSchema } from "@app/shared/src/schemas/memory.schema.js";
 
 const router = new Hono();
 

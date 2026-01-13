@@ -1,5 +1,5 @@
 import { tool } from "langchain";
-import { z } from "zod";
+import { z } from "@app/shared/src/index.js";
 import logger from "../utils/logger.utils.js";
 
 export const getCurrentWeather = tool(

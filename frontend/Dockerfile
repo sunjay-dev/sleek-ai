@@ -1,25 +1,34 @@
 ARG BUN_VERSION=1.3.3-alpine
 
-# ---------------------- base ----------------------
+# ---------------------- build ----------------------
+FROM oven/bun:${BUN_VERSION} AS build
 
-FROM oven/bun:${BUN_VERSION} AS base
+RUN bun i -g pnpm
 
 WORKDIR /app
 
-COPY package*.json bun.lock ./
-RUN bun install
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY shared/package.json ./shared/package.json
+COPY frontend/package.json ./frontend/package.json
+COPY backend/package.json ./backend/package.json
 
-COPY . .
+ENV HUSKY=0
 
+RUN pnpm install
+
+COPY shared ./shared
+COPY frontend ./frontend
+
+WORKDIR /app/frontend
 RUN bun run build
 
 # ---------------------- deploy ----------------------
 
 FROM nginx:1.27-alpine AS deploy
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/frontend/dist /usr/share/nginx/html
 
 EXPOSE 80
 

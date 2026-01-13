@@ -2,7 +2,7 @@ import { ChatGroq } from "@langchain/groq";
 import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import checkpointer from "./redisCheckpointer.config.js";
-import { MODELS } from "../models.js";
+import { MODELS } from "@app/shared/src/models.js";
 
 const llmCache = new Map();
 let summarizerCache: ChatGroq | null = null;
