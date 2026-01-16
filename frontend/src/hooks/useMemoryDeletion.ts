@@ -4,6 +4,7 @@ import type { UserMemory } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
 import { memoryIdParamSchema } from "@app/shared/src/schemas/memory.schema.js";
+import { toast } from "sonner";
 
 export type MemoryDeleteIntent = { type: "single"; id: string } | { type: "all" } | null;
 
@@ -50,9 +51,8 @@ export default function useMemoryDeletion(setMemories: Dispatch<SetStateAction<U
       }
 
       setIntent(null);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete memory.");
+    } catch {
+      toast.error("Oops!, Failed to delete memory.");
     } finally {
       setIsDeleting(false);
     }

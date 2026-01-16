@@ -1,11 +1,15 @@
 import { modelsList } from "./models";
 import { z } from "./index";
 import { userPreferencesSchema } from "./schemas/user.schema";
+import { uploadedFileSchema } from "./schemas/message.schema";
+
+export type UploadedFile = z.infer<typeof uploadedFileSchema>;
 
 export type Message = {
   id: string;
   text: string;
   role: "USER" | "ASSISTANT" | "SYSTEM";
+  messageFiles?: UploadedFile[] | null;
 };
 
 export type Model = (typeof modelsList)[number];

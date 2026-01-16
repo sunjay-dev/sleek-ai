@@ -62,7 +62,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
                 isGenerating={isLastAI && isGenerating}
               />
             ) : (
-              <UserMessage key={message.id} text={message.text} isCopied={isCopied} onCopy={() => handleCopy(message.text, message.id)} />
+              <UserMessage key={message.id} message={message} isCopied={isCopied} onCopy={() => handleCopy(message.text, message.id)} />
             )}
           </div>
         );

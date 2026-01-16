@@ -59,14 +59,30 @@ model Chat {
 }
 
 model Message {
-  id        String      @id @default(uuid())
-  chatId    String
-  text      String
-  createdAt DateTime    @default(now())
-  role      MessageRole @default(USER)
-  chat      Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  id           String        @id @default(uuid())
+  chatId       String
+  text         String
+  createdAt    DateTime      @default(now())
+  role         MessageRole   @default(USER)
+  chat         Chat          @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  messageFiles MessageFile[]
 
   @@index([chatId, createdAt])
+}
+
+model MessageFile {
+  id        String @id @default(uuid())
+  messageId String
+
+  fileUrl  String
+  fileName String
+  fileType String
+
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
 }
 
 enum MessageRole {

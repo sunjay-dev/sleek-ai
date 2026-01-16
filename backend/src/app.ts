@@ -18,12 +18,14 @@ import messageRouter from "./routes/message.routes.js";
 import clerkRouter from "./routes/clerk.routes.js";
 import userRouter from "./routes/user.routes.js";
 import searchRouter from "./routes/search.routes.js";
+import uploadRouter from "./routes/upload.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.middlewares.js";
 
 app.route("/", serverRoutes);
 app.route("/api/chat", chatRouter);
 app.route("/api/chat/:chatId/message", messageRouter);
 app.route("/api/user", userRouter);
+app.route("/api/upload", uploadRouter);
 app.route("/api/search", searchRouter);
 app.route("/api/clerk", clerkRouter);
 

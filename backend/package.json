@@ -25,6 +25,7 @@
     "@langchain/tavily": "^1.2.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "cloudinary": "^2.8.0",
     "hono": "^4.11.2",
     "langchain": "^1.1.5",
     "pino": "^10.1.0",
@@ -35,6 +36,7 @@
     "@types/node": "^25.0.3",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "prisma": "^7.2.0"
   }

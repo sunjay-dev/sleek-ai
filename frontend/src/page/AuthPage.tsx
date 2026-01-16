@@ -28,7 +28,7 @@ export default function AuthPage() {
       <div className="relative z-10 flex min-h-screen w-full">
         <div className="hidden w-1/2 flex-col justify-between p-12 md:flex">
           <div className="flex items-center gap-2 font-semibold tracking-tighter text-xl">
-            <img src="./logo.webp" alt="Chatty AI Logo" className="h-8 w-8 object-cover" />
+            <img src="/logo.webp" alt="Chatty AI Logo" className="h-8 w-8 object-cover" />
             Chatty AI
           </div>
           <div className="max-w-lg mb-20">

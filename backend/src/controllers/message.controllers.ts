@@ -7,12 +7,10 @@ import logger from "../utils/logger.utils.js";
 
 export async function handleUserMessageResponse(c: Context) {
   const requestStartTime = new Date();
-
   const { chatId } = c.get("param");
   const userId = c.get("user");
-  const { query, model } = c.get("body");
+  const { query, model, messageFiles } = c.get("body");
   const timezone = c.req.header("x-client-timezone") || "UTC";
-
   const [chat, preferences, memories] = await Promise.all([
     prisma.chat.findFirst({ where: { id: chatId, userId }, select: { id: true } }),
     prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
@@ -39,13 +37,20 @@ export async function handleUserMessageResponse(c: Context) {
         await stream.write(chunk);
       }
 
+      const filesToCreate = messageFiles?.length ? messageFiles : undefined;
+
       await prisma.chat.update({
         where: { id: chatId },
         data: {
           updatedAt: requestStartTime,
           messages: {
             create: [
-              { text: query, role: "USER", createdAt: requestStartTime },
+              {
+                text: query,
+                role: "USER",
+                createdAt: requestStartTime,
+                messageFiles: filesToCreate ? { create: filesToCreate } : undefined,
+              },
               { text: fullResponse, role: "ASSISTANT" },
             ],
           },
@@ -83,7 +88,7 @@ export async function handleGetAllChatMessages(c: Context) {
   const userId = c.get("user");
   const { chatId } = c.get("param");
 
-  const messages = await prisma.chat.findFirst({
+  const chat = await prisma.chat.findFirst({
     where: { id: chatId, userId },
     select: {
       id: true,
@@ -94,14 +99,21 @@ export async function handleGetAllChatMessages(c: Context) {
           id: true,
           text: true,
           role: true,
+          messageFiles: {
+            select: {
+              fileName: true,
+              fileType: true,
+              fileUrl: true,
+            },
+          },
         },
       },
     },
   });
 
-  if (!messages) {
+  if (!chat) {
     throw new NotFoundError("Chat not found or unauthorized");
   }
 
-  return c.json(messages, 200);
+  return c.json(chat, 200);
 }

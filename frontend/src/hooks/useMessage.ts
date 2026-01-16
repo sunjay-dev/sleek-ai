@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Chat, Message } from "@app/shared/src/types";
+import type { Chat, Message, UploadedFile } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
 import { chatIdParamSchema } from "@app/shared/src/schemas/chat.schema";
@@ -26,7 +26,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const rafPendingRef = useRef(false);
   const justCreatedChatRef = useRef<string | null>(null);
 
-  const sendMessage = async (text: string, model: string, file?: File | null) => {
+  const sendMessage = async (text: string, model: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
     if (!text.trim()) return;
 
     const token = await getToken();
@@ -36,6 +36,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
       id: crypto.randomUUID(),
       role: "USER",
       text,
+      messageFiles: optimisticFiles || messageFiles,
     };
     setMessages((m) => [...m, userMsg]);
 
@@ -73,7 +74,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
           Authorization: `Bearer ${token}`,
           "x-client-timezone": userTimeZone,
         },
-        body: JSON.stringify({ query: text, model, file }),
+        body: JSON.stringify({ query: text, model, messageFiles }),
         signal: controller.signal,
       })
         .then(async (res) => {
