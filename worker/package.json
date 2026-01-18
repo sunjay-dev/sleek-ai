@@ -1,0 +1,29 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "file worker",
+  "main": "src/app.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/app.ts",
+    "build": "tsc",
+    "start": "bun src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.17.1",
+  "dependencies": {
+    "@langchain/classic": "^1.0.9",
+    "@langchain/community": "^1.1.4",
+    "@langchain/core": "^1.1.15",
+    "@langchain/google-genai": "^2.1.10",
+    "@langchain/pinecone": "^1.0.1",
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^6.1.3",
+    "bullmq": "^5.66.5",
+    "langchain": "^1.2.7",
+    "mammoth": "^1.11.0",
+    "pdfjs-dist": "^5.4.530"
+  }
+}
