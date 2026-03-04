@@ -1,4 +1,4 @@
-ARG BUN_VERSION=1.3.3-alpine
+ARG BUN_VERSION=1.3.10-alpine
 ARG PNPM_VERSION=10.17.1
 # ---------------------- base stage ----------------------
 FROM oven/bun:${BUN_VERSION} AS base

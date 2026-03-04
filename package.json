@@ -1,5 +1,6 @@
 {
   "name": "sleek-ai",
+  "description": "AI chatBot",
   "scripts": {
     "prepare": "husky",
     "dev": "pnpm -r --parallel run dev",
@@ -8,7 +9,7 @@
     "lint:frontend": "eslint frontend/src --ext .ts,.tsx --fix"
   },
   "author": "https://github.com/sunjay-dev/",
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.17.1",
   "lint-staged": {
     "backend/src/**/*.ts": [

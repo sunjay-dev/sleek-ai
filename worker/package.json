@@ -10,8 +10,8 @@
     "start": "bun src/app.ts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "https://github.com/sunjay-dev/",
+  "license": "MIT",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
     "@langchain/classic": "^1.0.9",
