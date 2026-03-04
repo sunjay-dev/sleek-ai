@@ -15,8 +15,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["index.html", "offline.html", "*.webp", "fonts/inter/*.woff2"],
       manifest: {
-        name: "Chatty AI",
-        short_name: "Chatty AI",
+        name: "Sleek AI",
+        short_name: "Sleek AI",
         description: "Your friendly AI chat companion—talk, ask, and explore ideas anytime.",
         theme_color: "#8C8C8C",
         background_color: "#ffffff",

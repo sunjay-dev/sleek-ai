@@ -28,8 +28,8 @@ export default function AuthPage() {
       <div className="relative z-10 flex min-h-screen w-full">
         <div className="hidden w-1/2 flex-col justify-between p-12 md:flex">
           <div className="flex items-center gap-2 font-semibold tracking-tighter text-xl">
-            <img src="/logo.webp" alt="Chatty AI Logo" className="h-8 w-8 object-cover" />
-            Chatty AI
+            <img src="/logo.webp" alt="Sleek AI Logo" className="w-9 h-8" />
+            Sleek AI
           </div>
           <div className="max-w-lg mb-20">
             <h1 className="mb-6 text-5xl font-medium tracking-tight leading-tight">
@@ -44,14 +44,14 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="text-xs text-neutral-400">© {getCurrentYear()} Chatty AI Inc. All rights reserved.</div>
+          <div className="text-xs text-neutral-400">© {getCurrentYear()} Sleek AI Inc. All rights reserved.</div>
         </div>
 
         <div className="flex w-full flex-col items-center justify-center p-4 md:w-1/2">
           <div className="md:hidden flex flex-col items-center mb-8 text-center space-y-2">
-            <div className="flex items-center gap-1 font-semibold sm:font-bold tracking-tighter text-2xl">
-              <img src="./logo.webp" alt="Chatty AI Logo" className="h-8 w-8 object-cover" />
-              Chatty AI
+            <div className="flex items-center gap-1.5 font-semibold sm:font-bold tracking-tighter text-2xl">
+              <img src="./logo.webp" alt="Sleek AI Logo" className="w-9 h-8" />
+              Sleek AI
             </div>
             <p className="text-sm text-neutral-500">Turn ideas into reality with an AI partner.</p>
           </div>
@@ -70,7 +70,7 @@ export default function AuthPage() {
             />
           </div>
 
-          <div className="md:hidden mt-8 text-xs text-neutral-400">© {getCurrentYear()} Chatty AI Inc.</div>
+          <div className="md:hidden mt-8 text-xs text-neutral-400">© {getCurrentYear()} Sleek AI.</div>
         </div>
       </div>
     </div>

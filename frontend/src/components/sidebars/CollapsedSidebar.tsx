@@ -36,8 +36,8 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcom
       </div>
 
       <div className="hidden fixed top-3 left-3 md:flex items-center gap-2 z-50">
-        <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-7 h-7 cursor-pointer">
-          <img src="/logo.webp" alt="Chatty-AI Logo" className="w-full h-full object-contain" />
+        <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-8 h-7 cursor-pointer">
+          <img src="/logo.webp" alt="Sleek AI Logo" className="w-full h-full object-fill" />
         </div>
 
         <div className="bg-white rounded-full shadow-xs border border-gray-500/20 flex items-center gap-1 px-1.5 py-0.5">

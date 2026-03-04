@@ -86,13 +86,10 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
         className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
-          <div className="flex items-center gap-2">
-            <img className="h-7 w-7 md:h-6 md:w-6" src="/logo.webp" alt="Logo" />
-            <span className="font-semibold text-base md:text-sm">Chatty-AI</span>
-          </div>
+          <img className="w-8 h-7 md:w-8 md:h-7" src="/logo.webp" alt="Sleek AI Logo" />
           <button
             onClick={() => setCollapsed(true)}
-            className="h-8 w-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-200/60 active:bg-gray-200/60"
+            className="w-8 h-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-200/60 active:bg-gray-200/60"
           >
             <RoundedPanelLeft size={isMobile ? "18" : "16"} />
           </button>

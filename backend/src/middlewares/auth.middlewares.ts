@@ -3,7 +3,7 @@ import type { Next, Context } from "hono";
 
 export async function checkUser(c: Context, next: Next) {
   const auth = getAuth(c);
-  if (!auth?.userId) return c.json({ message: "Please login to access the chatty AI" }, 401);
+  if (!auth?.userId) return c.json({ message: "Please login to access the Sleek ai." }, 401);
   c.set("user", auth.userId);
   await next();
 }

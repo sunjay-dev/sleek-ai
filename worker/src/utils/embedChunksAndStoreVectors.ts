@@ -1,7 +1,8 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
-import { Document } from "@langchain/core/documents";
+import { type Document } from "@langchain/core/documents";
+import logger from "./logger.utils.js";
 
 const embeddingsClient = new GoogleGenerativeAIEmbeddings({
   model: process.env.GOOGLE_EMBEDDINGS_MODEL!,
@@ -11,12 +12,24 @@ const pinecone = new Pinecone();
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
 
 export async function embedChunksAndStoreVectors(chunks: Document<Record<string, any>>[], extraMetadata: Record<string, any>) {
-  const chunksWithMeta = chunks.map((c) => ({
+  const cleanChunks = chunks.filter((c) => typeof c.pageContent === "string" && c.pageContent.trim().length > 0);
+
+  if (!cleanChunks.length) {
+    throw new Error("No valid chunks to embed");
+  }
+
+  const chunksWithMeta = cleanChunks.map((c) => ({
     pageContent: c.pageContent,
-    metadata: { ...(c.metadata || {}), ...extraMetadata },
+    metadata: {
+      chatId: extraMetadata.chatId,
+      fileId: extraMetadata.fileId,
+      page: c.metadata?.pageNumber,
+      fromLine: c.metadata?.fromLine,
+      toLine: c.metadata?.toLine,
+    },
   }));
 
   await PineconeStore.fromDocuments(chunksWithMeta, embeddingsClient, { pineconeIndex: index });
 
-  console.log(`Stored ${chunks.length} chunks in Pinecone.`);
+  logger.info({ message: "Stored chunks in Pinecone.", chunks: chunks.length });
 }

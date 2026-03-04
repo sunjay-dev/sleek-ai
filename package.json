@@ -1,5 +1,5 @@
 {
-  "name": "gen-ai",
+  "name": "sleek-ai",
   "scripts": {
     "prepare": "husky",
     "dev": "pnpm -r --parallel run dev",
