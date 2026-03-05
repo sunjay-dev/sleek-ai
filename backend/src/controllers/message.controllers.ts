@@ -11,18 +11,23 @@ export async function handleUserMessageResponse(c: Context) {
   const userId = c.get("user");
   const { query, model, messageFiles } = c.get("body");
   const timezone = c.req.header("x-client-timezone") || "UTC";
-  const [chat, preferences, memories] = await Promise.all([
-    prisma.chat.findFirst({ where: { id: chatId, userId }, select: { id: true } }),
-    prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
-    prisma.userMemory.findMany({ where: { userId }, select: { content: true } }),
-  ]);
-
-  if (!chat) throw new NotFoundError("Chat not found or unauthorized");
+  if (!chatId) throw new NotFoundError("Chat ID required");
 
   return streamText(c, async (stream) => {
     let fullResponse = "";
 
     try {
+      const [chat, preferences, memories] = await Promise.all([
+        prisma.chat.findUnique({ where: { id: chatId, userId }, select: { id: true } }),
+        prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
+        prisma.userMemory.findMany({ where: { userId }, select: { content: true } }),
+      ]);
+
+      if (!chat) {
+        await stream.write("\n\n[Error: Chat not found or unauthorized]");
+        return;
+      }
+
       const aiStream = generateAIResponse({
         query,
         threadId: chatId,

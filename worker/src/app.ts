@@ -38,6 +38,15 @@ const worker = new Worker("file-ingest", handler, {
 
 worker.on("ready", () => logger.info({ message: "Worker is ready to process jobs." }));
 
-worker.on("completed", (job) => logger.info({ message: "Job ${job.id} completed successfully", job: job.id }));
+worker.on("completed", (job) => logger.info({ message: `Job ${job.id} completed successfully`, job: job.id }));
 
 worker.on("failed", (job, error) => console.error({ message: "Job failed", job: job?.id, error }));
+
+const gracefulShutdown = async () => {
+  logger.info({ message: "Shutting down worker gracefully." });
+  await worker.close();
+  process.exit(0);
+};
+
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);

@@ -45,16 +45,21 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
 
       setAttachments((prev) => [...prev, ...newAttachments]);
 
-      newAttachments.forEach(async (attachment) => {
+      const uploadPromises = newAttachments.map(async (attachment) => {
         try {
           const data = await uploadToCloudinary({ file: attachment.file, getToken });
 
-          setAttachments((prev) => prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item)));
+          setAttachments((prev) =>
+            prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item))
+          );
         } catch {
-          setAttachments((prev) => prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item)));
-          throw new Error(`Failed to upload ${attachment.file.name}`);
+          setAttachments((prev) =>
+            prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item))
+          );
         }
       });
+
+      await Promise.allSettled(uploadPromises);
 
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -128,9 +133,8 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                         <img
                           src={URL.createObjectURL(att.file)}
                           alt="Preview"
-                          className={`h-16 w-auto rounded-lg object-contain border border-gray-100 transition-all ${
-                            att.status === "uploading" ? "opacity-50 blur-[1px]" : ""
-                          }`}
+                          className={`h-16 w-auto rounded-lg object-contain border border-gray-100 transition-all ${att.status === "uploading" ? "opacity-50 blur-[1px]" : ""
+                            }`}
                         />
                         <button
                           type="button"
@@ -202,9 +206,8 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                 />
                 <label
                   htmlFor="file-upload"
-                  className={`flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent active:border-transparent hover:bg-[#e9e9e980] active:bg-[#e9e9e980] text-primary cursor-pointer ${
-                    isBusy ? "opacity-50 pointer-events-none" : ""
-                  }`}
+                  className={`flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent active:border-transparent hover:bg-[#e9e9e980] active:bg-[#e9e9e980] text-primary cursor-pointer ${isBusy ? "opacity-50 pointer-events-none" : ""
+                    }`}
                   title="Attach files"
                 >
                   <Paperclip size={16} strokeWidth={1.8} />
@@ -219,11 +222,10 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                   disabled={(!hasContent && !isGenerating) || isGlobalUploading}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
-                  ${
-                    isBusy || hasContent
+                  ${isBusy || hasContent
                       ? "bg-secondary text-white hover:bg-neutral-700 active:bg-neutral-700"
                       : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"
-                  }
+                    }
                 `}
                 >
                   {isGenerating || isGlobalUploading ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}

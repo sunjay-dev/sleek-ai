@@ -36,7 +36,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcom
       </div>
 
       <div className="hidden fixed top-3 left-3 md:flex items-center gap-2 z-50">
-        <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-8 h-7 cursor-pointer">
+        <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-9 h-7.5 cursor-pointer">
           <img src="/logo.webp" alt="Sleek AI Logo" className="w-full h-full object-fill" />
         </div>
 

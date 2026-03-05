@@ -86,7 +86,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
         className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
-          <img className="w-8 h-7 md:w-8 md:h-7" src="/logo.webp" alt="Sleek AI Logo" />
+          <img className="w-9 h-7.5" src="/logo.webp" alt="Sleek AI Logo" />
           <button
             onClick={() => setCollapsed(true)}
             className="w-8 h-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-200/60 active:bg-gray-200/60"
