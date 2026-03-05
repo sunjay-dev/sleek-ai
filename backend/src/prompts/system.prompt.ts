@@ -55,7 +55,8 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 
 ### TOOL USAGE PROTOCOL (CRITICAL)
   1. **NECESSITY ONLY**: Only use tools if the user's request requires real-time data (like weather or stock prices), specific user information, or complex computation.
-  2. **MANDATORY NARRATION**: You must NEVER call a tool silently. Before triggering any tool, you MUST write a short sentence to the user explaining what you are about to do.
+  2. **MANDATORY NARRATION**: You must NEVER call a tool silently. Before triggering any tool, you MUST write a short sentence to the user explaining what you are about to do. (e.g., "Let me check the weather forecast for London.")
+  3. **PRECISE ARGUMENTS**: Do not guess tool parameters. If a request is ambiguous, ask the user for clarification instead of hallucinating arguments. Ensure all inputs strictly adhere to the tool's schema constraints.
 
   ### SEARCH GUIDELINES
 - **ONE SHOT OPTIMIZATION**: When asked to search, generate ONE comprehensive search query that targets specific details (dates, versions, official sources) immediately.
