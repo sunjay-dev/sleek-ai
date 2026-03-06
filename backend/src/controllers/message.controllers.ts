@@ -12,33 +12,33 @@ export async function handleUserMessageResponse(c: Context) {
   const { query, model, messageFiles } = c.get("body");
   const timezone = c.req.header("x-client-timezone") || "UTC";
 
-  let finalQuery = `User message:\n${query}`;
-
-  try {
-    if (messageFiles && Array.isArray(messageFiles) && messageFiles.length > 0) {
-      const extractionPromises = messageFiles.map((file: any) => {
-        if (file.fileUrl) {
-          return extractImageData(file.fileUrl);
-        }
-        return Promise.resolve(null);
-      });
-
-      const extractionResults = await Promise.allSettled(extractionPromises);
-
-      const successfulData = extractionResults
-        .filter((result) => result.status === "fulfilled" && result.value)
-        .map((result: any) => result.value as string);
-
-      if (successfulData.length > 0) {
-        finalQuery += `\n\nExtracted information from attached images:\n${successfulData.join("\n---\n")}\n\nUse this information if relevant when answering.`;
-      }
-    }
-  } catch (error) {
-    logger.error({ message: "Failed to process attached images", error });
-  }
-
   return streamText(c, async (stream) => {
     let fullResponse = "";
+    let finalQuery = query;
+
+    try {
+      if (messageFiles && Array.isArray(messageFiles) && messageFiles.length > 0) {
+        await stream.write(JSON.stringify({ type: "loading", content: "Analyzing image..." }) + "\n");
+        const extractionPromises = messageFiles.map((file: any) => {
+          if (file.fileUrl) {
+            return extractImageData(file.fileUrl);
+          }
+          return Promise.resolve(null);
+        });
+
+        const extractionResults = await Promise.allSettled(extractionPromises);
+
+        const successfulData = extractionResults
+          .filter((result) => result.status === "fulfilled" && result.value)
+          .map((result: any) => result.value as string);
+
+        if (successfulData.length > 0) {
+          finalQuery += `\n\nExtracted information from attached images:\n${successfulData.join("\n---\n")}\n\nUse this information if relevant when answering.`;
+        }
+      }
+    } catch (error) {
+      logger.error({ message: "Failed to process attached images", error });
+    }
 
     try {
       const [chat, preferences, memories] = await Promise.all([
@@ -48,7 +48,7 @@ export async function handleUserMessageResponse(c: Context) {
       ]);
 
       if (!chat) {
-        await stream.write("\n\n[Error: Chat not found or unauthorized]");
+        await stream.write(JSON.stringify({ type: "error", content: "Chat not found or unauthorized" }) + "\n");
         return;
       }
 
@@ -61,9 +61,18 @@ export async function handleUserMessageResponse(c: Context) {
         timezone,
       });
 
+      let isFirstChunk = true;
       for await (const chunk of aiStream) {
+        if (isFirstChunk) {
+          await stream.write(JSON.stringify({ type: "loading", content: null }) + "\n");
+          isFirstChunk = false;
+        }
         fullResponse += chunk;
-        await stream.write(chunk);
+        await stream.write(JSON.stringify({ type: "text", content: chunk }) + "\n");
+      }
+
+      if (isFirstChunk) {
+        await stream.write(JSON.stringify({ type: "loading", content: null }) + "\n");
       }
 
       const filesToCreate = messageFiles?.length ? messageFiles : undefined;
@@ -93,7 +102,7 @@ export async function handleUserMessageResponse(c: Context) {
         chatId,
         error: error.message,
       });
-      await stream.write("\n\n[Error: Response generation interrupted]");
+      await stream.write(JSON.stringify({ type: "error", content: "Response generation interrupted" }) + "\n");
     }
   });
 }

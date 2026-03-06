@@ -10,6 +10,7 @@ export type Message = {
   text: string;
   role: "USER" | "ASSISTANT" | "SYSTEM";
   messageFiles?: UploadedFile[] | null;
+  status?: string | null;
 };
 
 export type Model = (typeof modelsList)[number];

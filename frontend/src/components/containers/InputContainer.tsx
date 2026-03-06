@@ -33,35 +33,59 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
 
+  const processFiles = async (files: File[]) => {
+    if (!files.length) return;
+
+    const newAttachments: Attachment[] = files.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      status: "uploading",
+    }));
+
+    setAttachments((prev) => [...prev, ...newAttachments]);
+
+    const uploadPromises = newAttachments.map(async (attachment) => {
+      try {
+        const data = await uploadToCloudinary({ file: attachment.file, getToken });
+
+        setAttachments((prev) =>
+          prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item))
+        );
+      } catch {
+        setAttachments((prev) =>
+          prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item))
+        );
+      }
+    });
+
+    await Promise.allSettled(uploadPromises);
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
+      await processFiles(Array.from(e.target.files));
+    }
+  };
 
-      const newAttachments: Attachment[] = newFiles.map((file) => ({
-        id: crypto.randomUUID(),
-        file,
-        status: "uploading",
-      }));
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData.items;
+    const files: File[] = [];
 
-      setAttachments((prev) => [...prev, ...newAttachments]);
-
-      const uploadPromises = newAttachments.map(async (attachment) => {
-        try {
-          const data = await uploadToCloudinary({ file: attachment.file, getToken });
-
-          setAttachments((prev) =>
-            prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item))
-          );
-        } catch {
-          setAttachments((prev) =>
-            prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item))
-          );
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.startsWith("image/")) {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
         }
-      });
+      }
+    }
 
-      await Promise.allSettled(uploadPromises);
-
-      if (fileInputRef.current) fileInputRef.current.value = "";
+    if (files.length > 0) {
+      e.preventDefault();
+      await processFiles(files);
     }
   };
 
@@ -187,6 +211,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder="Ask Anything"
               rows={1}
               className="w-full custom-scroll custom-scroll-xs py-2 px-1.5 text-primary text-sm focus:outline-none resize-none overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"

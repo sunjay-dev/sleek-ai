@@ -53,26 +53,35 @@ type Props = {
   onResend?: () => void;
   hideToolTip?: boolean;
   isGenerating?: boolean;
+  status?: string | null;
 };
 
-export default memo(function ModelMessage({ text, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
+export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
+
   return (
     <div className="max-w-full text-sm py-4 rounded-xl">
-      {isGenerating && text.length === 0 ? (
+      {isGenerating && text.length === 0 && !status ? (
         <span className="inline-block animate-pulse font-bold">▍</span>
       ) : (
-        <div className={`markdown ${isGenerating && "streamingCursor"}`}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[
-              rehypeHighlight,
-              [rehypeKatex, { strict: false }],
-              [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
-            ]}
-            components={{ pre: CodeBlock }}
-          >
-            {text}
-          </ReactMarkdown>
+        <div className={`markdown ${isGenerating && !status && "streamingCursor"}`}>
+          {status && (
+            <div className="analyzing-container">
+              <span>{status}</span>
+            </div>
+          )}
+          {text && (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[
+                rehypeHighlight,
+                [rehypeKatex, { strict: false }],
+                [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+              ]}
+              components={{ pre: CodeBlock }}
+            >
+              {text}
+            </ReactMarkdown>
+          )}
         </div>
       )}
 

@@ -55,6 +55,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
               <ModelMessage
                 key={message.id}
                 text={message.text}
+                status={message.status}
                 isCopied={isCopied}
                 onCopy={() => handleCopy(message.text, message.id)}
                 onResend={isLastAI ? onResend : undefined}

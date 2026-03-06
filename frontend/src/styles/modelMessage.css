@@ -34,13 +34,13 @@ th code {
   white-space: normal;
 }
 
-.markdown li > p {
+.markdown li>p {
   display: inline;
   margin: 0;
   padding: 0;
 }
 
-.markdown li + li {
+.markdown li+li {
   margin-top: 0.25rem;
 }
 
@@ -127,7 +127,7 @@ th code {
   font-size: 1rem;
 }
 
-.markdown > *:first-child {
+.markdown>*:first-child {
   margin-top: 0 !important;
 }
 
@@ -284,7 +284,7 @@ pre {
   transform: translate(1px, -1px);
 }
 
-.streamingCursor > *:last-child::after {
+.streamingCursor>*:last-child::after {
   content: "▋";
   display: inline-block;
   margin-left: 4px;
@@ -292,11 +292,39 @@ pre {
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
+  }
+}
+
+.analyzing-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: #6b7280;
+  font-weight: 500;
+  animation: pulse-opacity 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.analyzing-container span {
+  display: inline-block;
+}
+
+@keyframes pulse-opacity {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
   }
 }

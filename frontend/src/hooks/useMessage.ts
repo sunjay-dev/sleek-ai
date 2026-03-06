@@ -22,7 +22,8 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
   const abortRef = useRef<AbortController | null>(null);
   const streamingIdRef = useRef<string | null>(null);
-  const bufferRef = useRef("");
+  const textBufferRef = useRef("");
+  const statusBufferRef = useRef<string | null>(null);
   const rafPendingRef = useRef(false);
   const justCreatedChatRef = useRef<string | null>(null);
 
@@ -61,9 +62,10 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
       const assistantId = crypto.randomUUID();
       streamingIdRef.current = assistantId;
-      bufferRef.current = "";
+      textBufferRef.current = "";
+      statusBufferRef.current = null;
 
-      setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "" }]);
+      setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "", status: null }]);
 
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -82,17 +84,43 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
           const reader = res.body.getReader();
           const decoder = new TextDecoder();
+          let streamBuffer = "";
 
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            bufferRef.current += decoder.decode(value, { stream: true });
+            streamBuffer += decoder.decode(value, { stream: true });
 
-            if (!rafPendingRef.current) {
+            const lines = streamBuffer.split("\n");
+            streamBuffer = lines.pop() || ""; // Keep the last incomplete block in buffer
+
+            let changed = false;
+
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              try {
+                const parsed = JSON.parse(line);
+                if (parsed.type === "text") {
+                  textBufferRef.current += parsed.content;
+                  changed = true;
+                } else if (parsed.type === "loading") {
+                  statusBufferRef.current = parsed.content;
+                  changed = true;
+                } else if (parsed.type === "error") {
+                  throw new Error(parsed.content);
+                }
+              } catch {
+                console.error("Failed to parse stream chunk:", line);
+              }
+            }
+
+            if (changed && !rafPendingRef.current) {
               rafPendingRef.current = true;
               requestAnimationFrame(() => {
-                setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, text: bufferRef.current } : m)));
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, text: textBufferRef.current, status: statusBufferRef.current } : m))
+                );
                 rafPendingRef.current = false;
               });
             }
@@ -103,9 +131,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             prev.map((m) =>
               m.id === assistantId
                 ? {
-                    ...m,
-                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
-                  }
+                  ...m,
+                  text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                }
                 : m,
             ),
           );
