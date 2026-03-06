@@ -6,7 +6,7 @@
 // export const getPostgresCheckpointer = async () => {
 //   if (!pgCheckpointer) {
 //     try {
-//       pgCheckpointer = PostgresSaver.fromConnString(process.env.DATABASE_URL!);
+//       pgCheckpointer = PostgresSaver.fromConnString(process.env.DATABASE_URL as string);
 //       await pgCheckpointer.setup();
 //     } catch {
 //       throw new InternalServerError("Error occured while connecting to Postgres");

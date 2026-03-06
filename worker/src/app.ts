@@ -31,7 +31,7 @@ export async function handler(job: Job<Data>) {
 
 const worker = new Worker("file-ingest", handler, {
   connection: {
-    url: process.env.REDIS_URL!,
+    url: process.env.REDIS_URL as string,
   },
   limiter: { max: 5, duration: 1000 },
 });

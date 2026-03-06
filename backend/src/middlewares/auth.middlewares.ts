@@ -17,7 +17,7 @@ export async function prometheusAuth(c: Context, next: Next) {
 
   const token = authHeader.split(" ")[1];
 
-  if (token !== process.env.PROMETHEUS_SECRET) {
+  if (token !== (process.env.PROMETHEUS_SECRET as string)) {
     return c.json({ message: "Unauthorized access to metrics" }, 403);
   }
 

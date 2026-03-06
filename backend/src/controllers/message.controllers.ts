@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import { extractFactualMemory, generateAIResponse } from "../utils/model.utils.js";
+import { scheduleMemoryExtraction, generateAIResponse, extractImageData } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { NotFoundError } from "../utils/appError.utils.js";
 import { streamText } from "hono/streaming";
@@ -11,7 +11,31 @@ export async function handleUserMessageResponse(c: Context) {
   const userId = c.get("user");
   const { query, model, messageFiles } = c.get("body");
   const timezone = c.req.header("x-client-timezone") || "UTC";
-  if (!chatId) throw new NotFoundError("Chat ID required");
+
+  let finalQuery = `User message:\n${query}`;
+
+  try {
+    if (messageFiles && Array.isArray(messageFiles) && messageFiles.length > 0) {
+      const extractionPromises = messageFiles.map((file: any) => {
+        if (file.fileUrl) {
+          return extractImageData(file.fileUrl);
+        }
+        return Promise.resolve(null);
+      });
+
+      const extractionResults = await Promise.allSettled(extractionPromises);
+
+      const successfulData = extractionResults
+        .filter((result) => result.status === "fulfilled" && result.value)
+        .map((result: any) => result.value as string);
+
+      if (successfulData.length > 0) {
+        finalQuery += `\n\nExtracted information from attached images:\n${successfulData.join("\n---\n")}\n\nUse this information if relevant when answering.`;
+      }
+    }
+  } catch (error) {
+    logger.error({ message: "Failed to process attached images", error });
+  }
 
   return streamText(c, async (stream) => {
     let fullResponse = "";
@@ -29,7 +53,7 @@ export async function handleUserMessageResponse(c: Context) {
       }
 
       const aiStream = generateAIResponse({
-        query,
+        query: finalQuery,
         threadId: chatId,
         modelName: model,
         preferences,
@@ -51,7 +75,7 @@ export async function handleUserMessageResponse(c: Context) {
           messages: {
             create: [
               {
-                text: query,
+                text: finalQuery,
                 role: "USER",
                 createdAt: requestStartTime,
                 messageFiles: filesToCreate ? { create: filesToCreate } : undefined,
@@ -62,22 +86,7 @@ export async function handleUserMessageResponse(c: Context) {
         },
       });
 
-      setImmediate(() => {
-        extractFactualMemory(query, memories)
-          .then((newMemories) => {
-            if (!newMemories.length) return;
-
-            return prisma.userMemory.createMany({
-              data: newMemories.map((memory) => ({
-                userId,
-                content: memory.content,
-              })),
-            });
-          })
-          .catch((err) => {
-            logger.error({ error: err }, "Background memory extraction failed");
-          });
-      });
+      scheduleMemoryExtraction(userId, query, memories);
     } catch (error: any) {
       logger.error({
         message: "Streaming error",

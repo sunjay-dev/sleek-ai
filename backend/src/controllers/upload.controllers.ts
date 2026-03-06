@@ -4,7 +4,7 @@ import cloudinary from "../config/cloudinary.config.js";
 export async function handleFileSignature(c: Context) {
   const timestamp = Math.floor(Date.now() / 1000);
   const folder = "chatty-ai";
-  const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, process.env.CLOUDINARY_API_SECRET!);
+  const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, process.env.CLOUDINARY_API_SECRET as string);
 
   return c.json(
     {

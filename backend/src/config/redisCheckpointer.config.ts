@@ -7,7 +7,7 @@ let redisCheckpointer: RedisSaver;
 export const getRedisCheckpointer = async () => {
   if (!redisCheckpointer) {
     try {
-      redisCheckpointer = await RedisSaver.fromUrl(process.env.REDIS_URL!, {
+      redisCheckpointer = await RedisSaver.fromUrl(process.env.REDIS_URL as string, {
         defaultTTL: 30 * 60 * 24,
         refreshOnRead: false,
       });

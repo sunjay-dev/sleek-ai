@@ -5,7 +5,7 @@ const app = new Hono();
 app.use(
   "/api/*",
   cors({
-    origin: process.env.CLIENT_URL!,
+    origin: process.env.CLIENT_URL as string,
     allowHeaders: ["x-client-timezone", "Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
@@ -35,7 +35,7 @@ app.onError(errorHandler);
 
 // const fileIngestQueue = new Queue("file-ingest", {
 //   connection: {
-//     url: process.env.REDIS_URL!,
+//     url: process.env.REDIS_URL as string,
 //   },
 //   defaultJobOptions: {
 //     attempts: 3,

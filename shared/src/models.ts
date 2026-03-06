@@ -27,13 +27,13 @@ export const MODELS = [
     tpd: 100_000,
     rpm: 30,
   },
-  {
-    id: "meta-llama/llama-4-scout-17b-16e-instruct",
-    name: "Llama 4 Scout",
-    tpm: 40_000,
-    tpd: 500_000,
-    rpm: 30,
-  },
+  // {
+  //   id: "meta-llama/llama-4-scout-17b-16e-instruct",
+  //   name: "Llama 4 Scout",
+  //   tpm: 40_000,
+  //   tpd: 500_000,
+  //   rpm: 30,
+  // },
   {
     id: "moonshotai/kimi-k2-instruct-0905",
     name: "Kimi K2",

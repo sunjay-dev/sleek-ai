@@ -7,9 +7,10 @@ import { MODELS } from "@app/shared/src/models.js";
 const llmCache = new Map();
 let summarizerCache: ChatGroq | null = null;
 
-const MEMORY_MODEL = process.env.MEMORY_MODEL! || "groq/compound-mini";
-const TITLE_MODEL = process.env.TITLE_MODEL! || "groq/compound-mini";
-const SUMMARIZER_MODEL = process.env.SUMMARIZER_MODEL! || "groq/compound-mini";
+const MEMORY_MODEL = (process.env.MEMORY_MODEL as string) || "groq/compound-mini";
+const TITLE_MODEL = (process.env.TITLE_MODEL as string) || "groq/compound-mini";
+const SUMMARIZER_MODEL = (process.env.SUMMARIZER_MODEL as string) || "groq/compound-mini";
+const VISION_MODEL = (process.env.VISION_MODEL as string) || "meta-llama/llama-4-scout-17b-16e-instruct";
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {
@@ -60,3 +61,5 @@ export const createGroqAgent = (model: string, systemPrompt: string) => {
 export const memoryLLM = groqChatAgent(MEMORY_MODEL);
 
 export const titleLLM = groqChatAgent(TITLE_MODEL, 0.6);
+
+export const visionLLM = groqChatAgent(VISION_MODEL);

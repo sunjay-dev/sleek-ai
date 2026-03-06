@@ -1,11 +1,13 @@
 import type { UserPreference } from "../generated/prisma/client.js";
 import { HumanMessage, SystemMessage } from "langchain";
-import { createGroqAgent, memoryLLM, titleLLM } from "../config/groq.config.js";
+import { createGroqAgent, memoryLLM, titleLLM, visionLLM } from "../config/groq.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
+import { visionPrompt } from "../prompts/vision.prompt.js";
 import { memoryExtractionSchema } from "@app/shared/src/schemas/memory.schema.js";
 import logger from "./logger.utils.js";
+import prisma from "../config/prisma.config.js";
 
 export type Memories = {
   content: String;
@@ -75,29 +77,13 @@ export async function extractFactualMemory(userMessage: string, existingMemories
   ];
 
   try {
-    const result = await memoryLLM.invoke(messages);
-    const raw = result.content as string;
+    const result = await memoryLLM.invoke(messages, {
+      response_format: {
+        type: "json_object",
+      },
+    });
 
-    let parsedData = null;
-
-    const firstBrace = raw.indexOf("{");
-    const lastBrace = raw.lastIndexOf("}");
-
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      const jsonOnly = raw.substring(firstBrace, lastBrace + 1);
-      try {
-        parsedData = JSON.parse(jsonOnly);
-      } catch {
-        return [];
-      }
-    } else {
-      try {
-        const clean = raw.replace(/```json|```/g, "").trim();
-        parsedData = JSON.parse(clean);
-      } catch {
-        return [];
-      }
-    }
+    const parsedData = JSON.parse(result.content as string);
 
     const validated = memoryExtractionSchema.safeParse(parsedData);
 
@@ -110,5 +96,45 @@ export async function extractFactualMemory(userMessage: string, existingMemories
   } catch (error) {
     logger.warn({ message: "Memory Extraction Failed (Ignoring):", error });
     return [];
+  }
+}
+
+export function scheduleMemoryExtraction(userId: string, query: string, memories: any[]) {
+  setImmediate(async () => {
+    try {
+      const newMemories = await extractFactualMemory(query, memories);
+
+      if (!newMemories.length) return;
+
+      await prisma.userMemory.createMany({
+        data: newMemories.map((m) => ({ userId, content: m.content })),
+      });
+    } catch (err) {
+      logger.error({ error: err }, "Background memory extraction failed");
+    }
+  });
+}
+
+export async function extractImageData(imageUrl: string) {
+  const messages = [
+    new SystemMessage(visionPrompt),
+    new HumanMessage({
+      content: [
+        {
+          type: "image_url",
+          image_url: {
+            url: imageUrl,
+          },
+        },
+      ],
+    }),
+  ];
+
+  try {
+    const response = await visionLLM.invoke(messages);
+    return response.content as string;
+  } catch (error) {
+    logger.error({ message: "Image Data Extraction Failed", error, imageUrl });
+    return null;
   }
 }
