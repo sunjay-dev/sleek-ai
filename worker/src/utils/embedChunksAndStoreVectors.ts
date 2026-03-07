@@ -12,22 +12,31 @@ const pinecone = new Pinecone();
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME as string);
 
 export async function embedChunksAndStoreVectors(chunks: Document<Record<string, any>>[], extraMetadata: Record<string, any>) {
-  const cleanChunks = chunks.filter((c) => typeof c.pageContent === "string" && c.pageContent.trim().length > 0);
+  const cleanChunks = chunks
+    .map((c) => {
+      if (typeof c.pageContent !== "string") return c;
+      const cleanedText = c.pageContent.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").trim();
+      return { ...c, pageContent: cleanedText };
+    })
+    .filter((c) => typeof c.pageContent === "string" && c.pageContent.length > 0);
 
   if (!cleanChunks.length) {
     throw new Error("No valid chunks to embed");
   }
 
+  logger.info({ message: "Embedding chunks...", chunkCount: cleanChunks.length });
+
   const chunksWithMeta = cleanChunks.map((c) => ({
     pageContent: c.pageContent,
     metadata: {
-      chatId: extraMetadata.chatId,
-      fileId: extraMetadata.fileId,
+      ...extraMetadata,
       page: c.metadata?.pageNumber,
       fromLine: c.metadata?.fromLine,
       toLine: c.metadata?.toLine,
     },
   }));
+
+  logger.info({ message: "First chunk preview", preview: chunksWithMeta[0]?.pageContent.substring(0, 100) });
 
   await PineconeStore.fromDocuments(chunksWithMeta, embeddingsClient, { pineconeIndex: index });
 

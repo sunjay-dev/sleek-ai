@@ -19,7 +19,7 @@ export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
-  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({ moveChatToTop, setChats });
+  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages, isRagProcessing, startRagPolling } = useMessages({ moveChatToTop, setChats });
   const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
 
@@ -75,6 +75,8 @@ export default function ChatPage() {
                 selectedModel={selectedModel}
                 onStop={stopGeneration}
                 onModelChange={setSelectedModel}
+                isRagProcessing={isRagProcessing}
+                startRagPolling={startRagPolling}
               />
             </div>
           </LazyLoader>
@@ -96,6 +98,8 @@ export default function ChatPage() {
               onStop={stopGeneration}
               onModelChange={setSelectedModel}
               autoFocus={!isMobile}
+              isRagProcessing={isRagProcessing}
+              startRagPolling={startRagPolling}
             />
           </LazyLoader>
         )}

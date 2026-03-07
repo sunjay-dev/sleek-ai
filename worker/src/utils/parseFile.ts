@@ -1,5 +1,7 @@
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
+import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
+import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { TextLoader } from "@langchain/classic/document_loaders/fs/text";
 import fs from "fs";
 import path from "path";
@@ -15,6 +17,8 @@ export async function parseFileWithLangChain(fileUrl: string) {
   if (contentType.includes("pdf")) ext = ".pdf";
   else if (contentType.includes("text")) ext = ".txt";
   else if (contentType.includes("word")) ext = ".docx";
+  else if (contentType.includes("presentation")) ext = ".pptx";
+  else if (contentType.includes("csv")) ext = ".csv";
 
   const fileContent = Buffer.from(buffer);
 
@@ -35,6 +39,12 @@ export async function parseFileWithLangChain(fileUrl: string) {
       break;
     case ".docx":
       loader = new DocxLoader(tempPath);
+      break;
+    case ".pptx":
+      loader = new PPTXLoader(tempPath);
+      break;
+    case ".csv":
+      loader = new CSVLoader(tempPath);
       break;
     case ".txt":
     default:

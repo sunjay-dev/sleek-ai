@@ -22,9 +22,33 @@ export async function handler(job: Job<Data>) {
     await embedChunksAndStoreVectors(chunks, { userId, chatId, fileId });
 
     logger.info({ message: "File processed successfully", fileId });
+
+    if (process.env.BACKEND_URL) {
+      await fetch(`${process.env.BACKEND_URL}/api/webhooks/rag-status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-secret": process.env.INTERNAL_SECRET as string,
+        },
+        body: JSON.stringify({ chatId, status: "COMPLETED" }),
+      });
+    }
+
     return { success: true };
   } catch (error) {
     logger.error({ message: "Error processing", fileId, error });
+
+    if (process.env.BACKEND_URL) {
+      await fetch(`${process.env.BACKEND_URL}/api/webhooks/rag-status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-secret": process.env.INTERNAL_SECRET as string,
+        },
+        body: JSON.stringify({ chatId, status: "FAILED" }),
+      });
+    }
+
     throw error;
   }
 }

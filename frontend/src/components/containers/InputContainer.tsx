@@ -4,6 +4,7 @@ import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks";
 import { modelsList } from "@app/shared/src/models";
 import { useAuth } from "@clerk/clerk-react";
+import { useParams, useNavigate } from "react-router-dom";
 import type { UploadedFile } from "@app/shared/src/types";
 import { uploadToCloudinary } from "@/utils/cloudinary";
 
@@ -21,13 +22,19 @@ type Props = {
   onStop: () => void;
   onModelChange: (modelId: string) => void;
   autoFocus: boolean;
+  isRagProcessing?: boolean;
+  startRagPolling: () => void;
 };
 
-export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, autoFocus }: Props) {
+export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, autoFocus, isRagProcessing, startRagPolling }: Props) {
   const [message, setMessage] = useState("");
   const { getToken } = useAuth();
+  const { chatId } = useParams<{ chatId?: string }>();
+  const navigate = useNavigate();
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -48,9 +55,35 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
       try {
         const data = await uploadToCloudinary({ file: attachment.file, getToken });
 
+        let newChatId = undefined;
+        if (!data.fileType.includes("image")) {
+          const token = await getToken();
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/upload/rag`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+              fileUrl: data.fileUrl,
+              fileName: data.fileName,
+              fileType: data.fileType,
+              chatId: chatId || undefined
+            })
+          });
+          const apiData = await res.json();
+          if (apiData.success) {
+            startRagPolling();
+            if (apiData.chatId && !chatId) {
+              newChatId = apiData.chatId;
+            }
+          }
+        }
+
         setAttachments((prev) =>
           prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item))
         );
+
+        if (newChatId) {
+          navigate(`/c/${newChatId}`, { replace: true });
+        }
       } catch {
         setAttachments((prev) =>
           prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item))
@@ -139,12 +172,77 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
     }
   }, [message]);
 
+  const processFilesRef = useRef(processFiles);
+  useEffect(() => {
+    processFilesRef.current = processFiles;
+  }, [processFiles]);
+
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current += 1;
+      if (e.dataTransfer?.items && e.dataTransfer.items.length > 0) {
+        setIsDragging(true);
+      }
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current -= 1;
+      if (dragCounter.current === 0) {
+        setIsDragging(false);
+      }
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDrop = async (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+      dragCounter.current = 0;
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        await processFilesRef.current(Array.from(files));
+      }
+    };
+
+    window.addEventListener("dragenter", handleDragEnter);
+    window.addEventListener("dragleave", handleDragLeave);
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("drop", handleDrop);
+
+    return () => {
+      window.removeEventListener("dragenter", handleDragEnter);
+      window.removeEventListener("dragleave", handleDragLeave);
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("drop", handleDrop);
+    };
+  }, []);
+
   const isGlobalUploading = attachments.some((a) => a.status === "uploading");
   const hasContent = message?.trim().length > 0 || attachments.length > 0;
-  const isBusy = isGenerating || isGlobalUploading;
+  const isBusy = isGenerating || isGlobalUploading || isRagProcessing;
 
   return (
-    <div className="w-full flex justify-center items-center px-4 pb-4 bg-transparent">
+    <div className="w-full flex justify-center items-center px-4 pb-4 bg-transparent relative">
+      {isDragging && (
+        <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-none transition-all duration-200">
+          <div className="absolute inset-4 sm:inset-6 md:inset-8 border-4 border-dashed border-white/60 rounded-3xl z-0" />
+          <div className="bg-white px-6 py-5 rounded-2xl shadow-2xl flex flex-col items-center gap-3 animate-in zoom-in-95 duration-200 z-10">
+            <div className="bg-primary/5 p-4 rounded-full">
+              <Paperclip size={32} className="text-primary" />
+            </div>
+            <p className="text-lg font-medium text-primary">Drop files here to attach</p>
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-svw sm:max-w-180 transition-all duration-300 ease-in-out">
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-primary px-3 py-2 transition-all duration-200 ease-in-out shadow-md">
@@ -212,7 +310,8 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
-              placeholder="Ask Anything"
+              disabled={isBusy}
+              placeholder={isRagProcessing ? "Document is processing..." : "Ask Anything"}
               rows={1}
               className="w-full custom-scroll custom-scroll-xs py-2 px-1.5 text-primary text-sm focus:outline-none resize-none overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"
             />

@@ -15,7 +15,7 @@ app.use(
 import serverRoutes from "./routes/server.routes.js";
 import chatRouter from "./routes/chat.routes.js";
 import messageRouter from "./routes/message.routes.js";
-import clerkRouter from "./routes/clerk.routes.js";
+import webHookRouter from "./routes/webHook.routes.js";
 import userRouter from "./routes/user.routes.js";
 import searchRouter from "./routes/search.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
@@ -27,33 +27,9 @@ app.route("/api/chat/:chatId/message", messageRouter);
 app.route("/api/user", userRouter);
 app.route("/api/upload", uploadRouter);
 app.route("/api/search", searchRouter);
-app.route("/api/clerk", clerkRouter);
+app.route("/api/webhooks", webHookRouter);
 
 app.onError(errorHandler);
-
-// import { Queue } from "bullmq";
-
-// const fileIngestQueue = new Queue("file-ingest", {
-//   connection: {
-//     url: process.env.REDIS_URL as string,
-//   },
-//   defaultJobOptions: {
-//     attempts: 3,
-//     backoff: {
-//       type: "exponential",
-//       delay: 3000,
-//     },
-//     removeOnComplete: true,
-//     removeOnFail: false,
-//   },
-// });
-
-// fileIngestQueue.add("ingest", {
-//   fileUrl: "https://res.cloudinary.com/dzxcifimr/raw/upload/v1768761888/chatty-ai/qytcyksxdqadx2xa4nen.txt",
-//   userId: "user_38KrOBnsnDtO35wpRPwMvdfPhQU",
-//   chatId: "1e4efe47-424f-4fa0-9824-57a518ad089d",
-//   fileId: "57ae0bf3-8ad8-4c14-abd0-f1eec0c60eed",
-// });
 
 export default {
   port: process.env.PORT as string,

@@ -48,10 +48,19 @@ model UserPreference {
   user               User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
 }
 
+enum RagStatus {
+  IDLE
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model Chat {
   id        String    @id @default(uuid())
   userId    String
   title     String?
+  isRag     Boolean   @default(false)
+  ragStatus RagStatus @default(IDLE)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   user      User      @relation(fields: [userId], references: [clerkId])

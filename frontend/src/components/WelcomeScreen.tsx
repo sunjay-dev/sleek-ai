@@ -9,6 +9,8 @@ type Props = {
   selectedModel: string;
   onStop: () => void;
   onModelChange: (modelId: string) => void;
+  isRagProcessing?: boolean;
+  startRagPolling: () => void;
 };
 
 const SUGGESTIONS = [
@@ -22,7 +24,7 @@ const SUGGESTIONS = [
   { label: "Explain quantum physics", prompt: "Explain quantum physics in simple terms." },
 ];
 
-export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel, onStop, onModelChange }: Props) {
+export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, isRagProcessing, startRagPolling }: Props) {
   const { user, isLoaded } = useUser();
 
   const getGreetingName = () => {
@@ -47,7 +49,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel
             <button
               key={index}
               onClick={() => handleSuggestionClick(item.prompt)}
-              disabled={isGenerating}
+              disabled={isGenerating || isRagProcessing}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white
                 border-primary rounded-full transition-all duration-200 hover:bg-white/90"
             >
@@ -65,6 +67,8 @@ export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel
         onStop={onStop}
         onModelChange={onModelChange}
         autoFocus={true}
+        isRagProcessing={isRagProcessing}
+        startRagPolling={startRagPolling}
       />
     </div>
   );

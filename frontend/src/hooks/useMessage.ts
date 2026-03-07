@@ -15,6 +15,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFetchingMessages, setIsFetchingMessages] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [ragStatus, setRagStatus] = useState<string>("IDLE");
+
+  const startRagPolling = () => setRagStatus("PROCESSING");
 
   const { chatId } = useParams<{ chatId?: string }>();
   const { getToken } = useAuth();
@@ -158,6 +161,12 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
         });
 
         justCreatedChatRef.current = data.id;
+
+        if (optimisticFiles?.length) {
+          const hasRagFiles = optimisticFiles.some(f => !f.fileType?.includes("image"));
+          if (hasRagFiles) setRagStatus("PROCESSING");
+        }
+
         setChats((c) => [data, ...c]);
         navigate(`/c/${data.id}`, { replace: true });
 
@@ -218,6 +227,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMessages(data.messages || []);
+        if (data.ragStatus) setRagStatus(data.ragStatus);
       } catch {
         navigate("/", { replace: true });
       } finally {
@@ -228,6 +238,43 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     handleGetAllChatMessages();
   }, [chatId, getToken, navigate]);
 
+  useEffect(() => {
+    if (!chatId || ragStatus !== "PROCESSING") return;
+
+    let intervalId: NodeJS.Timeout;
+    let isPolling = false;
+
+    const pollStatus = async () => {
+      if (isPolling) return;
+      isPolling = true;
+
+      try {
+        const token = await getToken();
+        if (!token) return;
+
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (data && data.ragStatus) {
+          setRagStatus(data.ragStatus);
+
+          if (data.ragStatus === "COMPLETED" || data.ragStatus === "FAILED" || data.ragStatus === "IDLE") {
+            clearInterval(intervalId);
+          }
+        }
+      } catch (err) {
+        console.error("Polling error", err);
+      } finally {
+        isPolling = false;
+      }
+    };
+
+    intervalId = setInterval(pollStatus, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [chatId, ragStatus, getToken]);
+
   return {
     messages,
     sendMessage,
@@ -235,5 +282,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     stopGeneration,
     isGenerating,
     isFetchingMessages,
+    isRagProcessing: ragStatus === "PROCESSING",
+    startRagPolling
   };
 }

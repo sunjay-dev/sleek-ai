@@ -5,35 +5,8 @@ import { NotFoundError } from "../utils/appError.utils.js";
 import { streamText as honoStreamText } from "hono/streaming";
 import logger from "../utils/logger.utils.js";
 import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";
-import { type UploadedFile } from "@app/shared/src/schemas/message.schema.js"
-
-async function handleImageExtraction(messageFiles: UploadedFile[], stream: any): Promise<string> {
-  if (messageFiles?.length === 0) return "";
-
-  try {
-    await streamLoading(stream, "Analyzing image...");
-    const extractionPromises = messageFiles.map((file: UploadedFile) => {
-      if (file.fileUrl) {
-        return extractImageData(file.fileUrl);
-      }
-      return Promise.resolve(null);
-    });
-
-    const extractionResults = await Promise.allSettled(extractionPromises);
-
-    const successfulData = extractionResults
-      .filter((result) => result.status === "fulfilled" && result.value)
-      .map((result: any) => result.value as string);
-
-    if (successfulData.length > 0) {
-      return `\n\nExtracted information from attached images:\n${successfulData.join("\n---\n")}\n\nUse this information if relevant when answering.`;
-    }
-  } catch (error) {
-    logger.error({ message: "Failed to process attached images", error });
-  }
-
-  return "";
-}
+import { type UploadedFile } from "@app/shared/src/schemas/message.schema.js";
+import { vectorStore } from "../config/vectorStore.config.js";
 
 export async function handleUserMessageResponse(c: Context) {
   const requestStartTime = new Date();
@@ -50,7 +23,7 @@ export async function handleUserMessageResponse(c: Context) {
 
     try {
       const [chat, preferences, memories] = await Promise.all([
-        prisma.chat.findUnique({ where: { id: chatId, userId }, select: { id: true } }),
+        prisma.chat.findUnique({ where: { id: chatId, userId }, select: { id: true, isRag: true } }),
         prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
         prisma.userMemory.findMany({ where: { userId }, select: { content: true } }),
       ]);
@@ -58,6 +31,23 @@ export async function handleUserMessageResponse(c: Context) {
       if (!chat) {
         await streamError(stream, "Chat not found or unauthorized");
         return;
+      }
+
+      if (chat.isRag && query.trim() !== "") {
+        try {
+          await streamLoading(stream, "Searching documents...");
+
+          const results = await vectorStore.similaritySearch(query, 4, {
+            chatId: chat.id,
+          });
+
+          if (results.length > 0) {
+            const context = results.map((r) => r.pageContent).join("\n\n---\n\n");
+            finalQuery = `Context Information:\n${context}\n\nUser Query: ${finalQuery}\n\nPlease answer the user query using the context information provided above if it is relevant.`;
+          }
+        } catch (err) {
+          logger.error({ message: "Vector search failed", error: err, chatId });
+        }
       }
 
       const aiStream = generateAIResponse({
@@ -85,7 +75,7 @@ export async function handleUserMessageResponse(c: Context) {
 
       const filesToCreate = messageFiles?.length ? messageFiles : undefined;
 
-      await prisma.chat.update({
+      const createdChat = await prisma.chat.update({
         where: { id: chatId },
         data: {
           updatedAt: requestStartTime,
@@ -101,6 +91,7 @@ export async function handleUserMessageResponse(c: Context) {
             ],
           },
         },
+        include: { messages: { include: { messageFiles: true } } },
       });
 
       scheduleMemoryExtraction(userId, query, memories);
@@ -115,6 +106,34 @@ export async function handleUserMessageResponse(c: Context) {
   });
 }
 
+async function handleImageExtraction(messageFiles: UploadedFile[], stream: any) {
+  if (!messageFiles?.length) return "";
+
+  const imageFiles = messageFiles.filter((file) => file.fileType?.includes("image") && file.fileUrl);
+
+  if (imageFiles.length === 0) return "";
+
+  try {
+    await streamLoading(stream, "Analyzing image...");
+
+    const extractionPromises = imageFiles.map((file) => extractImageData(file.fileUrl));
+
+    const extractionResults = await Promise.allSettled(extractionPromises);
+
+    const successfulData = extractionResults
+      .filter((result) => result.status === "fulfilled" && result.value)
+      .map((result: any) => result.value as string);
+
+    if (successfulData.length > 0) {
+      return `\n\nExtracted information from attached images:\n${successfulData.join("\n---\n")}\n\nUse this information if relevant when answering.`;
+    }
+  } catch (error) {
+    logger.error({ message: "Failed to process attached images", error });
+  }
+
+  return "";
+}
+
 export async function handleGetAllChatMessages(c: Context) {
   const userId = c.get("user");
   const { chatId } = c.get("param");
@@ -124,6 +143,8 @@ export async function handleGetAllChatMessages(c: Context) {
     select: {
       id: true,
       title: true,
+      ragStatus: true,
+      isRag: true,
       messages: {
         orderBy: { createdAt: "asc" },
         select: {

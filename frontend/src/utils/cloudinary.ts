@@ -25,6 +25,7 @@ export const uploadToCloudinary = async ({ file, getToken }: Props) => {
   formData.append("signature", signature);
   formData.append("quality", "auto");
   formData.append("folder", folder);
+  formData.append("angle", "exif");
 
   const data = await apiRequest(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
     method: "POST",
