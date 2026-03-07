@@ -37,7 +37,7 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
   return (
     <div className="flex flex-col gap-2 justify-end items-end group">
       {hasFiles && (
-        <div className="mb-1 w-full max-w-xs sm:max-w-lg flex flex-wrap justify-end gap-2">
+        <div className="mb-1 w-full max-w-[85%] sm:max-w-lg flex flex-wrap justify-end gap-2">
           {messageFiles.map((fileItem, index) => {
             const { fileUrl, fileName, fileType } = fileItem;
             const isImage = fileType?.startsWith("image/") || (fileUrl ? isImageUrl(fileUrl) : false);
@@ -71,7 +71,7 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
       )}
 
       {text && (
-        <div className="user-message-color text-primary border border-gray-300/20 px-3 py-2.5 rounded-tr-none rounded-2xl max-w-xs sm:max-w-lg relative transition-all">
+        <div className="user-message-color text-primary border border-gray-300/20 px-4 py-3 sm:px-3 sm:py-2.5 rounded-tr-none rounded-2xl max-w-[85%] sm:max-w-lg relative transition-all">
           {isLongText && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
@@ -89,7 +89,7 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
             </button>
           )}
 
-          <p className="text-base md:text-sm leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
+          <p className="text-[15px] sm:text-sm leading-relaxed sm:leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
         </div>
       )}
 

@@ -18,7 +18,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcom
             className="flex items-center text-primary justify-center h-10 w-10 rounded-full hover:bg-gray-100 active:bg-gray-200"
             title="Open sidebar"
           >
-            <AlignLeft strokeWidth={2} size={20} />
+            <AlignLeft strokeWidth={2} size={22} />
           </button>
 
           <div className="flex items-center gap-3">
@@ -27,7 +27,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcom
               className="flex items-center text-primary justify-center h-10 w-10 rounded-full hover:bg-gray-100 active:bg-gray-200"
               title="New chat"
             >
-              <BadgePlus strokeWidth={1.8} size={20} />
+              <BadgePlus strokeWidth={1.8} size={22} />
             </button>
 
             <UserButton />

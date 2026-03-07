@@ -6,7 +6,7 @@ import { streamText as honoStreamText } from "hono/streaming";
 import logger from "../utils/logger.utils.js";
 import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";
 import { type UploadedFile } from "@app/shared/src/schemas/message.schema.js";
-import { vectorStore } from "../config/vectorStore.config.js";
+
 
 export async function handleUserMessageResponse(c: Context) {
   const requestStartTime = new Date();
@@ -33,23 +33,6 @@ export async function handleUserMessageResponse(c: Context) {
         return;
       }
 
-      if (chat.isRag && query.trim() !== "") {
-        try {
-          await streamLoading(stream, "Searching documents...");
-
-          const results = await vectorStore.similaritySearch(query, 4, {
-            chatId: chat.id,
-          });
-
-          if (results.length > 0) {
-            const context = results.map((r) => r.pageContent).join("\n\n---\n\n");
-            finalQuery = `Context Information:\n${context}\n\nUser Query: ${finalQuery}\n\nPlease answer the user query using the context information provided above if it is relevant.`;
-          }
-        } catch (err) {
-          logger.error({ message: "Vector search failed", error: err, chatId });
-        }
-      }
-
       const aiStream = generateAIResponse({
         query: finalQuery,
         threadId: chatId,
@@ -57,6 +40,7 @@ export async function handleUserMessageResponse(c: Context) {
         preferences,
         memories,
         timezone,
+        isRag: chat.isRag,
       });
 
       let isFirstChunk = true;

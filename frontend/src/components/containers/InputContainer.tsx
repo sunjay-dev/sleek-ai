@@ -134,7 +134,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
       return;
     }
 
-    if (isGlobalUploading) return;
+    if (isGlobalUploading || isRagProcessing) return;
 
     const successfulUploads = attachments.filter((a) => a.status === "success" && a.uploadData).map((a) => a.uploadData!);
 
@@ -228,10 +228,10 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
 
   const isGlobalUploading = attachments.some((a) => a.status === "uploading");
   const hasContent = message?.trim().length > 0 || attachments.length > 0;
-  const isBusy = isGenerating || isGlobalUploading || isRagProcessing;
+  const isBusy = isGenerating || isGlobalUploading;
 
   return (
-    <div className="w-full flex justify-center items-center px-4 pb-4 bg-transparent relative">
+    <div className="w-full flex justify-center items-center px-4 pb-6 sm:pb-4 bg-transparent relative">
       {isDragging && (
         <div className="fixed inset-0 z-99 flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-none transition-all duration-200">
           <div className="absolute inset-4 sm:inset-6 md:inset-8 border-4 border-dashed border-white/60 rounded-3xl z-0" />
@@ -246,8 +246,8 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
       <div className="w-full max-w-svw sm:max-w-180 transition-all duration-300 ease-in-out">
         <form onSubmit={handleSubmit}>
           <div className="bg-white rounded-2xl border border-primary px-3 py-2 transition-all duration-200 ease-in-out shadow-md">
-            {attachments.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2 pl-1">
+            {(attachments.length > 0 || isRagProcessing) && (
+              <div className="flex flex-wrap gap-2 mb-2 pl-1 items-center">
                 {attachments.map((att) => (
                   <div key={att.id} className="relative group">
                     {att.file.type.startsWith("image/") ? (
@@ -299,6 +299,13 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                     )}
                   </div>
                 ))}
+
+                {isRagProcessing && (
+                  <div className="flex items-center gap-2 text-xs text-primary bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 font-medium">
+                    <Loader2 size={14} className="animate-spin" />
+                    <span>Processing document...</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -311,7 +318,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
               disabled={isBusy}
-              placeholder={isRagProcessing ? "Document is processing..." : "Ask Anything"}
+              placeholder="Ask Anything"
               rows={1}
               className="w-full custom-scroll custom-scroll-xs py-2 px-1.5 text-primary text-sm focus:outline-none resize-none overflow-y-auto max-h-28 transition-all duration-200 ease-in-out"
             />
@@ -334,7 +341,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                     }`}
                   title="Attach files"
                 >
-                  <Paperclip size={16} strokeWidth={1.8} />
+                  <Paperclip size={isMobile ? 20 : 16} strokeWidth={1.8} />
                 </label>
               </div>
 
@@ -343,7 +350,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
 
                 <button
                   type="submit"
-                  disabled={(!hasContent && !isGenerating) || isGlobalUploading}
+                  disabled={(!hasContent && !isGenerating) || isGlobalUploading || isRagProcessing}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
                   ${isBusy || hasContent
@@ -352,7 +359,7 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                     }
                 `}
                 >
-                  {isGenerating || isGlobalUploading ? <Loader2 size={16} className="animate-spin" /> : <ArrowUp size={18} strokeWidth={2.5} />}
+                  {isGenerating || isGlobalUploading || isRagProcessing ? <Loader2 size={isMobile ? 20 : 16} className="animate-spin" /> : <ArrowUp size={isMobile ? 22 : 18} strokeWidth={2.5} />}
                 </button>
               </div>
             </div>

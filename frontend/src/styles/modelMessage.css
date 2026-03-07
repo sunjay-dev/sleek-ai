@@ -4,9 +4,15 @@
   line-height: 0.8;
 }
 
-th code {
+.markdown :not(pre)>code {
   font-family: Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-size: 0.875em;
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #c7254e;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  word-break: break-word;
 }
 
 .markdown p,
@@ -22,12 +28,17 @@ th code {
   margin: 0;
 }
 
-.markdown code {
+/* Code inside fenced blocks keeps monospace */
+.markdown pre code {
   font-size: 0.9rem;
 }
 
 .markdown strong {
   font-weight: bold;
+}
+
+.markdown em {
+  font-style: italic;
 }
 
 .markdown li {
@@ -326,5 +337,41 @@ pre {
 
   50% {
     opacity: 0.6;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+
+  .markdown p,
+  .markdown li,
+  .markdown pre,
+  .markdown code {
+    line-height: 1.6;
+  }
+
+  .markdown li+li {
+    margin-top: 0.3rem;
+  }
+
+  .markdown ol li {
+    margin-bottom: 0.3rem;
+    line-height: 1.6;
+  }
+
+  .markdown ul li {
+    margin-bottom: 0.3rem;
+    line-height: 1.6;
+  }
+
+  .markdown h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4,
+  .markdown h5,
+  .markdown h6 {
+    line-height: 1.4;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
   }
 }

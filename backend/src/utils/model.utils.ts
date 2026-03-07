@@ -20,10 +20,11 @@ type Props = {
   preferences: UserPreference;
   memories: Memories[];
   timezone: string;
+  isRag: boolean;
 };
 
-export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone }: Props) {
-  const agent = createGroqAgent(modelName, systemPrompt(preferences, memories, timezone));
+export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag }: Props) {
+  const agent = createGroqAgent(modelName, systemPrompt(preferences, memories, timezone), isRag);
 
   const config = { configurable: { thread_id: threadId } };
 

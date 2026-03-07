@@ -59,7 +59,7 @@ type Props = {
 export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
 
   return (
-    <div className="max-w-full text-base md:text-sm py-4 rounded-xl">
+    <div className="max-w-full text-[15px] sm:text-sm py-2 sm:py-4 rounded-xl">
       {isGenerating && text.length === 0 && !status ? (
         <span className="inline-block animate-pulse font-bold">▍</span>
       ) : (

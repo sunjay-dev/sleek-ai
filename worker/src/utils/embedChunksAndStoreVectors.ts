@@ -15,7 +15,7 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
   const cleanChunks = chunks
     .map((c) => {
       if (typeof c.pageContent !== "string") return c;
-      const cleanedText = c.pageContent.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").trim();
+      const cleanedText = c.pageContent.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "").trim();
       return { ...c, pageContent: cleanedText };
     })
     .filter((c) => typeof c.pageContent === "string" && c.pageContent.length > 0);
@@ -38,7 +38,44 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
 
   logger.info({ message: "First chunk preview", preview: chunksWithMeta[0]?.pageContent.substring(0, 100) });
 
-  await PineconeStore.fromDocuments(chunksWithMeta, embeddingsClient, { pineconeIndex: index });
+  const store = new PineconeStore(embeddingsClient, { pineconeIndex: index });
 
-  logger.info({ message: "Stored chunks in Pinecone.", chunks: chunks.length });
+  const textsToEmbed = chunksWithMeta.map((c) => c.pageContent);
+  logger.info({ message: "Sending to Google Embeddings API...", count: textsToEmbed.length });
+
+  let embeddings: number[][] = [];
+  try {
+    embeddings = await embeddingsClient.embedDocuments(textsToEmbed);
+  } catch (err: any) {
+    logger.error({
+      message: "Google GenAI Embeddings API threw an explicit error",
+      error: err.message,
+      stack: err.stack,
+      details: err
+    });
+    throw err;
+  }
+
+  const validEmbeddings: number[][] = [];
+  const validDocuments: Document<Record<string, any>>[] = [];
+
+  for (let i = 0; i < embeddings.length; i++) {
+    const vector = embeddings[i];
+    if (vector && vector.length > 0) {
+      validEmbeddings.push(vector);
+      validDocuments.push(chunksWithMeta[i]);
+    } else {
+      logger.warn({
+        message: "Google GenAI returned an empty vector (likely safety bounded)",
+        chunkPreview: chunksWithMeta[i].pageContent.substring(0, 100)
+      });
+    }
+  }
+
+  if (validEmbeddings.length === 0) {
+    throw new Error("Google GenAI returned 0 valid embeddings for this document. It may have been blocked by safety filters.");
+  }
+
+  logger.info({ message: "Storing validated chunks in Pinecone", storedCount: validEmbeddings.length, rejectedCount: embeddings.length - validEmbeddings.length });
+  await store.addVectors(validEmbeddings, validDocuments);
 }

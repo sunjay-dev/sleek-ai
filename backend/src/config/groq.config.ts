@@ -33,16 +33,18 @@ export const groqChatAgent = (model: string, temperature = 0) => {
   });
 };
 
-export const createGroqAgent = (model: string, systemPrompt: string) => {
+export const createGroqAgent = (model: string, systemPrompt: string, isRag: boolean = false) => {
   const llm = getLLM(model);
   const summarizerLLM = getSummarizer();
 
   const modelConfig = MODELS.find((m) => model === m.id);
   const triggerTokens = modelConfig ? Math.floor(modelConfig.tpm * 0.5) : 3000;
 
+  const agentTools = isRag ? tools : tools.filter((t) => t.name !== "search_uploaded_documents");
+
   return createAgent({
     model: llm,
-    tools,
+    tools: agentTools,
     systemPrompt,
     checkpointer,
     middleware: [

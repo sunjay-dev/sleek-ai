@@ -3,7 +3,7 @@ import { Document } from "@langchain/core/documents";
 
 export async function chunkFile(docs: Document[] | string[], chunkSize = 500, chunkOverlap = 50): Promise<Document[]> {
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1000,
+    chunkSize: 1500,
     chunkOverlap: 200,
   });
 

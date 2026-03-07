@@ -50,7 +50,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
         const isCopied = copiedId === message.id;
 
         return (
-          <div className="px-4 mx-auto w-full max-w-svw sm:max-w-180 py-3" style={{ contain: "content" }}>
+          <div className="px-5 sm:px-4 mx-auto w-full max-w-svw sm:max-w-180 py-4 sm:py-3" style={{ contain: "content" }}>
             {message.role === "ASSISTANT" ? (
               <ModelMessage
                 key={message.id}

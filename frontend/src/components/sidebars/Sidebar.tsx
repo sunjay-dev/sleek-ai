@@ -83,7 +83,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
-        className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
+        className="fixed md:relative h-dvh w-[68%] sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
       >
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
           <img className="w-9 h-7.5" src="/logo.webp" alt="Sleek AI Logo" />
@@ -102,7 +102,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
               onClick={createChat}
               className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
             >
-              <BadgePlus size={16} />
+              <BadgePlus size={isMobile ? 20 : 16} />
               New chat
             </button>
 
@@ -111,7 +111,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
               onClick={() => openModal("search")}
               className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
             >
-              <Search size={16} />
+              <Search size={isMobile ? 20 : 16} />
               Search chats
             </button>
 
@@ -120,7 +120,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
               onClick={() => openModal("settings", "personalization")}
               className="w-full px-2 py-2 text-sm flex items-center gap-2 rounded-lg hover:bg-gray-200/60 active:bg-gray-200/60"
             >
-              <Settings size={16} />
+              <Settings size={isMobile ? 20 : 16} />
               Settings
             </button>
           </div>
