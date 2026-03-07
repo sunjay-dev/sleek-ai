@@ -80,7 +80,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
 
   return (
     <>
-      {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-10" onClick={() => setCollapsed(true)} />}
+      {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
       <aside
         ref={sidebarRef}
         className="fixed md:relative h-dvh w-3/4 sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"

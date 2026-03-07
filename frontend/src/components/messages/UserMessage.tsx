@@ -89,7 +89,7 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
             </button>
           )}
 
-          <p className="text-sm leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
+          <p className="text-base md:text-sm leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
         </div>
       )}
 

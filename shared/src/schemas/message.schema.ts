@@ -13,3 +13,7 @@ export const messageSchema = z.object({
 
   messageFiles: z.array(uploadedFileSchema).optional().default([]),
 });
+
+export type UploadedFile = z.infer<typeof uploadedFileSchema>;
+
+export type Message = z.infer<typeof messageSchema>;

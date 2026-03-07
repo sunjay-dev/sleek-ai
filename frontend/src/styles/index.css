@@ -60,6 +60,7 @@ body {
 .text-secondary {
   color: #fbfbfb;
 }
+
 /* 
 .word-break {
   word-break: break-word;
@@ -249,7 +250,14 @@ img {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@media (max-width: 640px) {
+  textarea {
+    height: 40px;
   }
 }
