@@ -81,10 +81,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
   return (
     <>
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
-      <aside
-        ref={sidebarRef}
-        className="fixed md:relative h-dvh w-[68%] sm:w-64 rounded-r-3xl sm:rounded-r-none bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0"
-      >
+      <aside ref={sidebarRef} className="fixed md:relative h-dvh w-[68%] sm:w-64 bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0">
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
           <img className="w-9 h-7.5" src="/logo.webp" alt="Sleek AI Logo" />
           <button
@@ -145,7 +142,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
                   }}
                   className={({ isActive }) =>
                     [
-                      "group relative flex items-center justify-between px-2 py-1 rounded-lg text-xs hover:bg-gray-200/60 active:bg-gray-200/60",
+                      "group relative flex items-center justify-between px-2 py-1.5 sm:py-1 rounded-lg text-xs hover:bg-gray-200/60 active:bg-gray-200/60",
                       isActive ? "font-medium bg-gray-200/60" : "",
                     ].join(" ")
                   }

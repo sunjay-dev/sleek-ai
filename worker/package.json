@@ -1,5 +1,5 @@
 {
-  "name": "worker",
+  "name": "@app/worker",
   "version": "1.0.0",
   "description": "file worker",
   "main": "src/app.ts",

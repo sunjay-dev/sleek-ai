@@ -71,7 +71,7 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
       )}
 
       {text && (
-        <div className="user-message-color text-primary border border-gray-300/20 px-4 py-3 sm:px-3 sm:py-2.5 rounded-tr-none rounded-2xl max-w-[85%] sm:max-w-lg relative transition-all">
+        <div className="user-message-color text-primary border border-gray-300/20 px-3 py-2.5 rounded-tr-none rounded-2xl max-w-[85%] sm:max-w-lg relative transition-all">
           {isLongText && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}

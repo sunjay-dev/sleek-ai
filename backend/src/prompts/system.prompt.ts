@@ -1,7 +1,7 @@
 import type { UserPreference } from "../generated/prisma/client.js";
 import { Memories } from "../utils/model.utils.js";
 
-export const systemPrompt = (preferences: UserPreference, memories: Memories[], timezone: string) => {
+export const systemPrompt = (preferences: UserPreference, memories: Memories[], timezone: string, isRag: boolean = false) => {
   const { nickname, occupation, about, customInstructions } = preferences;
 
   const dateTimeString = new Date().toLocaleString("en-US", {
@@ -60,9 +60,18 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 **1. Math & Currency**
 - Inline math: ONLY use double dollar signs \`$$...$$\` for inline math equations so they render correctly via KaTeX. DO NOT use single dollar signs \`$...\` for math.
 - Block math: Use double dollar signs \`$$...$$\` on separate lines.
-- Currency: Write currency normally like \`$37,000\`. It will render as normal text because single-dollar math parsing is disabled.
+- Currency & Numbers: Use commas as thousands separators for all numbers greater than 999 (e.g., $37,000, 1,250, Rs 38,880) to improve readability. This applies to both normal text and math equations.
+- Currency Formatting: Write currency normally like \`$37,000\`. It will render as normal text because single-dollar math parsing is disabled.
 
 **2. Markdown Tables**
 - Do NOT use multi-line code blocks inside tables, place it **outside** the table..
-- Use single backticks for inline code.`;
+- Use single backticks for inline code.
+${isRag
+      ? `
+### DOCUMENT SEARCH CAPABILITY (ACTIVE)
+- **YOU HAVE ACCESS TO DOCUMENTS**: The user has uploaded files to this chat.
+- **USE ragSearch TOOL**: When the user asks about the content of their documents, or if your internal knowledge is insufficient regarding the specific files they've uploaded, you MUST use the \`ragSearch\` tool.
+- **CONTEXTUAL ANSWERS**: Use the information retrieved from the documents to provide accurate, grounded responses. Identify the source if multiple documents are present.`
+      : ""
+    }`;
 };

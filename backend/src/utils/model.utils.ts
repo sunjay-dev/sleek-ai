@@ -24,7 +24,7 @@ type Props = {
 };
 
 export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag }: Props) {
-  const agent = createGroqAgent(modelName, systemPrompt(preferences, memories, timezone), isRag);
+  const agent = createGroqAgent(modelName, systemPrompt(preferences, memories, timezone, isRag), isRag);
 
   const config = { configurable: { thread_id: threadId } };
 

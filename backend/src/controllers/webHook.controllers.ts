@@ -37,27 +37,3 @@ export async function handleClerkWebHook(c: Context) {
   return c.json({ ok: true }, 200);
 }
 
-export async function handleRagWebhook(c: Context) {
-  const secret = c.req.header("x-internal-secret");
-  if (secret !== process.env.INTERNAL_SECRET) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
-  const { chatId, status } = await c.req.json();
-
-  if (!chatId || !status) {
-    return c.json({ error: "Missing required fields" }, 400);
-  }
-
-  const dataToUpdate: any = { ragStatus: status };
-  if (status === "COMPLETED") {
-    dataToUpdate.isRag = true;
-  }
-
-  await prisma.chat.update({
-    where: { id: chatId },
-    data: dataToUpdate,
-  });
-
-  return c.json({ success: true }, 200);
-}
