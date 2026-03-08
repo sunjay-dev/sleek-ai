@@ -59,7 +59,7 @@ type Props = {
 export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
 
   return (
-    <div className="max-w-full text-[15px] sm:text-sm py-2 sm:py-4 rounded-xl">
+    <div className="max-w-full text-[15px] sm:text-sm py-3 rounded-xl">
       {isGenerating && text.length === 0 && !status ? (
         <span className="inline-block animate-pulse font-bold">▍</span>
       ) : (
@@ -71,7 +71,7 @@ export default memo(function ModelMessage({ text, status, isCopied, onCopy, onRe
           )}
           {text && (
             <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
+              remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
               rehypePlugins={[
                 rehypeHighlight,
                 [rehypeKatex, { strict: false }],

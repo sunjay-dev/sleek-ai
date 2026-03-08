@@ -57,9 +57,10 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 - **AVOID ITERATION**: Do not search, analyze, and then search again. Try to get the answer in the first attempt.
 
 ### FORMATTING STANDARDS
-**1. Math & LaTeX**
-- Inline math: $...$
-- Block math: $$...$$
+**1. Math & Currency**
+- Inline math: ONLY use double dollar signs \`$$...$$\` for inline math equations so they render correctly via KaTeX. DO NOT use single dollar signs \`$...\` for math.
+- Block math: Use double dollar signs \`$$...$$\` on separate lines.
+- Currency: Write currency normally like \`$37,000\`. It will render as normal text because single-dollar math parsing is disabled.
 
 **2. Markdown Tables**
 - Do NOT use multi-line code blocks inside tables, place it **outside** the table..

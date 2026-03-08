@@ -70,3 +70,18 @@ export async function handleDeleteAllUserChat(c: Context) {
 
   return c.json({ success: true, deleted: count });
 }
+export async function handleChatStatus(c: Context) {
+  const { chatId } = c.get("param");
+  const userId = c.get("user");
+
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId, userId },
+    select: {
+      ragStatus: true,
+    },
+  });
+
+  if (!chat) throw new NotFoundError("Chat not found or unauthorized");
+
+  return c.json(chat, 200);
+}

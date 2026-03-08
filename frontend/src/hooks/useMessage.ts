@@ -122,7 +122,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
               rafPendingRef.current = true;
               requestAnimationFrame(() => {
                 setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantId ? { ...m, text: textBufferRef.current, status: statusBufferRef.current } : m))
+                  prev.map((m) => (m.id === assistantId ? { ...m, text: textBufferRef.current, status: statusBufferRef.current } : m)),
                 );
                 rafPendingRef.current = false;
               });
@@ -134,9 +134,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             prev.map((m) =>
               m.id === assistantId
                 ? {
-                  ...m,
-                  text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
-                }
+                    ...m,
+                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                  }
                 : m,
             ),
           );
@@ -163,7 +163,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
         justCreatedChatRef.current = data.id;
 
         if (optimisticFiles?.length) {
-          const hasRagFiles = optimisticFiles.some(f => !f.fileType?.includes("image"));
+          const hasRagFiles = optimisticFiles.some((f) => !f.fileType?.includes("image"));
           if (hasRagFiles) setRagStatus("PROCESSING");
         }
 
@@ -252,7 +252,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
         const token = await getToken();
         if (!token) return;
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/message`, {
+        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -283,6 +283,6 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     isGenerating,
     isFetchingMessages,
     isRagProcessing: ragStatus === "PROCESSING",
-    startRagPolling
+    startRagPolling,
   };
 }
