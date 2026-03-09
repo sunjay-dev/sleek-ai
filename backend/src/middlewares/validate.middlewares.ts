@@ -2,7 +2,7 @@ import { Context, Next } from "hono";
 import { z, ZodError } from "@app/shared/src/index.js";
 import { BadRequestError } from "../utils/appError.utils.js";
 
-export function validate(schema: z.ZodObject<any, any>) {
+export function validate(schema: z.ZodTypeAny) {
   return async (c: Context, next: Next) => {
     try {
       const data = schema.parse(await c.req.json());

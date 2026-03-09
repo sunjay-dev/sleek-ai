@@ -3,6 +3,7 @@ import { parseFileWithLangChain } from "./utils/parseFile.js";
 import { chunkFile } from "./utils/chunkFile.js";
 import { embedChunksAndStoreVectors } from "./utils/embedChunksAndStoreVectors.js";
 import logger from "./utils/logger.utils.js";
+import "./server.js";
 
 type Data = {
   fileUrl: string;

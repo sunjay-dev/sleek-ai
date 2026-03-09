@@ -31,7 +31,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const justCreatedChatRef = useRef<string | null>(null);
 
   const sendMessage = async (text: string, model: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
-    if (!text.trim()) return;
+    if (!text.trim() && !messageFiles?.length) return;
 
     const token = await getToken();
     if (!token) throw new Error("You must be logged in to send message.");
@@ -134,9 +134,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             prev.map((m) =>
               m.id === assistantId
                 ? {
-                    ...m,
-                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
-                  }
+                  ...m,
+                  text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                }
                 : m,
             ),
           );
@@ -156,7 +156,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ query: text }),
+          body: JSON.stringify({ query: text || "Shared a file" }),
           signal: controller.signal,
         });
 

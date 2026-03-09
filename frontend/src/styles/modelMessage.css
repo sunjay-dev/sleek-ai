@@ -4,7 +4,7 @@
   line-height: 0.8;
 }
 
-.markdown :not(pre)>code {
+.markdown :not(pre) > code {
   font-family: Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
   font-size: 0.875em;
@@ -52,13 +52,13 @@
   white-space: normal;
 }
 
-.markdown li>p {
+.markdown li > p {
   display: inline;
   margin: 0;
   padding: 0;
 }
 
-.markdown li+li {
+.markdown li + li {
   margin-top: 0.25rem;
 }
 
@@ -68,15 +68,17 @@
   line-height: 0;
 }
 
-.markdown ol li {
+.markdown ol li,
+.markdown ul li {
   margin-bottom: 0.22rem;
-  line-height: 1.4;
+  line-height: 1.8;
 }
 
-.markdown ol li::marker {
+.markdown ol li::marker,
+.markdown ul li::marker {
   color: #1c1c1c;
   font-weight: 600;
-  font-size: 0.9em;
+  font-size: 0.95em;
 }
 
 .markdown ol ol {
@@ -88,16 +90,6 @@
   list-style-type: disc;
   list-style-position: inside;
   line-height: 0.1;
-}
-
-.markdown ul li {
-  margin-bottom: 0.22rem;
-  line-height: 1.4;
-}
-
-.markdown ul li::marker {
-  color: rgba(28, 28, 28, 0.8);
-  font-size: 0.95em;
 }
 
 .markdown ul ul {
@@ -147,7 +139,7 @@
   font-size: 1rem;
 }
 
-.markdown>*:first-child {
+.markdown > *:first-child {
   margin-top: 0 !important;
 }
 
@@ -313,7 +305,10 @@
   opacity: 1;
   transition: all 0.2s ease;
 
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 0.85em;
   line-height: 1;
 }
@@ -323,7 +318,7 @@
   transform: translate(1px, -1px);
 }
 
-.streamingCursor>*:last-child::after {
+.streamingCursor > *:last-child::after {
   content: "▋";
   display: inline-block;
   margin-left: 4px;
@@ -331,7 +326,6 @@
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -357,7 +351,6 @@
 }
 
 @keyframes pulse-opacity {
-
   0%,
   100% {
     opacity: 1;
@@ -370,8 +363,7 @@
 
 /* Mobile responsive adjustments */
 @media (max-width: 640px) {
-
-  .markdown li+li {
+  .markdown li + li {
     margin-top: 0.3rem;
   }
 

@@ -20,6 +20,7 @@ export async function handleUserMessageResponse(c: Context) {
     let finalQuery = query;
 
     finalQuery += await handleImageExtraction(messageFiles, stream);
+    if (!finalQuery.trim()) finalQuery = "Please summarize or describe the uploaded document.";
 
     try {
       const [chat, preferences, memories] = await Promise.all([
@@ -78,7 +79,7 @@ export async function handleUserMessageResponse(c: Context) {
         include: { messages: { include: { messageFiles: true } } },
       });
 
-      scheduleMemoryExtraction(userId, query, memories);
+      if (query.trim()) scheduleMemoryExtraction(userId, query, memories);
     } catch (error: any) {
       logger.error({
         message: "Streaming error",

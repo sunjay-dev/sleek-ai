@@ -28,7 +28,7 @@ export default function AuthPage() {
       <div className="relative z-10 flex min-h-screen w-full">
         <div className="hidden w-1/2 flex-col justify-between p-12 md:flex">
           <div className="flex items-center gap-2 font-semibold tracking-tighter text-xl">
-            <img src="/logo.webp" alt="Sleek AI Logo" className="w-9 h-8" />
+            <img src="/logo.webp" alt="Sleek AI Logo" className="w-10 h-8" />
             Sleek AI
           </div>
           <div className="max-w-lg mb-20">
@@ -50,7 +50,7 @@ export default function AuthPage() {
         <div className="flex w-full flex-col items-center justify-center p-4 md:w-1/2">
           <div className="md:hidden flex flex-col items-center mb-8 text-center space-y-2">
             <div className="flex items-center gap-1.5 font-semibold sm:font-bold tracking-tighter text-2xl">
-              <img src="./logo.webp" alt="Sleek AI Logo" className="w-9 h-8" />
+              <img src="./logo.webp" alt="Sleek AI Logo" className="w-10 h-8" />
               Sleek AI
             </div>
             <p className="text-sm text-neutral-500">Turn ideas into reality with an AI partner.</p>

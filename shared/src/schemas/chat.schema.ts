@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const querySchema = z.object({
-  query: z.string().trim().min(1, { message: "Please enter the valid query" }).max(2000, { message: "Please keep messages under 2000 characters." }),
+  query: z.string().trim().max(2000, { message: "Please keep messages under 2000 characters." }).default(""),
 });
 
 export const chatRenameSchema = z.object({

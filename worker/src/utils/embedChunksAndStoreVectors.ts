@@ -36,12 +36,9 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
     },
   }));
 
-  logger.info({ message: "First chunk preview", preview: chunksWithMeta[0]?.pageContent.substring(0, 100) });
-
   const store = new PineconeStore(embeddingsClient, { pineconeIndex: index });
 
   const textsToEmbed = chunksWithMeta.map((c) => c.pageContent);
-  logger.info({ message: "Sending to Google Embeddings API...", count: textsToEmbed.length });
 
   let embeddings: number[][] = [];
   try {
@@ -51,7 +48,7 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
       message: "Google GenAI Embeddings API threw an explicit error",
       error: err.message,
       stack: err.stack,
-      details: err
+      details: err,
     });
     throw err;
   }
@@ -67,7 +64,7 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
     } else {
       logger.warn({
         message: "Google GenAI returned an empty vector (likely safety bounded)",
-        chunkPreview: chunksWithMeta[i].pageContent.substring(0, 100)
+        chunkPreview: chunksWithMeta[i].pageContent.substring(0, 100),
       });
     }
   }
@@ -76,6 +73,5 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
     throw new Error("Google GenAI returned 0 valid embeddings for this document. It may have been blocked by safety filters.");
   }
 
-  logger.info({ message: "Storing validated chunks in Pinecone", storedCount: validEmbeddings.length, rejectedCount: embeddings.length - validEmbeddings.length });
   await store.addVectors(validEmbeddings, validDocuments);
 }
