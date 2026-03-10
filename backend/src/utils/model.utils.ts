@@ -57,7 +57,19 @@ export async function generateTitle(userMessage: string) {
   }
 }
 
+function isPersonallyMeaningful(message: string): boolean {
+  if (message.includes("```")) return false;
+
+  if (/[A-Za-z]:\\|\/[a-z0-9_-]+\/[a-z0-9_-]+/i.test(message)) return false;
+
+  if (/at\s+\w+\s*\(|Error:|TypeError:|SyntaxError:|undefined is not/.test(message)) return false;
+
+  return true;
+}
+
 export async function extractFactualMemory(userMessage: string, existingMemories: Memories[]) {
+  if (!isPersonallyMeaningful(userMessage)) return [];
+
   const memoryString = existingMemories.map((m) => `- ${m.content}`).join("\n");
 
   const messages = [

@@ -156,7 +156,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ query: text || "Shared a file" }),
+          body: JSON.stringify({ query: text || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat") }),
           signal: controller.signal,
         });
 
