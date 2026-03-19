@@ -11,7 +11,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY shared ./shared
 COPY backend ./backend
 
-RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts --store-dir /tmp/pnpm-clean
+RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts
 
 WORKDIR /usr/src/app/backend
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"

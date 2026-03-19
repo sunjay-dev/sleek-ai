@@ -15,7 +15,7 @@ on:
 jobs:
   backend:
     if: ${{ github.event.inputs.service == 'backend' }}
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
@@ -38,13 +38,13 @@ jobs:
           file: backend/Dockerfile
           platforms: linux/arm64
           push: true
-          no-cache: true
-          pull: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: sunjay195/chatty-ai-backend:latest
 
   worker:
     if: ${{ github.event.inputs.service == 'worker' }}
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
@@ -67,6 +67,6 @@ jobs:
           file: worker/Dockerfile
           platforms: linux/arm64
           push: true
-          no-cache: true
-          pull: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: sunjay195/chatty-ai-worker:latest
