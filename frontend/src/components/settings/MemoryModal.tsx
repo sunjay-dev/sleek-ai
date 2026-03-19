@@ -1,4 +1,4 @@
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { Trash2, Search, Brain } from "lucide-react";
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import Loader from "../loaders/Loader";

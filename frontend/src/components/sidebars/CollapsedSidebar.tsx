@@ -1,4 +1,4 @@
-import { UserButton } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/react";
 import { BadgePlus, AlignLeft } from "lucide-react";
 import { RoundedPanelLeft } from "../icons/RoundedPanelLeft";
 

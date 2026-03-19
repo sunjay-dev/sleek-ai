@@ -4,7 +4,7 @@ import { useDebounce } from "use-debounce";
 import type { SearchResult } from "@app/shared/src/types";
 import SearchSkeleton from "./SearchSkeleton";
 import { Link } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
 import { frontendSearchQuerySchema } from "@app/shared/src/schemas/search.schema";

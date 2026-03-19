@@ -16,4 +16,5 @@ export const InternetSearch = new TavilySearch({
   // excludeDomains: [],
 });
 
-InternetSearch.description = "A search engine optimized for comprehensive, accurate, and trusted results. ONLY use this tool if you absolutely need real-time data, recent news, or highly specific facts not in your training data. Do NOT use this tool for general knowledge, coding syntax, historical facts, or casual conversation.";
+InternetSearch.description =
+  "A search engine optimized for comprehensive, accurate, and trusted results. ONLY use this tool if you absolutely need real-time data, recent news, or highly specific facts not in your training data. Do NOT use this tool for general knowledge, coding syntax, historical facts, or casual conversation.";

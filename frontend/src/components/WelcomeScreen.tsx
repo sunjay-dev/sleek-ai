@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import { PenTool } from "lucide-react";
 import InputContainer from "./containers/InputContainer";
 import type { UploadedFile } from "@app/shared/src/types";

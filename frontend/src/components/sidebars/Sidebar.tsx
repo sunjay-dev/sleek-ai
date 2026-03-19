@@ -1,4 +1,4 @@
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { UserButton, useUser } from "@clerk/react";
 import { BadgePlus, MoreHorizontal, Trash2, Settings, Pencil, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";

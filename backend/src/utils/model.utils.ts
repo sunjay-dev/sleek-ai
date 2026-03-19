@@ -10,7 +10,7 @@ import logger from "./logger.utils.js";
 import prisma from "../config/prisma.config.js";
 
 export type Memories = {
-  content: String;
+  content: string;
 };
 
 type Props = {
@@ -42,7 +42,7 @@ export async function* generateAIResponse({ query, threadId, modelName, preferen
     }
   } catch (error) {
     logger.error({ message: "Agent invocation failed:", error });
-    throw new Error("AI agent invocation failed");
+    throw new Error("AI agent invocation failed", { cause: error });
   }
 }
 
@@ -53,7 +53,7 @@ export async function generateTitle(userMessage: string) {
     return result.content as string;
   } catch (error) {
     logger.error({ message: "Title generation failed", error });
-    throw new Error("Title generation failed");
+    throw new Error("Title generation failed", { cause: error });
   }
 }
 
@@ -112,7 +112,7 @@ export async function extractFactualMemory(userMessage: string, existingMemories
   }
 }
 
-export function scheduleMemoryExtraction(userId: string, query: string, memories: any[]) {
+export function scheduleMemoryExtraction(userId: string, query: string, memories: Memories[]) {
   setImmediate(async () => {
     try {
       const newMemories = await extractFactualMemory(query, memories);

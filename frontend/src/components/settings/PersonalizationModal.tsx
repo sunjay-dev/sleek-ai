@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type Dispatch } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { Loader } from "@/components";
 import type { UserPreferences } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";

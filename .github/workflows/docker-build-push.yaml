@@ -74,6 +74,8 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: sunjay195/chatty-ai-backend:latest
+          no-cache: true
+          pull: true
           labels: |
             git_commit_sha=${{ github.sha }}
             git_commit_short=${{ steps.meta.outputs.short_sha }}
@@ -112,6 +114,8 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: sunjay195/chatty-ai-worker:latest
+          no-cache: true
+          pull: true
           labels: |
             git_commit_sha=${{ github.sha }}
             git_commit_short=${{ steps.meta.outputs.short_sha }}

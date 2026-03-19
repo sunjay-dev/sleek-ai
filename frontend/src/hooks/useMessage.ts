@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Chat, Message, UploadedFile } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
@@ -29,6 +29,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const statusBufferRef = useRef<string | null>(null);
   const rafPendingRef = useRef(false);
   const justCreatedChatRef = useRef<string | null>(null);
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const sendMessage = async (text: string, model: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
     if (!text.trim() && !messageFiles?.length) return;
@@ -134,9 +135,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             prev.map((m) =>
               m.id === assistantId
                 ? {
-                  ...m,
-                  text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
-                }
+                    ...m,
+                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                  }
                 : m,
             ),
           );
@@ -156,7 +157,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ query: text || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat") }),
+          body: JSON.stringify({
+            query: text || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat"),
+          }),
           signal: controller.signal,
         });
 
@@ -241,7 +244,6 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   useEffect(() => {
     if (!chatId || ragStatus !== "PROCESSING") return;
 
-    let intervalId: NodeJS.Timeout;
     let isPolling = false;
 
     const pollStatus = async () => {
@@ -260,7 +262,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
           setRagStatus(data.ragStatus);
 
           if (data.ragStatus === "COMPLETED" || data.ragStatus === "FAILED" || data.ragStatus === "IDLE") {
-            clearInterval(intervalId);
+            if (pollIntervalRef.current) {
+              clearInterval(pollIntervalRef.current);
+            }
           }
         }
       } catch (err) {
@@ -270,9 +274,13 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
       }
     };
 
-    intervalId = setInterval(pollStatus, 3000);
+    pollIntervalRef.current = setInterval(pollStatus, 3000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
   }, [chatId, ragStatus, getToken]);
 
   return {

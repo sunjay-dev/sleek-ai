@@ -1,5 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import type { Chat, DeleteChatIntent } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";

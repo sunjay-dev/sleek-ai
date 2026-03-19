@@ -47,15 +47,15 @@ export async function handleStartRag(c: Context) {
         userId,
         title,
         ragStatus: "PROCESSING",
-      }
+      },
     });
     targetChatId = newChat.id;
   } else {
     await prisma.chat.update({
       where: { id: targetChatId, userId },
       data: {
-        ragStatus: "PROCESSING"
-      }
+        ragStatus: "PROCESSING",
+      },
     });
   }
 

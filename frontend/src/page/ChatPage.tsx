@@ -19,7 +19,10 @@ export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
-  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages, isRagProcessing, startRagPolling } = useMessages({ moveChatToTop, setChats });
+  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages, isRagProcessing, startRagPolling } = useMessages({
+    moveChatToTop,
+    setChats,
+  });
   const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
   const { selectedModel, setSelectedModel } = useModel();
 

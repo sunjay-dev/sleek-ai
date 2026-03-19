@@ -30,7 +30,11 @@ export const getCurrentWeather = tool(
     name: "get_current_weather",
     description: "Fetch the current, real-time weather conditions for a specifically named city.",
     schema: z.object({
-      city: z.string().describe("The name of the city to get the current weather for. Format: 'City, Country' or just 'City'. Provide the full name, no abbreviations."),
+      city: z
+        .string()
+        .describe(
+          "The name of the city to get the current weather for. Format: 'City, Country' or just 'City'. Provide the full name, no abbreviations.",
+        ),
     }),
   },
 );
@@ -64,7 +68,6 @@ export const getDailyWeatherForecast = tool(
         return `No forecast data found for day ${day}.`;
       }
 
-
       return forecast;
     } catch (error) {
       logger.error({ message: "Weather forecast tool error", error });
@@ -73,10 +76,15 @@ export const getDailyWeatherForecast = tool(
   },
   {
     name: "get_daily_weather_forecast",
-    description: "Get a detailed daily weather forecast strictly 1 to 3 days ahead for a city. Do NOT use this tool for 'current' or 'now' weather requests.",
+    description:
+      "Get a detailed daily weather forecast strictly 1 to 3 days ahead for a city. Do NOT use this tool for 'current' or 'now' weather requests.",
     schema: z.object({
       city: z.string().describe("The city name to get the weather forecast for. Format: 'City, Country' or just 'City'."),
-      day: z.coerce.number().min(1).max(3).describe("The numerical day of the forecast (1 = today's forecast, 2 = tomorrow, 3 = day after tomorrow)."),
+      day: z.coerce
+        .number()
+        .min(1)
+        .max(3)
+        .describe("The numerical day of the forecast (1 = today's forecast, 2 = tomorrow, 3 = day after tomorrow)."),
     }),
   },
 );

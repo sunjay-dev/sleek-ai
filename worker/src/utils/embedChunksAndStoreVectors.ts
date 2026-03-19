@@ -11,7 +11,7 @@ const embeddingsClient = new GoogleGenerativeAIEmbeddings({
 const pinecone = new Pinecone();
 const index = pinecone.Index(process.env.PINECONE_INDEX_NAME as string);
 
-export async function embedChunksAndStoreVectors(chunks: Document<Record<string, any>>[], extraMetadata: Record<string, any>) {
+export async function embedChunksAndStoreVectors(chunks: Document<Record<string, unknown>>[], extraMetadata: Record<string, unknown>) {
   const cleanChunks = chunks
     .map((c) => {
       if (typeof c.pageContent !== "string") return c;
@@ -40,21 +40,22 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
 
   const textsToEmbed = chunksWithMeta.map((c) => c.pageContent);
 
-  let embeddings: number[][] = [];
+  let embeddings: number[][];
+
   try {
     embeddings = await embeddingsClient.embedDocuments(textsToEmbed);
-  } catch (err: any) {
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown Embeddings API error";
     logger.error({
       message: "Google GenAI Embeddings API threw an explicit error",
-      error: err.message,
-      stack: err.stack,
+      error: errorMessage,
       details: err,
     });
     throw err;
   }
 
   const validEmbeddings: number[][] = [];
-  const validDocuments: Document<Record<string, any>>[] = [];
+  const validDocuments: Document<Record<string, unknown>>[] = [];
 
   for (let i = 0; i < embeddings.length; i++) {
     const vector = embeddings[i];

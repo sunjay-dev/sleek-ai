@@ -1,1 +1,3 @@
-bunx lint-staged
+pnpm lint-staged
+
+pnpm --filter ./frontend build

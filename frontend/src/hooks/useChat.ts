@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Chat } from "@app/shared/src/types";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { apiRequest } from "@/utils/api";
 import { chatRenameSchema } from "@app/shared/src/schemas/chat.schema.js";
 import { validate } from "@/utils/validate";

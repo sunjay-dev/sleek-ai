@@ -1,4 +1,4 @@
-import { SignIn } from "@clerk/clerk-react";
+import { SignIn } from "@clerk/react";
 import { useLocation } from "react-router-dom";
 
 export default function AuthPage() {

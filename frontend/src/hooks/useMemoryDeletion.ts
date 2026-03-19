@@ -1,5 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import type { UserMemory } from "@app/shared/src/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";

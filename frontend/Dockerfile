@@ -1,5 +1,5 @@
 ARG BUN_VERSION=1.3.3-alpine
-ARG PNPM_VERSION=10.17.1
+ARG PNPM_VERSION=10.32.1
 # ---------------------- build ----------------------
 FROM oven/bun:${BUN_VERSION} AS build
 

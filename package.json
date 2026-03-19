@@ -1,27 +1,32 @@
 {
   "name": "sleek-ai",
   "description": "AI chatBot",
+  "type": "module",
   "scripts": {
     "prepare": "husky",
     "dev": "pnpm -r --parallel run dev",
     "start": "pnpm -r --parallel run start",
-    "lint:backend": "eslint backend/src --ext .ts --fix",
-    "lint:frontend": "eslint frontend/src --ext .ts,.tsx --fix"
+    "lint:frontend": "pnpm --filter ./frontend eslint --fix",
+    "lint:backend": "eslint .",
+    "lint": "pnpm lint:frontend && pnpm lint:backend",
+    "format": "prettier . --write"
   },
   "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.32.1",
   "lint-staged": {
-    "backend/src/**/*.ts": [
-      "pnpm --filter @app/backend run lint:backend"
-    ],
-    "frontend/src/**/*.{ts,tsx}": [
-      "pnpm --filter @app/frontend run lint:frontend"
-    ]
+    "frontend/**/*.{js,jsx,ts,tsx}": "pnpm --filter ./frontend exec eslint --fix",
+    "{backend,worker,shared}/**/*.{js,ts}": "eslint --fix",
+    "*.{js,jsx,ts,tsx,md,css,json,yml,yaml}": "prettier --write"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "tsx": "^4.21.0"
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript-eslint": "^8.57.1"
   }
 }

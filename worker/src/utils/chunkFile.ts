@@ -1,10 +1,10 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Document } from "@langchain/core/documents";
 
-export async function chunkFile(docs: Document[] | string[], chunkSize = 500, chunkOverlap = 50): Promise<Document[]> {
+export async function chunkFile(docs: Document[] | string[], chunkSize = 1500, chunkOverlap = 200): Promise<Document[]> {
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1500,
-    chunkOverlap: 200,
+    chunkSize,
+    chunkOverlap,
   });
 
   const docObjects: Document[] = docs.map((d) => {

@@ -66,12 +66,13 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 **2. Markdown Tables**
 - Do NOT use multi-line code blocks inside tables, place it **outside** the table..
 - Use single backticks for inline code.
-${isRag
-      ? `
+${
+  isRag
+    ? `
 ### DOCUMENT SEARCH CAPABILITY (ACTIVE)
 - **YOU HAVE ACCESS TO DOCUMENTS**: The user has uploaded files to this chat.
 - **USE ragSearch TOOL**: When the user asks about the content of their documents, or if your internal knowledge is insufficient regarding the specific files they've uploaded, you MUST use the \`ragSearch\` tool.
 - **CONTEXTUAL ANSWERS**: Use the information retrieved from the documents to provide accurate, grounded responses. Identify the source if multiple documents are present.`
-      : ""
-    }`;
+    : ""
+}`;
 };

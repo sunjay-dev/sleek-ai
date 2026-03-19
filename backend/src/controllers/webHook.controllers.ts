@@ -36,4 +36,3 @@ export async function handleClerkWebHook(c: Context) {
   }
   return c.json({ ok: true }, 200);
 }
-

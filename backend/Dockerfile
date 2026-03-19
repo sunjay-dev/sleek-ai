@@ -1,4 +1,4 @@
-ARG BUN_VERSION=1.3.10-alpine
+ARG BUN_VERSION=1.3.11-alpine
 ARG PNPM_VERSION=10.30.3
 # ---------------------- base stage ----------------------
 FROM oven/bun:${BUN_VERSION} AS base
@@ -11,7 +11,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY shared ./shared
 COPY backend ./backend
 
-RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts
+RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts --store-dir /tmp/pnpm-clean
 
 WORKDIR /usr/src/app/backend
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"

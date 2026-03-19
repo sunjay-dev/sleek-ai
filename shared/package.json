@@ -2,9 +2,10 @@
   "name": "@app/shared",
   "description": "sleek ai shared folder",
   "version": "1.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
   "main": "src/index.ts",
   "author": "https://github.com/sunjay-dev/",
-  "type": "module",
   "dependencies": {
     "zod": "^4.3.5"
   }

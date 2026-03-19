@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowUp, Loader2, Paperclip, X, AlertCircle, FileText, RefreshCw } from "lucide-react";
 import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks";
 import { modelsList } from "@app/shared/src/models";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { UploadedFile } from "@app/shared/src/types";
 import { uploadToCloudinary } from "@/utils/cloudinary";
@@ -40,7 +40,16 @@ const SUPPORTED_FORMATS = [
 
 const SUPPORTED_EXTENSIONS_DISPLAY = ".pdf, .docx, .pptx, .csv, .txt, .jpg, .jpeg, .png, .webp";
 
-export default function InputContainer({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, autoFocus, isRagProcessing, startRagPolling }: Props) {
+export default function InputContainer({
+  sendMessage,
+  isGenerating,
+  selectedModel,
+  onStop,
+  onModelChange,
+  autoFocus,
+  isRagProcessing,
+  startRagPolling,
+}: Props) {
   const [message, setMessage] = useState("");
   const { getToken } = useAuth();
   const { chatId } = useParams<{ chatId?: string }>();
@@ -54,97 +63,98 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isMobile = useIsMobile();
 
-  const uploadSingleFile = async (attachment: Attachment) => {
-    try {
-      setAttachments((prev) =>
-        prev.map((item) => (item.id === attachment.id ? { ...item, status: "uploading" } : item))
-      );
+  const uploadSingleFile = useCallback(
+    async (attachment: Attachment) => {
+      try {
+        setAttachments((prev) => prev.map((item) => (item.id === attachment.id ? { ...item, status: "uploading" } : item)));
 
-      const data = await uploadToCloudinary({ file: attachment.file, getToken });
+        const data = await uploadToCloudinary({ file: attachment.file, getToken });
 
-      let newChatId = undefined;
-      if (!data.fileType.includes("image")) {
-        const token = await getToken();
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/upload/rag`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({
-            fileUrl: data.fileUrl,
-            fileName: data.fileName,
-            fileType: data.fileType,
-            chatId: chatId || undefined
-          })
-        });
-        const apiData = await res.json();
-        if (apiData.success) {
-          startRagPolling();
-          if (apiData.chatId && !chatId) {
-            newChatId = apiData.chatId;
+        let newChatId = undefined;
+        if (!data.fileType.includes("image")) {
+          const token = await getToken();
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/upload/rag`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({
+              fileUrl: data.fileUrl,
+              fileName: data.fileName,
+              fileType: data.fileType,
+              chatId: chatId || undefined,
+            }),
+          });
+          const apiData = await res.json();
+          if (apiData.success) {
+            startRagPolling();
+            if (apiData.chatId && !chatId) {
+              newChatId = apiData.chatId;
+            }
           }
         }
+
+        setAttachments((prev) => prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item)));
+
+        if (newChatId) {
+          navigate(`/c/${newChatId}`, { replace: true });
+        }
+      } catch {
+        setAttachments((prev) => prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item)));
+      }
+    },
+    [chatId, getToken, navigate, startRagPolling],
+  );
+
+  const processFiles = useCallback(
+    async (files: File[]) => {
+      if (!files.length) return;
+
+      const currentCount = attachments.length;
+      const remainingSlots = 4 - currentCount;
+
+      if (remainingSlots <= 0) {
+        toast.error("Maximum 4 files allowed per message");
+        return;
       }
 
-      setAttachments((prev) =>
-        prev.map((item) => (item.id === attachment.id ? { ...item, status: "success", uploadData: data } : item))
-      );
+      const validFiles = files.filter((file) => {
+        const isSupported =
+          SUPPORTED_FORMATS.includes(file.type) ||
+          file.name.toLowerCase().endsWith(".txt") ||
+          file.name.toLowerCase().endsWith(".csv") ||
+          file.name.toLowerCase().endsWith(".pdf") ||
+          file.name.toLowerCase().endsWith(".docx") ||
+          file.name.toLowerCase().endsWith(".pptx");
 
-      if (newChatId) {
-        navigate(`/c/${newChatId}`, { replace: true });
+        if (!isSupported) {
+          toast.error(`Unsupported file type: ${file.name}`);
+        }
+        return isSupported;
+      });
+
+      if (validFiles.length === 0) return;
+
+      let filesToUpload = validFiles;
+      if (validFiles.length > remainingSlots) {
+        toast.warning(`Only ${remainingSlots} more file${remainingSlots > 1 ? "s" : ""} can be added (4 file limit)`);
+        filesToUpload = validFiles.slice(0, remainingSlots);
       }
-    } catch {
-      setAttachments((prev) =>
-        prev.map((item) => (item.id === attachment.id ? { ...item, status: "error" } : item))
-      );
-    }
-  };
 
-  const processFiles = async (files: File[]) => {
-    if (!files.length) return;
+      const newAttachments: Attachment[] = filesToUpload.map((file) => ({
+        id: crypto.randomUUID(),
+        file,
+        status: "uploading",
+      }));
 
-    const currentCount = attachments.length;
-    const remainingSlots = 4 - currentCount;
+      setAttachments((prev) => [...prev, ...newAttachments]);
 
-    if (remainingSlots <= 0) {
-      toast.error("Maximum 4 files allowed per message");
-      return;
-    }
+      const uploadPromises = newAttachments.map((attachment) => uploadSingleFile(attachment));
 
-    const validFiles = files.filter(file => {
-      const isSupported = SUPPORTED_FORMATS.includes(file.type) ||
-        file.name.toLowerCase().endsWith('.txt') ||
-        file.name.toLowerCase().endsWith('.csv') ||
-        file.name.toLowerCase().endsWith('.pdf') ||
-        file.name.toLowerCase().endsWith('.docx') ||
-        file.name.toLowerCase().endsWith('.pptx');
+      await Promise.allSettled(uploadPromises);
 
-      if (!isSupported) {
-        toast.error(`Unsupported file type: ${file.name}`);
-      }
-      return isSupported;
-    });
-
-    if (validFiles.length === 0) return;
-
-    let filesToUpload = validFiles;
-    if (validFiles.length > remainingSlots) {
-      toast.warning(`Only ${remainingSlots} more file${remainingSlots > 1 ? 's' : ''} can be added (4 file limit)`);
-      filesToUpload = validFiles.slice(0, remainingSlots);
-    }
-
-    const newAttachments: Attachment[] = filesToUpload.map((file) => ({
-      id: crypto.randomUUID(),
-      file,
-      status: "uploading",
-    }));
-
-    setAttachments((prev) => [...prev, ...newAttachments]);
-
-    const uploadPromises = newAttachments.map((attachment) => uploadSingleFile(attachment));
-
-    await Promise.allSettled(uploadPromises);
-
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    },
+    [attachments.length, uploadSingleFile],
+  );
 
   const handleRetryUpload = (attachment: Attachment) => {
     uploadSingleFile(attachment);
@@ -309,8 +319,9 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                         <img
                           src={URL.createObjectURL(att.file)}
                           alt="Preview"
-                          className={`h-16 w-auto rounded-lg object-contain border border-gray-100 transition-all ${att.status === "uploading" ? "opacity-50 blur-[1px]" : "opacity-100"
-                            } ${att.status === "error" ? "border-red-400 bg-red-50" : ""}`}
+                          className={`h-16 w-auto rounded-lg object-contain border border-gray-100 transition-all ${
+                            att.status === "uploading" ? "opacity-50 blur-[1px]" : "opacity-100"
+                          } ${att.status === "error" ? "border-red-400 bg-red-50" : ""}`}
                         />
                         {att.status === "error" && (
                           <button
@@ -332,7 +343,9 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                       </div>
                     ) : (
                       <div className="relative inline-flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100 w-fit max-w-full">
-                        <div className={`bg-white p-1.5 rounded-md border shadow-sm transition-colors ${att.status === "error" ? "border-red-200 bg-red-50" : "border-gray-200"}`}>
+                        <div
+                          className={`bg-white p-1.5 rounded-md border shadow-sm transition-colors ${att.status === "error" ? "border-red-200 bg-red-50" : "border-gray-200"}`}
+                        >
                           {att.status === "error" ? (
                             <RefreshCw
                               size={16}
@@ -411,8 +424,9 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                 />
                 <label
                   htmlFor="file-upload"
-                  className={`flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent active:border-transparent hover:bg-[#e9e9e980] active:bg-[#e9e9e980] text-primary cursor-pointer ${isBusy ? "opacity-50 pointer-events-none" : ""
-                    }`}
+                  className={`flex items-center justify-center h-8 w-8 rounded-full border border-gray-200 hover:border-transparent active:border-transparent hover:bg-[#e9e9e980] active:bg-[#e9e9e980] text-primary cursor-pointer ${
+                    isBusy ? "opacity-50 pointer-events-none" : ""
+                  }`}
                   title="Attach files"
                 >
                   <Paperclip size={isMobile ? 20 : 16} strokeWidth={1.8} />
@@ -427,13 +441,18 @@ export default function InputContainer({ sendMessage, isGenerating, selectedMode
                   disabled={(!hasContent && !isGenerating) || isGlobalUploading || isRagProcessing}
                   className={`
                   flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200
-                  ${isBusy || hasContent
+                  ${
+                    isBusy || hasContent
                       ? "bg-secondary text-white hover:bg-neutral-700 active:bg-neutral-700"
                       : "bg-[#e9e9e980] text-[#6f6f6f] cursor-not-allowed"
-                    }
+                  }
                 `}
                 >
-                  {isGenerating || isGlobalUploading || isRagProcessing ? <Loader2 size={isMobile ? 20 : 16} className="animate-spin" /> : <ArrowUp size={isMobile ? 22 : 18} strokeWidth={2.5} />}
+                  {isGenerating || isGlobalUploading || isRagProcessing ? (
+                    <Loader2 size={isMobile ? 20 : 16} className="animate-spin" />
+                  ) : (
+                    <ArrowUp size={isMobile ? 22 : 18} strokeWidth={2.5} />
+                  )}
                 </button>
               </div>
             </div>
