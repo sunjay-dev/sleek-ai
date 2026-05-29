@@ -1,9 +1,10 @@
-ARG BUN_VERSION=1.3.11-alpine
-ARG PNPM_VERSION=10.30.3
+ARG NODE_VERSION=24.11.0-alpine
+ARG PNPM_VERSION=10.32.31
 
-FROM oven/bun:${BUN_VERSION} AS base
+# ---------------------- base stage ----------------------
+FROM node:${NODE_VERSION} AS base
 
-RUN bun install -g pnpm@${PNPM_VERSION}
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 WORKDIR /usr/src/app
 
@@ -12,6 +13,23 @@ COPY worker ./worker
 
 RUN pnpm install --filter "@app/worker..." --prod --frozen-lockfile --ignore-scripts
 
+# ---------------------- build stage ----------------------
+FROM base AS build
+
+ENV CI=true
+RUN pnpm install --filter "@app/worker..." --frozen-lockfile
+
+WORKDIR /usr/src/app/worker
+RUN pnpm run build
+
+# ---------------------- final stage ----------------------
+FROM node:${NODE_VERSION} AS final
+
+
 WORKDIR /usr/src/app/worker
 
-CMD pnpm start
+COPY --from=build /usr/src/app/worker .
+
+ENV NODE_ENV=production
+
+CMD ["node", "./dist/server.js"]
