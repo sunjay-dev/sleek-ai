@@ -34,13 +34,13 @@ export const MODELS = [
   //   tpd: 500_000,
   //   rpm: 30,
   // },
-  {
-    id: "moonshotai/kimi-k2-instruct-0905",
-    name: "Kimi K2",
-    tpm: 15_000,
-    tpd: 300_000,
-    rpm: 60,
-  },
+  // {
+  //   id: "moonshotai/kimi-k2-instruct-0905",
+  //   name: "Kimi K2",
+  //   tpm: 15_000,
+  //   tpd: 300_000,
+  //   rpm: 60,
+  // },
 ] as const;
 
 export const modelsList = MODELS.map((model) => ({ id: model.id, name: model.name }));

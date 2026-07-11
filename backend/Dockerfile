@@ -1,5 +1,5 @@
 ARG BUN_VERSION=1.3.11-alpine
-ARG PNPM_VERSION=10.30.3
+ARG PNPM_VERSION=10.30.1
 # ---------------------- base stage ----------------------
 FROM oven/bun:${BUN_VERSION} AS base
 WORKDIR /usr/src/app

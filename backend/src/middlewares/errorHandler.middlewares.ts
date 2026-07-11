@@ -8,7 +8,7 @@ export function errorHandler(err: Error, c: Context) {
     logger.error(
       {
         statusCode: err.statusCode,
-        details: err.details ?? {},
+        details: err.details,
         method: c.req.method,
         url: c.req.path,
       },
@@ -18,7 +18,7 @@ export function errorHandler(err: Error, c: Context) {
     return c.json(
       {
         message: err.message,
-        ...(err.details ?? {}),
+        ...err.details,
       },
       err.statusCode,
     );
@@ -27,7 +27,7 @@ export function errorHandler(err: Error, c: Context) {
   if (err instanceof HTTPException) {
     logger.error(
       {
-        stack: process.env.NODE_ENV === "production" ? null : err.stack || {},
+        stack: process.env.NODE_ENV === "production" ? null : err.stack,
         statusCode: err.status,
         message: err.message,
         method: c.req.method,
@@ -41,7 +41,7 @@ export function errorHandler(err: Error, c: Context) {
 
   logger.error(
     {
-      stack: process.env.NODE_ENV === "production" ? null : err.stack || {},
+      stack: process.env.NODE_ENV === "production" ? null : err.stack,
       method: c.req.method,
       url: c.req.path,
     },
