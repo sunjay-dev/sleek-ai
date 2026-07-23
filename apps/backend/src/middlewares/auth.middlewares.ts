@@ -1,5 +1,6 @@
 import { getAuth } from "@hono/clerk-auth";
 import type { Next, Context } from "hono";
+import { backendEnv } from "../config/env.config.js";
 
 export async function checkUser(c: Context, next: Next) {
   const auth = getAuth(c);
@@ -17,7 +18,7 @@ export async function prometheusAuth(c: Context, next: Next) {
 
   const token = authHeader.split(" ")[1];
 
-  if (token !== (process.env.PROMETHEUS_SECRET as string)) {
+  if (token !== backendEnv.PROMETHEUS_SECRET) {
     return c.json({ message: "Unauthorized access to metrics" }, 403);
   }
 

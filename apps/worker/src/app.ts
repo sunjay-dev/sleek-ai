@@ -1,3 +1,4 @@
+import { workerEnv } from "./config/env.config.js";
 import { Worker, type Job } from "bullmq";
 import { parseFileWithLangChain } from "./utils/parseFile.js";
 import { chunkFile } from "./utils/chunkFile.js";
@@ -34,7 +35,7 @@ export async function handler(job: Job<Data>) {
 
 const worker = new Worker("file-ingest", handler, {
   connection: {
-    url: process.env.REDIS_URL as string,
+    url: workerEnv.REDIS_URL,
   },
   limiter: { max: 5, duration: 1000 },
 });

@@ -2,6 +2,7 @@ import type { Context } from "hono";
 import { AppError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
 import { HTTPException } from "hono/http-exception";
+import { backendEnv } from "../config/env.config.js";
 
 export function errorHandler(err: Error, c: Context) {
   if (err instanceof AppError) {
@@ -27,7 +28,7 @@ export function errorHandler(err: Error, c: Context) {
   if (err instanceof HTTPException) {
     logger.error(
       {
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
+        stack: backendEnv.isProduction ? null : err.stack,
         statusCode: err.status,
         message: err.message,
         method: c.req.method,
@@ -41,7 +42,7 @@ export function errorHandler(err: Error, c: Context) {
 
   logger.error(
     {
-      stack: process.env.NODE_ENV === "production" ? null : err.stack,
+      stack: backendEnv.NODE_ENV === "production" ? null : err.stack,
       method: c.req.method,
       url: c.req.path,
     },

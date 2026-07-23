@@ -1,18 +1,14 @@
 import { tool } from "langchain";
 import { z } from "@app/shared";
 import logger from "../utils/logger.utils.js";
+import { backendEnv } from "../config/env.config.js";
 
 export const getCurrentWeather = tool(
   async ({ city }) => {
     logger.info({ message: "Get Current Weather tool called", city });
 
     try {
-      const apiKey = process.env.WEATHER_API_KEY;
-      if (!apiKey) {
-        return "Error: WEATHER_API_KEY is not configured.";
-      }
-
-      const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`);
+      const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${backendEnv.WEATHER_API_KEY}&q=${city}`);
 
       if (!response.ok) {
         return "Error: Could not fetch weather data. The city might be invalid.";
@@ -50,12 +46,7 @@ export const getDailyWeatherForecast = tool(
     }
 
     try {
-      const apiKey = process.env.WEATHER_API_KEY;
-      if (!apiKey) {
-        return "Error: WEATHER_API_KEY is not configured.";
-      }
-
-      const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=${dayNumber}`);
+      const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${backendEnv.WEATHER_API_KEY}&q=${city}&days=${dayNumber}`);
 
       if (!response.ok) {
         return "Something went wrong! Please try again later.";

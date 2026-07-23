@@ -3,14 +3,15 @@ import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import checkpointer from "./redisCheckpointer.config.js";
 import { MODELS } from "@app/shared";
+import { backendEnv } from "./env.config.js";
 
 const llmCache = new Map();
 let summarizerCache: ChatGroq | null = null;
 
-const MEMORY_MODEL = (process.env.MEMORY_MODEL as string) || "groq/compound-mini";
-const TITLE_MODEL = (process.env.TITLE_MODEL as string) || "groq/compound-mini";
-const SUMMARIZER_MODEL = (process.env.SUMMARIZER_MODEL as string) || "groq/compound-mini";
-const VISION_MODEL = (process.env.VISION_MODEL as string) || "meta-llama/llama-4-scout-17b-16e-instruct";
+const MEMORY_MODEL = backendEnv.MEMORY_MODEL;
+const TITLE_MODEL = backendEnv.TITLE_MODEL;
+const SUMMARIZER_MODEL = backendEnv.SUMMARIZER_MODEL;
+const VISION_MODEL = backendEnv.VISION_MODEL;
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {

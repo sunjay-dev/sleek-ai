@@ -3,13 +3,14 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { type Document } from "@langchain/core/documents";
 import logger from "./logger.utils.js";
+import { workerEnv } from "../config/env.config.js";
 
 const embeddingsClient = new GoogleGenerativeAIEmbeddings({
-  model: process.env.GOOGLE_EMBEDDINGS_MODEL as string,
+  model: workerEnv.GOOGLE_EMBEDDINGS_MODEL,
 });
 
 const pinecone = new Pinecone();
-const index = pinecone.Index(process.env.PINECONE_INDEX_NAME as string);
+const index = pinecone.Index(workerEnv.PINECONE_INDEX_NAME);
 
 export async function embedChunksAndStoreVectors(chunks: Document<Record<string, unknown>>[], extraMetadata: Record<string, unknown>) {
   const cleanChunks = chunks

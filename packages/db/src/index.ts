@@ -1,3 +1,4 @@
+import { dbEnv } from "./config/env.config.js";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -7,7 +8,7 @@ export { RagStatus, MessageRole } from "./generated/prisma/client.js";
 
 function createPrismaClient() {
   const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: dbEnv.DATABASE_URL,
   });
 
   return new PrismaClient({ adapter });

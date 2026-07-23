@@ -1,9 +1,10 @@
 import { Queue, QueueEvents } from "bullmq";
 import prisma from "./prisma.config.js";
+import { backendEnv } from "./env.config.js";
 
 export const fileIngestQueue = new Queue("file-ingest", {
   connection: {
-    url: process.env.REDIS_URL as string,
+    url: backendEnv.REDIS_URL,
   },
   defaultJobOptions: {
     attempts: 2,
@@ -12,7 +13,7 @@ export const fileIngestQueue = new Queue("file-ingest", {
 
 const queueEvents = new QueueEvents("file-ingest", {
   connection: {
-    url: process.env.REDIS_URL as string,
+    url: backendEnv.REDIS_URL,
   },
 });
 

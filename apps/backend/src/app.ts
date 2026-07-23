@@ -1,3 +1,4 @@
+import { backendEnv } from "./config/env.config.js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 const app = new Hono();
@@ -5,7 +6,7 @@ const app = new Hono();
 app.use(
   "/api/*",
   cors({
-    origin: process.env.CLIENT_URL as string,
+    origin: backendEnv.CLIENT_URL,
     allowHeaders: ["x-client-timezone", "Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
@@ -32,7 +33,7 @@ app.route("/api/webhooks", webHookRouter);
 app.onError(errorHandler);
 
 export default {
-  port: process.env.PORT as string,
+  port: backendEnv.PORT,
   idleTimeout: 30,
   fetch: app.fetch,
 };
