@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { handleUserMessageResponse, handleGetAllChatMessages } from "../controllers/message.controllers.js";
-import { clerkMiddleware } from "@hono/clerk-auth";
+import { clerkMiddleware } from "@clerk/hono";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 import { validate, validateParams } from "../middlewares/validate.middlewares.js";
 import { chatIdParamSchema, messageSchema } from "@app/shared";

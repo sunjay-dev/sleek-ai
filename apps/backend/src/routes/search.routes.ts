@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { handleSearchMessages } from "../controllers/search.controllers.js";
-import { clerkMiddleware } from "@hono/clerk-auth";
+import { clerkMiddleware } from "@clerk/hono";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 import { validateQuery } from "../middlewares/validate.middlewares.js";
 import { searchQuerySchema } from "@app/shared";

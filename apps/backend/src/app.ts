@@ -1,6 +1,8 @@
+import { serve } from "@hono/node-server";
 import { backendEnv } from "./config/env.config.js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import logger from "./utils/logger.utils.js";
 const app = new Hono();
 
 app.use(
@@ -32,8 +34,12 @@ app.route("/api/webhooks", webHookRouter);
 
 app.onError(errorHandler);
 
-export default {
-  port: backendEnv.PORT,
-  idleTimeout: 30,
-  fetch: app.fetch,
-};
+serve(
+  {
+    fetch: app.fetch,
+    port: Number(backendEnv.PORT),
+  },
+  (info) => {
+    logger.info(`Server running on http://localhost:${info.port}`);
+  },
+);

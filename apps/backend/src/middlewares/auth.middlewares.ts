@@ -1,4 +1,4 @@
-import { getAuth } from "@hono/clerk-auth";
+import { getAuth } from "@clerk/hono";
 import type { Next, Context } from "hono";
 import { backendEnv } from "../config/env.config.js";
 

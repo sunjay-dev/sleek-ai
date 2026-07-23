@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { handleFileSignature, handleStartRag } from "../controllers/upload.controllers.js";
-import { clerkMiddleware } from "@hono/clerk-auth";
+import { clerkMiddleware } from "@clerk/hono";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 const router = new Hono();
 
