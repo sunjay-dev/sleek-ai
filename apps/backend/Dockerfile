@@ -8,6 +8,7 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/shared ./packages/shared
+COPY packages/db ./packages/db
 COPY packages/typescript-config ./packages/typescript-config
 COPY apps/backend ./apps/backend
 
@@ -16,7 +17,7 @@ RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-sc
 WORKDIR /usr/src/app/apps/backend
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
-RUN npx prisma generate
+RUN npx prisma generate --schema=../../packages/db/prisma/schema.prisma
 
 
 # ---------------------- final runtime stage ----------------------

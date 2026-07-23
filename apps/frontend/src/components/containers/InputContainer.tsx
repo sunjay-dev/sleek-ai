@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowUp, Loader2, Paperclip, X, AlertCircle, FileText, RefreshCw } from "lucide-react";
 import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks";
-import { modelsList } from "@app/shared/src/models";
+import { modelsList } from "@app/shared/models";
 import { useAuth } from "@clerk/react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { UploadedFile } from "@app/shared/src/types";
+import type { UploadedFile } from "@app/shared/types";
 import { uploadToCloudinary } from "@/utils/cloudinary";
 import { toast } from "sonner";
 

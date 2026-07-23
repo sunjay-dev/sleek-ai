@@ -2,7 +2,7 @@ import { ChatGroq } from "@langchain/groq";
 import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import checkpointer from "./redisCheckpointer.config.js";
-import { MODELS } from "@app/shared/src/models.js";
+import { MODELS } from "@app/shared";
 
 const llmCache = new Map();
 let summarizerCache: ChatGroq | null = null;
@@ -37,7 +37,7 @@ export const createGroqAgent = (model: string, systemPrompt: string, isRag: bool
   const llm = getLLM(model);
   const summarizerLLM = getSummarizer();
 
-  const modelConfig = MODELS.find((m) => model === m.id);
+  const modelConfig = MODELS.find((m: (typeof MODELS)[number]) => model === m.id);
   const triggerTokens = modelConfig ? Math.floor(modelConfig.tpm * 0.5) : 3000;
 
   const agentTools = isRag ? tools : tools.filter((t) => t.name !== "search_uploaded_documents");

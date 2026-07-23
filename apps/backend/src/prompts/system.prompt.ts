@@ -1,5 +1,5 @@
-import type { UserPreference } from "../generated/prisma/client.js";
-import { Memories } from "../utils/model.utils.js";
+import type { UserPreference } from "@app/db";
+import type { Memories } from "../utils/model.utils.js";
 
 export const systemPrompt = (preferences: UserPreference, memories: Memories[], timezone: string, isRag: boolean = false) => {
   const { nickname, occupation, about, customInstructions } = preferences;

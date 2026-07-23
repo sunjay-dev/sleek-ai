@@ -1,7 +1,7 @@
 import { useUser } from "@clerk/react";
 import { PenTool } from "lucide-react";
 import InputContainer from "./containers/InputContainer";
-import type { UploadedFile } from "@app/shared/src/types";
+import type { UploadedFile } from "@app/shared/types";
 
 type Props = {
   sendMessage: (text: string, selectedModel: string, messageFiles?: UploadedFile[] | null) => void;

@@ -3,8 +3,8 @@ import ProtectedRoute from "./ProtectedRoutes";
 import { lazy } from "react";
 import { LazyLoader, LoaderContainer, RootLayout } from "@/components";
 
-const ChatPage = lazy(() => import("@/page/ChatPage.tsx"));
-const AuthPage = lazy(() => import("@/page/AuthPage.tsx"));
+const ChatPage = lazy(() => import("@/page/ChatPage.js"));
+const AuthPage = lazy(() => import("@/page/AuthPage.js"));
 
 export const routes = createBrowserRouter([
   {

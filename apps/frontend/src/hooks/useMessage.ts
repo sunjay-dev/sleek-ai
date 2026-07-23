@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Chat, Message, UploadedFile } from "@app/shared/src/types";
+import type { Chat, Message, UploadedFile } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { chatIdParamSchema } from "@app/shared/src/schemas/chat.schema";
+import { chatIdParamSchema } from "@app/shared/schemas/chat.schema";
 
 type Props = {
   moveChatToTop: (id: string) => void;

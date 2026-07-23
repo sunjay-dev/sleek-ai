@@ -1,10 +1,10 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
 import { useNavigate, useLocation } from "react-router-dom";
-import type { Chat, DeleteChatIntent } from "@app/shared/src/types";
+import type { Chat, DeleteChatIntent } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { chatIdParamSchema } from "@app/shared/src/schemas/chat.schema.js";
+import { chatIdParamSchema } from "@app/shared/schemas/chat.schema.js";
 
 export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();

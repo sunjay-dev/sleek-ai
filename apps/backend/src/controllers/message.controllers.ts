@@ -5,7 +5,7 @@ import prisma from "../config/prisma.config.js";
 import { NotFoundError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
 import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";
-import { type UploadedFile } from "@app/shared/src/schemas/message.schema.js";
+import type { UploadedFile } from "@app/shared";
 
 export async function handleUserMessageResponse(c: Context) {
   const requestStartTime = new Date();

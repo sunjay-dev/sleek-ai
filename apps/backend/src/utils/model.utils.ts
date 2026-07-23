@@ -1,11 +1,11 @@
-import type { UserPreference } from "../generated/prisma/client.js";
+import type { UserPreference } from "@app/db";
 import { HumanMessage, SystemMessage } from "langchain";
 import { createGroqAgent, memoryLLM, titleLLM, visionLLM } from "../config/groq.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
 import { visionPrompt } from "../prompts/vision.prompt.js";
-import { memoryExtractionSchema } from "@app/shared/src/schemas/memory.schema.js";
+import { memoryExtractionSchema } from "@app/shared";
 import logger from "./logger.utils.js";
 import prisma from "../config/prisma.config.js";
 
@@ -105,7 +105,7 @@ export async function extractFactualMemory(userMessage: string, existingMemories
       return [];
     }
 
-    return validated.data.memories.map((mem) => ({ content: mem }));
+    return validated.data.memories.map((mem: string) => ({ content: mem }));
   } catch (error) {
     logger.warn({ message: "Memory Extraction Failed (Ignoring):", error });
     return [];
@@ -120,7 +120,7 @@ export function scheduleMemoryExtraction(userId: string, query: string, memories
       if (!newMemories.length) return;
 
       await prisma.userMemory.createMany({
-        data: newMemories.map((m) => ({ userId, content: m.content })),
+        data: newMemories.map((m: Memories) => ({ userId, content: m.content })),
       });
     } catch (err) {
       logger.error({ error: err }, "Background memory extraction failed");

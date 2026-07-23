@@ -1,4 +1,4 @@
-import type { Tab } from "@app/shared/src/types";
+import type { Tab } from "@app/shared/types";
 import { Brain, Shield, Sparkles, X } from "lucide-react";
 
 type Props = {

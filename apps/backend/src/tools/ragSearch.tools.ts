@@ -1,8 +1,8 @@
 import { tool } from "@langchain/core/tools";
-import { z } from "@app/shared/src/index.js";
+import { z } from "@app/shared";
 import { vectorStore } from "../config/vectorStore.config.js";
 import logger from "../utils/logger.utils.js";
-import { RunnableConfig } from "@langchain/core/runnables";
+import type { RunnableConfig } from "@langchain/core/runnables";
 
 const searchUploadedDocumentsSchema = z.object({
   query: z.string().describe("The search query to find relevant information from the uploaded documents in the current chat."),

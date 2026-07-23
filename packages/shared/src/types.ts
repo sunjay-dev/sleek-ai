@@ -1,7 +1,7 @@
-import { modelsList } from "./models";
-import { z } from "./index";
-import { userPreferencesSchema } from "./schemas/user.schema";
-import { uploadedFileSchema } from "./schemas/message.schema";
+import { modelsList } from "./models.js";
+import { z } from "./index.js";
+import { userPreferencesSchema } from "./schemas/user.schema.js";
+import { uploadedFileSchema } from "./schemas/message.schema.js";
 
 export type UploadedFile = z.infer<typeof uploadedFileSchema>;
 

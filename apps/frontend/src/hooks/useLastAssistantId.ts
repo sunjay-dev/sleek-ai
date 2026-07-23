@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Message } from "@app/shared/src/types";
+import type { Message } from "@app/shared/types";
 
 export default function useLastAssistantId(messages: Message[]): string | undefined {
   return useMemo(() => {

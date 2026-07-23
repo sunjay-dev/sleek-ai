@@ -1,9 +1,11 @@
 type Props = {
-  error?: Error;
+  error?: unknown;
   resetErrorBoundary?: () => void;
 };
 
 export default function ErrorPage({ error, resetErrorBoundary }: Props) {
+  const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred. Please try again.";
+
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white text-primary p-4 text-center z-50 overflow-hidden">
       <img
@@ -12,7 +14,7 @@ export default function ErrorPage({ error, resetErrorBoundary }: Props) {
         className="w-90 h-90 -mt-16 object-cover"
       />
       <h1 className="text-2xl font-semibold mb-2 -mt-16">Oops! Something broke.</h1>
-      <p className="mb-4 text-gray-600">{error?.message || "An unexpected error occurred. Please try again."}</p>
+      <p className="mb-4 text-gray-600">{errorMessage}</p>
       {resetErrorBoundary && (
         <button
           onClick={resetErrorBoundary}

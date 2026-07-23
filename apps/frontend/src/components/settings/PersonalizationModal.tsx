@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, type Dispatch } from "react";
 import { useAuth } from "@clerk/react";
 import { Loader } from "@/components";
-import type { UserPreferences } from "@app/shared/src/types";
+import type { UserPreferences } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { userPreferencesSchema } from "@app/shared/src/schemas/user.schema";
+import { userPreferencesSchema } from "@app/shared/schemas/user.schema";
 
 type Props = {
   preferences: UserPreferences | null;
@@ -63,7 +63,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setPreferences((prev) => (prev ? { ...prev, [name]: value } : { ...data, [name]: value }));
+    setPreferences((prev: UserPreferences | null) => (prev ? { ...prev, [name]: value } : { ...data, [name]: value }));
   };
 
   async function handleSave() {

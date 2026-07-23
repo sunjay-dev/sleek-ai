@@ -1,5 +1,5 @@
-import { Context, Next } from "hono";
-import { z, ZodError } from "@app/shared/src/index.js";
+import type { Context, Next } from "hono";
+import { z, ZodError } from "@app/shared";
 import { BadRequestError } from "../utils/appError.utils.js";
 
 export function validate(schema: z.ZodTypeAny) {

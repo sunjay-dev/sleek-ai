@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import { UserMessageToolTip } from "@/components";
 import { ChevronDown, ChevronUp, FileText } from "lucide-react";
-import type { Message } from "@app/shared/src/types";
+import type { Message } from "@app/shared/types";
 
 type Props = {
   message: Message;

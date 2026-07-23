@@ -1,19 +1,19 @@
 import { lazy, useState } from "react";
 import { Sidebar, LazyLoader } from "@/components";
 import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
-import type { Chat, Tab } from "@app/shared/src/types";
+import type { Chat, Tab } from "@app/shared/types";
 import "@/styles/modelMessage.css";
 import "highlight.js/styles/atom-one-light.css";
 import "katex/dist/katex.css";
 import { useSearchParams } from "react-router-dom";
 
-const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.tsx"));
-const SearchModal = lazy(() => import("@/components/search/SearchModal.tsx"));
-const MessagesContainer = lazy(() => import("@/components/containers/MessagesContainer.tsx"));
-const InputContainer = lazy(() => import("@/components/containers/InputContainer.tsx"));
-const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.tsx"));
-const DeleteModal = lazy(() => import("@/components/common/DeleteModal.tsx"));
-const WelcomeScreen = lazy(() => import("@/components/WelcomeScreen.tsx"));
+const SettingsModal = lazy(() => import("@/components/settings/SettingsModal.js"));
+const SearchModal = lazy(() => import("@/components/search/SearchModal.js"));
+const MessagesContainer = lazy(() => import("@/components/containers/MessagesContainer.js"));
+const InputContainer = lazy(() => import("@/components/containers/InputContainer.js"));
+const RenameChatModal = lazy(() => import("@/components/common/RenameChatModal.js"));
+const DeleteModal = lazy(() => import("@/components/common/DeleteModal.js"));
+const WelcomeScreen = lazy(() => import("@/components/WelcomeScreen.js"));
 
 export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { z } from "@app/shared/src/index.js";
+import { z } from "@app/shared";
 
 export function validate<T extends z.ZodTypeAny>(schema: T, data: z.input<T>, customMessage?: string): z.output<T> | undefined {
   const parseResult = schema.safeParse(data);

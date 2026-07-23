@@ -1,9 +1,9 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
-import type { UserMemory } from "@app/shared/src/types";
+import type { UserMemory } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { memoryIdParamSchema } from "@app/shared/src/schemas/memory.schema.js";
+import { memoryIdParamSchema } from "@app/shared/schemas/memory.schema.js";
 import { toast } from "sonner";
 
 export type MemoryDeleteIntent = { type: "single"; id: string } | { type: "all" } | null;

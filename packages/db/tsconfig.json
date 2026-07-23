@@ -2,8 +2,7 @@
   "extends": "@app/typescript-config/node.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true
+    "rootDir": "src"
   },
   "include": ["src"]
 }

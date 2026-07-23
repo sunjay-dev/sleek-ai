@@ -1,7 +1,7 @@
 import http from "node:http";
 
 http
-  .createServer((req, res) => {
+  .createServer((_req, res) => {
     res.writeHead(200);
     res.end("ok");
   })
