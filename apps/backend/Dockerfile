@@ -1,11 +1,10 @@
-ARG BUN_VERSION=1.3.11-alpine
-ARG PNPM_VERSION=10.30.1
+ARG NODE_VERSION=22-alpine
+ARG PNPM_VERSION=10.32.1
 # ---------------------- base stage ----------------------
-FROM oven/bun:${BUN_VERSION} AS base
+FROM node:${NODE_VERSION} AS base
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache openssl \
-    && bun install -g pnpm@${PNPM_VERSION}
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/shared ./packages/shared
@@ -17,15 +16,15 @@ RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-sc
 WORKDIR /usr/src/app/apps/backend
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
-RUN pnpx prisma generate
+RUN npx prisma generate
 
 
 # ---------------------- final runtime stage ----------------------
-FROM oven/bun:${BUN_VERSION} AS final
+FROM node:${NODE_VERSION} AS final
 WORKDIR /usr/src/app
 
 COPY --from=base /usr/src/app .
 
 WORKDIR /usr/src/app/apps/backend
 
-CMD ["bun", "run", "start"]
+CMD ["node", "dist/app.js"]

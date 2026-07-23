@@ -1,9 +1,9 @@
-ARG BUN_VERSION=1.3.3-alpine
+ARG NODE_VERSION=22-alpine
 ARG PNPM_VERSION=10.32.1
 # ---------------------- build ----------------------
-FROM oven/bun:${BUN_VERSION} AS build
+FROM node:${NODE_VERSION} AS build
 
-RUN bun install -g pnpm@${PNPM_VERSION}
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN pnpm install --filter "@app/frontend..." --frozen-lockfile --ignore-scripts
 
 WORKDIR /app/apps/frontend
 
-RUN bun run build
+RUN pnpm run build
 
 # ---------------------- deploy ----------------------
 

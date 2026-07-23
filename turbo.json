@@ -9,9 +9,22 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {},
     "start": {
       "cache": false
+    },
+    "//#lint": {},
+    "//#lint:fix": {
+      "cache": false
+    },
+    "//#format": {},
+    "//#format:fix": {
+      "cache": false
+    },
+    "//#quality": {
+      "dependsOn": ["//#lint", "//#format"]
+    },
+    "//#quality:fix": {
+      "dependsOn": ["//#lint:fix", "//#format:fix"]
     }
   }
 }

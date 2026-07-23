@@ -7,27 +7,28 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "start": "turbo run start",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "oxlint --ignore-path .oxlintignore .",
+    "lint:fix": "oxlint --ignore-path .oxlintignore --fix .",
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt .",
+    "quality": "turbo run quality",
+    "quality:fix": "turbo run quality:fix"
   },
   "author": "https://github.com/sunjay-dev/",
   "license": "MIT",
   "packageManager": "pnpm@10.32.1",
   "lint-staged": {
-    "apps/**/*.{js,jsx,ts,tsx}": "eslint --fix",
-    "packages/**/*.{js,ts}": "eslint --fix",
-    "*.{js,jsx,ts,tsx,md,css,json,yml,yaml}": "prettier --write"
+    "*.{js,jsx,ts,tsx}": ["oxlint --fix", "oxfmt --write"],
+    "*.{json,md,yml,yaml,css}": ["oxfmt --write"]
   },
   "devDependencies": {
     "@app/typescript-config": "workspace:*",
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.0.3",
-    "globals": "^17.4.0",
+    "@types/node": "^25.3.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
     "turbo": "^2.10.6",
-    "typescript-eslint": "^8.57.1"
+    "typescript": "^7.0.2"
   }
 }

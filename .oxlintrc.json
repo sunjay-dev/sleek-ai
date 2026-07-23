@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "react-hooks", "import"],
+  "rules": {
+    "eqeqeq": "error",
+    "no-var": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "array-callback-return": "error",
+    "no-template-curly-in-string": "error",
+    "no-sequences": "error",
+    "no-useless-concat": "error",
+    "no-redeclare": "error",
+    "no-lone-blocks": "error",
+    "no-extra-boolean-cast": "error",
+    "prefer-spread": "error",
+    "prefer-rest-params": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "react/jsx-uses-vars": "error",
+    "react/display-name": "warn",
+    "react/jsx-no-useless-fragment": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/no-duplicates": "error"
+  }
+}

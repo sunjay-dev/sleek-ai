@@ -5,12 +5,8 @@
   "main": "src/app.ts",
   "type": "module",
   "scripts": {
-    "dev": "pnpm run bun:dev",
-    "start": "pnpm run bun:start",
-    "bun:dev": "bun --watch src/app.ts",
-    "node:dev": "tsx watch src/app.ts",
-    "bun:start": "bun src/app.ts",
-    "node:start": "npm run build && node dist/app.js",
+    "dev": "pnpm run build && node dist/app.js",
+    "start": "node dist/app.js",
     "build": "tsc"
   },
   "keywords": [],
@@ -36,9 +32,6 @@
     "pino-pretty": "catalog:"
   },
   "devDependencies": {
-    "@app/typescript-config": "workspace:*",
-    "@types/node": "^25.3.3",
-    "tsx": "^4.21.0",
-    "typescript": "catalog:"
+    "@app/typescript-config": "workspace:*"
   }
 }

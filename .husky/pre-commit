@@ -1,3 +1,0 @@
-pnpm lint-staged
-
-pnpm turbo run build --filter=frontend

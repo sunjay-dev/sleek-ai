@@ -1,10 +1,10 @@
-ARG NODE_VERSION=24.11.0-alpine
-ARG PNPM_VERSION=10.32.31
+ARG NODE_VERSION=22-alpine
+ARG PNPM_VERSION=10.32.1
 
 # ---------------------- base stage ----------------------
 FROM node:${NODE_VERSION} AS base
 
-RUN npm install -g pnpm@${PNPM_VERSION}
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 WORKDIR /usr/src/app
 
@@ -25,7 +25,6 @@ RUN pnpm run build
 
 # ---------------------- final stage ----------------------
 FROM node:${NODE_VERSION} AS final
-
 
 WORKDIR /usr/src/app/apps/worker
 
