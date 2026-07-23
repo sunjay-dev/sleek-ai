@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/react";
 import type { UserMemory } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { memoryIdParamSchema } from "@app/shared/schemas/memory.schema.js";
+import { memoryIdParamSchema } from "@app/shared/schemas/memory.schema";
 import { toast } from "sonner";
 
 export type MemoryDeleteIntent = { type: "single"; id: string } | { type: "all" } | null;

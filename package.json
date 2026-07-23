@@ -1,6 +1,8 @@
 {
   "name": "sleek-ai",
   "description": "AI chatBot",
+  "license": "MIT",
+  "author": "https://github.com/sunjay-dev/",
   "type": "module",
   "scripts": {
     "prepare": "husky",
@@ -14,13 +16,6 @@
     "quality": "turbo run quality",
     "quality:fix": "turbo run quality:fix"
   },
-  "author": "https://github.com/sunjay-dev/",
-  "license": "MIT",
-  "packageManager": "pnpm@10.32.1",
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["oxlint --fix", "oxfmt --write"],
-    "*.{json,md,yml,yaml,css}": ["oxfmt --write"]
-  },
   "devDependencies": {
     "@app/typescript-config": "workspace:*",
     "@types/node": "^25.3.3",
@@ -30,5 +25,15 @@
     "oxlint": "^1.75.0",
     "turbo": "^2.10.6",
     "typescript": "^7.0.2"
-  }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "oxlint --fix",
+      "oxfmt --write"
+    ],
+    "*.{json,md,yml,yaml,css}": [
+      "oxfmt --write"
+    ]
+  },
+  "packageManager": "pnpm@10.32.1"
 }

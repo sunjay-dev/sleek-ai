@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import type { Chat, DeleteChatIntent } from "@app/shared/types";
 import { apiRequest } from "@/utils/api";
 import { validate } from "@/utils/validate";
-import { chatIdParamSchema } from "@app/shared/schemas/chat.schema.js";
+import { chatIdParamSchema } from "@app/shared/schemas/chat.schema";
 
 export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]>>) {
   const { getToken } = useAuth();

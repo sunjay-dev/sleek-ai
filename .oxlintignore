@@ -1,5 +1,0 @@
-node_modules/
-dist/
-.turbo/
-**/src/generated/
-**/worker/tmp/

@@ -49,13 +49,13 @@ export default function SearchModal({ onClose }: Props) {
   }, [debouncedQuery, getToken]);
 
   function HighlightedText(text: string, highlight: string) {
-    if (!highlight.trim()) return <>{text}</>;
+    if (!highlight.trim()) return text;
 
     const lowerText = text.toLowerCase();
     const lowerHighlight = highlight.toLowerCase();
 
     const index = lowerText.indexOf(lowerHighlight);
-    if (index === -1) return <>{text}</>;
+    if (index === -1) return text;
 
     return (
       <>

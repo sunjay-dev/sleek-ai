@@ -11,7 +11,7 @@ initPrisma().catch((e) => {
 });
 
 const gracefulShutdown = async () => {
-  console.log("Shutting down gracefully.");
+  logger.info("Shutting down gracefully.");
   await prisma.$disconnect();
   process.exit(0);
 };

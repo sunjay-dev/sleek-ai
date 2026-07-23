@@ -2,17 +2,16 @@
   "name": "@app/worker",
   "version": "1.0.0",
   "description": "file worker",
-  "main": "src/app.ts",
+  "keywords": [],
+  "license": "MIT",
+  "author": "https://github.com/sunjay-dev/",
   "type": "module",
+  "main": "src/app.ts",
   "scripts": {
     "dev": "pnpm run build && node dist/app.js",
     "start": "node dist/app.js",
     "build": "tsc"
   },
-  "keywords": [],
-  "author": "https://github.com/sunjay-dev/",
-  "license": "MIT",
-  "packageManager": "pnpm@10.32.1",
   "dependencies": {
     "@langchain/classic": "^1.0.9",
     "@langchain/community": "^1.1.4",
@@ -33,5 +32,6 @@
   },
   "devDependencies": {
     "@app/typescript-config": "workspace:*"
-  }
+  },
+  "packageManager": "pnpm@10.32.1"
 }
