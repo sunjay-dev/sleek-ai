@@ -8,12 +8,13 @@ RUN apk add --no-cache openssl \
     && bun install -g pnpm@${PNPM_VERSION}
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY shared ./shared
-COPY backend ./backend
+COPY packages/shared ./packages/shared
+COPY packages/typescript-config ./packages/typescript-config
+COPY apps/backend ./apps/backend
 
 RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts
 
-WORKDIR /usr/src/app/backend
+WORKDIR /usr/src/app/apps/backend
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
 RUN pnpx prisma generate
@@ -25,6 +26,6 @@ WORKDIR /usr/src/app
 
 COPY --from=base /usr/src/app .
 
-WORKDIR /usr/src/app/backend
+WORKDIR /usr/src/app/apps/backend
 
 CMD ["bun", "run", "start"]

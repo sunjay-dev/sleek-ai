@@ -9,7 +9,8 @@ RUN npm install -g pnpm@${PNPM_VERSION}
 WORKDIR /usr/src/app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY worker ./worker
+COPY packages/typescript-config ./packages/typescript-config
+COPY apps/worker ./apps/worker
 
 RUN pnpm install --filter "@app/worker..." --prod --frozen-lockfile --ignore-scripts
 
@@ -19,16 +20,16 @@ FROM base AS build
 ENV CI=true
 RUN pnpm install --filter "@app/worker..." --frozen-lockfile
 
-WORKDIR /usr/src/app/worker
+WORKDIR /usr/src/app/apps/worker
 RUN pnpm run build
 
 # ---------------------- final stage ----------------------
 FROM node:${NODE_VERSION} AS final
 
 
-WORKDIR /usr/src/app/worker
+WORKDIR /usr/src/app/apps/worker
 
-COPY --from=build /usr/src/app/worker .
+COPY --from=build /usr/src/app/apps/worker .
 
 ENV NODE_ENV=production
 

@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: backend/Dockerfile
+          file: apps/backend/Dockerfile
           platforms: linux/arm64
           push: true
           cache-from: type=gha
@@ -64,7 +64,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: worker/Dockerfile
+          file: apps/worker/Dockerfile
           platforms: linux/arm64
           push: true
           cache-from: type=gha

@@ -1,5 +1,10 @@
 packages:
-  - "backend"
-  - "frontend"
-  - "shared"
-  - "worker"
+  - "apps/*"
+  - "packages/*"
+
+catalog:
+  zod: ^4.3.6
+  typescript: ~5.8.3
+  pino: ^10.3.1
+  pino-pretty: ^13.1.3
+  bullmq: ^5.70.2

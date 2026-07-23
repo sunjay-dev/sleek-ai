@@ -12,10 +12,10 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: apps/backend/Dockerfile
     container_name: backend
     env_file:
-      - ./backend/.env
+      - ./apps/backend/.env
     depends_on:
       - redis
     ports:
@@ -25,10 +25,10 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./worker/Dockerfile
+      dockerfile: ./apps/worker/Dockerfile
     container_name: worker
     env_file:
-      - ./worker/.env
+      - ./apps/worker/.env
     depends_on:
       - redis
     restart: always
@@ -36,10 +36,10 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: apps/frontend/Dockerfile
     container_name: frontend
     env_file:
-      - ./frontend/.env
+      - ./apps/frontend/.env
     restart: always
     depends_on:
       - backend

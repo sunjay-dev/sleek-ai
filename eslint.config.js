@@ -14,5 +14,5 @@ export default defineConfig([
     },
   },
   tseslint.configs.recommended,
-  globalIgnores(["frontend/**", "**/dist/**", ".pnpm-store/**", "**/node_modules/**", "**/tests/**"]),
+  globalIgnores(["apps/frontend/**", "**/dist/**", ".pnpm-store/**", "**/node_modules/**", "**/tests/**", ".turbo/**"]),
 ]);
