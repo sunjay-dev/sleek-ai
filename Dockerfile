@@ -16,7 +16,6 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
 
-RUN npx prisma generate --schema=packages/db/prisma/schema.prisma
 RUN pnpm turbo run build
 
 # ---------------------- production deps ----------------------
