@@ -35,12 +35,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: apps/backend/Dockerfile
+          file: Dockerfile
           platforms: linux/arm64
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: sunjay195/chatty-ai-backend:latest
+          tags: sunjay195/sleek-ai-app:latest
 
   worker:
     if: ${{ github.event.inputs.service == 'worker' }}

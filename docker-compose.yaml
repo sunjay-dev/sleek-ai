@@ -2,18 +2,18 @@ services:
   redis:
     image: redis:8.4-alpine
     container_name: redis
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory-policy noeviction
     volumes:
       - redis_data:/data
     restart: always
     ports:
       - "6379:6379"
 
-  backend:
+  sleek-ai-app:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile
-    container_name: backend
+      dockerfile: Dockerfile
+    container_name: sleek-ai-app
     env_file:
       - ./apps/backend/.env
     depends_on:
@@ -22,29 +22,16 @@ services:
       - "3000:3000"
     restart: always
 
-  worker:
+  sleek-ai-worker:
     build:
       context: .
       dockerfile: ./apps/worker/Dockerfile
-    container_name: worker
+    container_name: sleek-ai-worker
     env_file:
       - ./apps/worker/.env
     depends_on:
       - redis
     restart: always
-
-  frontend:
-    build:
-      context: .
-      dockerfile: apps/frontend/Dockerfile
-    container_name: frontend
-    env_file:
-      - ./apps/frontend/.env
-    restart: always
-    depends_on:
-      - backend
-    ports:
-      - "5173:80"
 
 volumes:
   redis_data:

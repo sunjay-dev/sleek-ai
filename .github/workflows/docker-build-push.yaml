@@ -24,7 +24,10 @@ jobs:
           filters: |
             backend:
               - 'apps/backend/**'
+              - 'apps/frontend/**'
               - 'packages/shared/**'
+              - 'packages/db/**'
+              - 'Dockerfile'
             worker:
               - 'apps/worker/**'
 
@@ -73,10 +76,10 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: apps/backend/Dockerfile
+          file: Dockerfile
           platforms: linux/arm64
           push: true
-          tags: sunjay195/chatty-ai-backend:latest
+          tags: sunjay195/sleek-ai-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: |

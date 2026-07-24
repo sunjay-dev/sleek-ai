@@ -32,4 +32,4 @@ COPY --from=build /usr/src/app/apps/worker .
 
 ENV NODE_ENV=production
 
-CMD ["node", "./dist/server.js"]
+CMD ["node", "./dist/app.js"]
