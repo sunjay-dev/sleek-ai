@@ -73,7 +73,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${activeChatId}/message`, {
+      fetch(`/api/v1/chat/${activeChatId}/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
     if (!chatId) {
       try {
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        const data = await apiRequest(`/api/v1/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -226,7 +226,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to fetch messages.");
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${result.chatId}/message`, {
+        const data = await apiRequest(`/api/v1/chat/${result.chatId}/message`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMessages(data.messages || []);
@@ -254,7 +254,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
         const token = await getToken();
         if (!token) return;
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}/status`, {
+        const data = await apiRequest(`/api/v1/chat/${chatId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

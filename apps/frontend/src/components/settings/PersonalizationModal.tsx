@@ -42,7 +42,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to get preferences.");
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
+        const data = await apiRequest(`/api/v1/user/preferences`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const fetchedData = {
@@ -74,7 +74,7 @@ export default function PersonalizationSettings({ preferences, setPreferences, i
       const token = await getToken();
       if (!token) throw new Error("You must be logged in to save changes.");
 
-      await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/preferences`, {
+      await apiRequest(`/api/v1/user/preferences`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(preferences),

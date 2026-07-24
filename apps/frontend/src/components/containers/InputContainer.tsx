@@ -73,7 +73,7 @@ export default function InputContainer({
         let newChatId = undefined;
         if (!data.fileType.includes("image")) {
           const token = await getToken();
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/upload/rag`, {
+          const res = await fetch(`/api/v1/upload/rag`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({

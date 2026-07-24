@@ -9,7 +9,7 @@ export const uploadToCloudinary = async ({ file, getToken }: Props) => {
   const token = await getToken();
   if (!token) throw new Error("Authentication required");
 
-  const signRes = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/upload`, {
+  const signRes = await apiRequest(`/api/v1/upload`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

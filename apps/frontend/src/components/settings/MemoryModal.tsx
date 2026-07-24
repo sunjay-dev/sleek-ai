@@ -31,7 +31,7 @@ export default function MemorySettings({ memories, setMemories, requestDeleteMem
       try {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to search memories.");
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/user/memories`, {
+        const data = await apiRequest(`/api/v1/user/memories`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMemories(data);

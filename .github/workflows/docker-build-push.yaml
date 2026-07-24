@@ -79,6 +79,8 @@ jobs:
           file: Dockerfile
           platforms: linux/arm64
           push: true
+          build-args: |
+            VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
           tags: sunjay195/sleek-ai-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

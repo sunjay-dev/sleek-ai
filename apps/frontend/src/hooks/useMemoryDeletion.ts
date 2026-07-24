@@ -33,9 +33,9 @@ export default function useMemoryDeletion(setMemories: Dispatch<SetStateAction<U
           return;
         }
 
-        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories/${result.memoryId}`;
+        url = `/api/v1/user/memories/${result.memoryId}`;
       } else {
-        url = `${import.meta.env.VITE_BACKEND_URL}/api/user/memories`;
+        url = `/api/v1/user/memories`;
       }
 
       await apiRequest(url, {

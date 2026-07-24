@@ -16,7 +16,7 @@ export default function useChat() {
       try {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to fetch chats.");
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        const data = await apiRequest(`/api/v1/chat`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -46,7 +46,7 @@ export default function useChat() {
     const token = await getToken();
     if (!token) throw new Error("You must be logged in to rename chat.");
 
-    await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${chatId}`, {
+    await apiRequest(`/api/v1/chat/${chatId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

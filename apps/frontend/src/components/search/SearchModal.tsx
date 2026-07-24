@@ -35,7 +35,7 @@ export default function SearchModal({ onClose }: Props) {
         const token = await getToken();
         if (!token) throw new Error("You must be logged in to search.");
 
-        const data = await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(validated?.q as string)}`, {
+        const data = await apiRequest(`/api/v1/search?q=${encodeURIComponent(validated?.q as string)}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

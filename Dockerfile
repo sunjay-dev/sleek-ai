@@ -16,6 +16,9 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 ENV DATABASE_URL=$DATABASE_URL
 
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+
 RUN pnpm turbo run build
 
 # ---------------------- production deps ----------------------

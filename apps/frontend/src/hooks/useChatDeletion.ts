@@ -34,7 +34,7 @@ export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]
           return;
         }
 
-        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat/${result.chatId}`, {
+        await apiRequest(`/api/v1/chat/${result.chatId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
           successMessage: "Chat deleted successfully!",
@@ -48,7 +48,7 @@ export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]
       }
 
       if (chatIntent.type === "all") {
-        await apiRequest(`${import.meta.env.VITE_BACKEND_URL}/api/chat`, {
+        await apiRequest(`/api/v1/chat`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
           successMessage: "Chats deleted successfully!",

@@ -7,26 +7,81 @@ Thank you for your interest in contributing to Sleek AI! We welcome contribution
 1.  **Fork the repository** on GitHub.
 2.  **Clone your fork** locally:
     ```bash
-    git clone https://github.com/sunjay-dev/sleek-ai.git
+    git clone https://github.com/your-username/sleek-ai.git
     cd sleek-ai
     ```
 3.  **Install dependencies**:
     ```bash
     pnpm install
     ```
-4.  **Create a branch** for your feature or bug fix:
+4.  **Set up environment**:
+    ```bash
+    cp apps/backend/.env.example apps/backend/.env
+    # Fill in your keys (Clerk, API keys, database URL, etc.)
+    ```
+5.  **Create a branch** for your feature or bug fix:
     ```bash
     git checkout -b feature/amazing-feature
     ```
 
 ## Development Workflow
 
-- **Backend**: Located in `backend/`. Uses Hono and Bun.
-- **Frontend**: Located in `frontend/`. Uses React and Vite.
-- **Worker**: Located in `worker/`. Handles background jobs.
+This is a Turborepo monorepo. Run all services with:
 
-Ensure you have the necessary environment variables set up in each service's `.env` file (see `README.md`).
+```bash
+pnpm dev
+```
 
-### Running Locally
+### Project Layout
 
-Run `pnpm dev` in the root directory to start all services.
+- **`apps/frontend/`**: Vite + React app with Tailwind CSS
+- **`apps/backend/`**: Hono.js API server (also serves the frontend in production)
+- **`apps/worker/`**: BullMQ worker for background file processing
+- **`packages/shared/`**: Shared types, schemas, and utilities
+- **`packages/db/`**: Prisma schema and database client
+- **`packages/typescript-config/`**: Shared tsconfig presets
+
+### Available Scripts
+
+| Command           | Description          |
+| ----------------- | -------------------- |
+| `pnpm dev`        | Start all services   |
+| `pnpm build`      | Build all packages   |
+| `pnpm lint`       | Lint with oxlint     |
+| `pnpm lint:fix`   | Auto-fix lint issues |
+| `pnpm format`     | Check formatting     |
+| `pnpm format:fix` | Auto-fix formatting  |
+
+### Code Quality
+
+This project uses **oxlint** for linting and **oxfmt** for formatting. Both run automatically on pre-commit via husky and lint-staged.
+
+To run manually:
+
+```bash
+pnpm lint        # Check for lint errors
+pnpm format      # Check formatting
+pnpm format:fix  # Auto-fix formatting
+```
+
+## Submitting Changes
+
+1.  **Commit your changes** with a clear message:
+
+    ```bash
+    git commit -m "feat: add new feature"
+    ```
+
+    We follow [Conventional Commits](https://www.conventionalcommits.org/).
+
+2.  **Push to your fork**:
+
+    ```bash
+    git push origin feature/amazing-feature
+    ```
+
+3.  **Open a Pull Request** on the main repository.
+
+## Need Help?
+
+Open an issue or reach out on the repository discussions.
