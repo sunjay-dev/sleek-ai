@@ -32,9 +32,8 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/db/package.json ./packages/db/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY apps/backend/package.json ./apps/backend/
-COPY apps/frontend/package.json ./apps/frontend/
 
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+RUN pnpm install --filter "@app/backend..." --prod --frozen-lockfile --ignore-scripts
 
 # ---------------------- final runtime ----------------------
 FROM node:${NODE_VERSION} AS final

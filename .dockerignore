@@ -19,3 +19,9 @@ logs
 Dockerfile
 .dockerignore
 **/src/generated
+
+# Docs & source maps (not needed at runtime)
+**/*.md
+**/LICENSE*
+**/CHANGELOG*
+**/*.map

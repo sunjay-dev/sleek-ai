@@ -34,15 +34,12 @@ WORKDIR /usr/src/app
 
 COPY --from=prod-deps /usr/src/app/node_modules ./node_modules
 
-COPY --from=build /usr/src/app/packages/shared/dist ./packages/shared/dist
-COPY --from=build /usr/src/app/packages/shared/package.json ./packages/shared/
-
-COPY --from=build /usr/src/app/apps/worker/dist ./apps/worker/dist
-COPY --from=build /usr/src/app/apps/worker/package.json ./apps/worker/
-
 RUN mkdir -p node_modules/@app/shared
 COPY --from=build /usr/src/app/packages/shared/dist ./node_modules/@app/shared/dist
 COPY --from=build /usr/src/app/packages/shared/package.json ./node_modules/@app/shared/
+
+COPY --from=build /usr/src/app/apps/worker/dist ./apps/worker/dist
+COPY --from=build /usr/src/app/apps/worker/package.json ./apps/worker/
 
 WORKDIR /usr/src/app/apps/worker
 
