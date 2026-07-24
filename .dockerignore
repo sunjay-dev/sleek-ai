@@ -25,3 +25,4 @@ Dockerfile
 **/LICENSE*
 **/CHANGELOG*
 **/*.map
+.env.example

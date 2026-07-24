@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
-COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages ./packages
 COPY apps ./apps
 
@@ -29,11 +29,10 @@ WORKDIR /usr/src/app
 
 COPY --from=build /deploy /usr/src/app
 
-# serveStatic({ root: "../frontend/dist" }) resolves relative to CWD (/usr/src/app)
 COPY --from=build /usr/src/app/apps/frontend/dist /usr/src/frontend/dist
 
 # Remove files not needed at runtime
-RUN rm -rf src .turbo .env.example prisma.config.ts tsconfig.json
+RUN rm -rf src .turbo prisma.config.ts tsconfig.json
 
 EXPOSE 3000
 
