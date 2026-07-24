@@ -1,17 +1,23 @@
 import { serve } from "@hono/node-server";
-import { serveStatic } from "@hono/node-server/serve-static";
 import { backendEnv } from "./config/env.config.js";
 import { Hono } from "hono";
 import logger from "./utils/logger.utils.js";
 import apiRouter from "./api.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.middlewares.js";
+import { serveFrontend } from "./static/serveFrontend.js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { secureHeaders } from "hono/secure-headers";
 
 const app = new Hono();
+app.use("*", secureHeaders());
 
 app.route("/api/v1", apiRouter);
 
-app.use("/*", serveStatic({ root: "../frontend/dist" }));
-app.use("/*", serveStatic({ root: "../frontend/dist", rewriteRequestPath: () => "/index.html" }));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendRoot = path.resolve(__dirname, "../../frontend/dist");
+serveFrontend(app, frontendRoot);
 
 app.onError(errorHandler);
 

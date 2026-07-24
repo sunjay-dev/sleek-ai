@@ -13,7 +13,7 @@ export default defineConfig({
         enabled: false,
       },
       registerType: "autoUpdate",
-      includeAssets: ["index.html", "offline.html", "*.webp", "fonts/inter/*.woff2"],
+      includeAssets: ["index.html", "offline.html"],
       manifest: {
         name: "Sleek AI",
         short_name: "Sleek AI",

@@ -6,6 +6,7 @@ import CollapsedSidebar from "./CollapsedSidebar";
 import { useIsMobile } from "@/hooks";
 import type { Chat, Tab } from "@app/shared/types";
 import { RoundedPanelLeft } from "../icons/RoundedPanelLeft";
+import logo from "@/assets/images/logo.webp";
 
 type Props = {
   onDeleteRequest: (chatId: string) => void;
@@ -83,7 +84,7 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
       {isMobile && !collapsed && <div className="fixed inset-0 bg-black/40 z-20" onClick={() => setCollapsed(true)} />}
       <aside ref={sidebarRef} className="fixed md:relative h-dvh w-[68%] sm:w-64 bg-dark border-r border-gray-500/20 flex flex-col z-30 shrink-0">
         <div className={`px-4 py-3 flex items-center justify-between ${scrolled ? "border-b border-gray-400/20" : ""}`}>
-          <img className="w-9 h-7.5" src="/logo.webp" alt="Sleek AI Logo" />
+          <img className="w-9 h-7.5" src={logo} alt="Sleek AI Logo" />
           <button
             onClick={() => setCollapsed(true)}
             className="w-8 h-8 text-gray-500 flex items-center justify-center rounded-full hover:bg-gray-200/60 active:bg-gray-200/60"

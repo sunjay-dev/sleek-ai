@@ -1,6 +1,7 @@
 import { UserButton } from "@clerk/react";
 import { BadgePlus, AlignLeft } from "lucide-react";
 import { RoundedPanelLeft } from "../icons/RoundedPanelLeft";
+import logo from "@/assets/images/logo.webp";
 
 type Props = {
   setCollapsed: (v: boolean) => void;
@@ -37,7 +38,7 @@ export default function CollapsedSidebar({ setCollapsed, createNewChat, onWelcom
 
       <div className="hidden fixed top-3 left-3 md:flex items-center gap-2 z-50">
         <div onClick={() => setCollapsed(false)} className="flex items-center justify-center w-9 h-7.5 cursor-pointer">
-          <img src="/logo.webp" alt="Sleek AI Logo" className="w-full h-full object-fill" />
+          <img src={logo} alt="Sleek AI Logo" className="w-full h-full object-fill" />
         </div>
 
         <div className="bg-white rounded-full shadow-xs border border-gray-500/20 flex items-center gap-1 px-1.5 py-0.5">
