@@ -14,5 +14,5 @@ export async function getVectorStore() {
 
   const index = pinecone.Index(workerEnv.PINECONE_INDEX_NAME);
 
-  return { vectorStore: await PineconeStore.fromExistingIndex(embeddings, { pineconeIndex: index }), pinecone };
+  return { vectorStore: await PineconeStore.fromExistingIndex(embeddings, { pineconeIndex: index as never }), pinecone };
 }

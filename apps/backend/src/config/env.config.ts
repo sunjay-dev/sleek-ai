@@ -3,7 +3,6 @@ import { z } from "zod";
 const backendEnvSchema = z.object({
   PORT: z.string().default("3000"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  CLIENT_URL: z.url(),
 
   GROQ_API_KEY: z.string().min(1),
   TAVILY_API_KEY: z.string().min(1),

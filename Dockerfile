@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages ./packages
 COPY apps ./apps
 
@@ -19,7 +19,7 @@ ENV DATABASE_URL=$DATABASE_URL
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 
-RUN pnpm turbo run build
+RUN pnpm turbo run build --filter=@app/shared --filter=@app/db --filter=@app/backend --filter=@app/frontend
 
 # ---------------------- production deps ----------------------
 FROM node:${NODE_VERSION} AS prod-deps
@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/db/package.json ./packages/db/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
@@ -41,15 +41,14 @@ FROM node:${NODE_VERSION} AS final
 WORKDIR /usr/src/app
 
 COPY --from=prod-deps /usr/src/app/node_modules ./node_modules
-COPY --from=prod-deps /usr/src/app/apps/backend/node_modules ./apps/backend/node_modules
-COPY --from=prod-deps /usr/src/app/packages/db/node_modules ./packages/db/node_modules
 
-COPY --from=build /usr/src/app/packages/shared/dist ./packages/shared/dist
-COPY --from=build /usr/src/app/packages/shared/package.json ./packages/shared/
-
-COPY --from=build /usr/src/app/packages/db/dist ./packages/db/dist
 COPY --from=build /usr/src/app/packages/db/prisma ./packages/db/prisma
-COPY --from=build /usr/src/app/packages/db/package.json ./packages/db/
+
+RUN mkdir -p node_modules/@app/shared node_modules/@app/db
+COPY --from=build /usr/src/app/packages/shared/dist ./node_modules/@app/shared/dist
+COPY --from=build /usr/src/app/packages/shared/package.json ./node_modules/@app/shared/
+COPY --from=build /usr/src/app/packages/db/dist ./node_modules/@app/db/dist
+COPY --from=build /usr/src/app/packages/db/package.json ./node_modules/@app/db/
 
 COPY --from=build /usr/src/app/apps/backend/dist ./apps/backend/dist
 COPY --from=build /usr/src/app/apps/backend/package.json ./apps/backend/

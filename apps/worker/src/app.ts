@@ -27,7 +27,7 @@ export async function handler(job: Job<Data>) {
 
     return { success: true, chatId };
   } catch (error) {
-    logger.error({ message: "Error processing", fileId, error });
+    logger.error({ message: "Error processing", fileId, err: error });
 
     throw error;
   }
@@ -44,7 +44,7 @@ worker.on("ready", () => logger.info({ message: "Worker is ready to process jobs
 
 worker.on("completed", (job) => logger.info({ message: `Job ${job.id} completed successfully`, job: job.id }));
 
-worker.on("failed", (job, error) => logger.error({ message: "Job failed", job: job?.id, error }));
+worker.on("failed", (job, error) => logger.error({ message: "Job failed", job: job?.id, err: error }));
 
 const gracefulShutdown = async () => {
   logger.info({ message: "Shutting down worker gracefully." });

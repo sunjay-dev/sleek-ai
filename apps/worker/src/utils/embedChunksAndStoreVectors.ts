@@ -16,10 +16,16 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
   const cleanChunks = chunks
     .map((c) => {
       if (typeof c.pageContent !== "string") return c;
-      const cleanedText = c.pageContent.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "").trim();
+      const cleanedText = c.pageContent
+        .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F-\u009F]/g, "")
+        .replace(/[-=_]{3,}/g, "")
+        .replace(/\|[^|]*\|/g, (match) => match.replace(/[|]/g, " "))
+        .replace(/[^\S\n]+/g, " ")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
       return { ...c, pageContent: cleanedText };
     })
-    .filter((c) => typeof c.pageContent === "string" && c.pageContent.length > 0);
+    .filter((c) => typeof c.pageContent === "string" && c.pageContent.trim().length > 10);
 
   if (!cleanChunks.length) {
     throw new Error("No valid chunks to embed");
@@ -37,7 +43,7 @@ export async function embedChunksAndStoreVectors(chunks: Document<Record<string,
     },
   }));
 
-  const store = new PineconeStore(embeddingsClient, { pineconeIndex: index });
+  const store = new PineconeStore(embeddingsClient, { pineconeIndex: index as never });
 
   const textsToEmbed = chunksWithMeta.map((c) => c.pageContent);
 
