@@ -15,7 +15,7 @@ type Attachment = {
 };
 
 type Props = {
-  sendMessage: (text: string, selectedModel: string, messageFiles: UploadedFile[], optimisticFiles?: UploadedFile[]) => void;
+  sendMessage: (text: string, messageFiles: UploadedFile[], optimisticFiles?: UploadedFile[]) => void;
   isGenerating: boolean;
   onStop: () => void;
   autoFocus: boolean;
@@ -205,7 +205,7 @@ export default function InputContainer({
         fileUrl: URL.createObjectURL(a.file),
       }));
 
-    sendMessage(message.trim(), "auto", successfulUploads, optimisticUploads);
+    sendMessage(message.trim(), successfulUploads, optimisticUploads);
 
     setMessage("");
     setAttachments([]);

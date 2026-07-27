@@ -86,7 +86,7 @@ export default function ChatPage() {
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
               <MessagesContainer
                 messages={messages}
-                onResend={() => resendLastUser("auto")}
+                onResend={() => resendLastUser()}
                 isFetchingMessages={isFetchingMessages}
                 isGenerating={isGenerating}
               />

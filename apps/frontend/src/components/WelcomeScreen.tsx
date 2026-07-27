@@ -4,7 +4,7 @@ import InputContainer from "./containers/InputContainer";
 import type { UploadedFile } from "@app/shared/types";
 
 type Props = {
-  sendMessage: (text: string, selectedModel: string, messageFiles?: UploadedFile[] | null) => void;
+  sendMessage: (text: string, messageFiles?: UploadedFile[] | null) => void;
   isGenerating: boolean;
   onStop: () => void;
   isRagProcessing?: boolean;
@@ -31,7 +31,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, onStop, isRag
   };
 
   const handleSuggestionClick = (prompt: string) => {
-    sendMessage(prompt, "auto");
+    sendMessage(prompt);
   };
 
   return (

@@ -31,7 +31,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const justCreatedChatRef = useRef<string | null>(null);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const sendMessage = async (text: string, model: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
+  const sendMessage = async (text: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
     if (!text.trim() && !messageFiles?.length) return;
 
     const token = await getToken();
@@ -80,7 +80,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
           Authorization: `Bearer ${token}`,
           "x-client-timezone": userTimeZone,
         },
-        body: JSON.stringify({ query: text, model, messageFiles }),
+        body: JSON.stringify({ query: text, messageFiles }),
         signal: controller.signal,
       })
         .then(async (res) => {
@@ -190,9 +190,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     }
   };
 
-  const resendLastUser = (model: string) => {
+  const resendLastUser = () => {
     const lastUser = [...messages].reverse().find((m) => m.role === "USER");
-    if (lastUser) sendMessage(lastUser.text, model);
+    if (lastUser) sendMessage(lastUser.text);
   };
 
   const stopGeneration = () => {
