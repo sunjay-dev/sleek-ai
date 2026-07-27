@@ -25,10 +25,10 @@ const getSummarizer = () => {
   return summarizerCache;
 };
 
-export const chatAgent = (model: string, temperature = 0) => {
+export const chatAgent = (model: string, temperature?: number) => {
   return new ChatOpenAI({
     model,
-    temperature,
+    temperature: temperature ?? backendEnv.DEFAULT_TEMPERATURE,
     apiKey: backendEnv.ROUTER_API_KEY,
     configuration: {
       baseURL: backendEnv.ROUTER_BASE_URL,
@@ -64,5 +64,5 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
 
 export const memoryLLM = chatAgent(MEMORY_MODEL);
 
-export const titleLLM = chatAgent(TITLE_MODEL, 0.6);
+export const titleLLM = chatAgent(TITLE_MODEL, backendEnv.TITLE_TEMPERATURE);
 

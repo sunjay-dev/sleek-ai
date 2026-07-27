@@ -17,6 +17,9 @@ const backendEnvSchema = z.object({
   SUMMARIZER_TRIGGER_TOKENS: z.coerce.number().default(3000),
   SUMMARIZER_KEEP_TOKENS: z.coerce.number().default(1000),
 
+  DEFAULT_TEMPERATURE: z.coerce.number().default(0),
+  TITLE_TEMPERATURE: z.coerce.number().default(0.6),
+
   CLERK_PUBLISHABLE_KEY: z.string().min(1),
   CLERK_SECRET_KEY: z.string().min(1),
   CLERK_WEBHOOK_SIGNING_SECRET: z.string().min(1),
