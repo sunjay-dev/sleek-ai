@@ -1,6 +1,6 @@
 import { type Context } from "hono";
 import { streamSSE, type SSEStreamingApi } from "hono/streaming";
-import { scheduleMemoryExtraction, generateAIResponse, extractImageData } from "../utils/model.utils.js";
+import { scheduleMemoryExtraction, generateAIResponse } from "../utils/model.utils.js";
 import prisma from "../config/prisma.config.js";
 import { NotFoundError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
@@ -16,13 +16,12 @@ export async function handleUserMessageResponse(c: Context) {
 
   return streamSSE(c, async (stream: SSEStreamingApi) => {
     let fullResponse = "";
-    let finalQuery = query;
+    const finalQuery = query || "Please summarize or describe the uploaded document.";
 
-    finalQuery += await handleImageExtraction(messageFiles, stream);
-
-    if (!finalQuery.trim()) {
-      finalQuery = "Please summarize or describe the uploaded document.";
-    }
+    // Extract image URLs to send directly to 9router
+    const imageUrls = messageFiles
+      ?.filter((file: UploadedFile) => file.fileType?.includes("image") && file.fileUrl)
+      .map((file: UploadedFile) => file.fileUrl) || [];
 
     try {
       const [chat, preferences, memories] = await Promise.all([
@@ -44,6 +43,7 @@ export async function handleUserMessageResponse(c: Context) {
         memories,
         timezone,
         isRag: chat.isRag,
+        imageUrls,
       });
 
       let isFirstChunk = true;
@@ -91,35 +91,6 @@ export async function handleUserMessageResponse(c: Context) {
       await streamError(stream, "Response generation interrupted");
     }
   });
-}
-
-/**
- * Handle image context extraction with proper SSE types
- */
-async function handleImageExtraction(messageFiles: UploadedFile[] | undefined, stream: SSEStreamingApi): Promise<string> {
-  if (!messageFiles?.length) return "";
-
-  const imageFiles = messageFiles.filter((file) => file.fileType?.includes("image") && file.fileUrl);
-  if (imageFiles.length === 0) return "";
-
-  try {
-    await streamLoading(stream, "Analyzing image...");
-
-    const extractionPromises = imageFiles.map((file) => extractImageData(file.fileUrl));
-    const extractionResults = await Promise.allSettled(extractionPromises);
-
-    const successfulData = extractionResults
-      .filter((result): result is PromiseFulfilledResult<string> => result.status === "fulfilled" && typeof result.value === "string")
-      .map((result) => result.value);
-
-    if (successfulData.length > 0) {
-      return `\n\nExtracted information from images:\n${successfulData.join("\n---\n")}\n\n`;
-    }
-  } catch (error: unknown) {
-    logger.error({ message: "Failed to process attached images", error });
-  }
-
-  return "";
 }
 
 export async function handleGetAllChatMessages(c: Context) {

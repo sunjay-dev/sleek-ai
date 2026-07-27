@@ -11,7 +11,6 @@ let summarizerCache: ChatOpenAI | null = null;
 const MEMORY_MODEL = backendEnv.MEMORY_MODEL;
 const TITLE_MODEL = backendEnv.TITLE_MODEL;
 const SUMMARIZER_MODEL = backendEnv.SUMMARIZER_MODEL;
-const VISION_MODEL = backendEnv.VISION_MODEL;
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {
@@ -69,4 +68,3 @@ export const memoryLLM = chatAgent(MEMORY_MODEL);
 
 export const titleLLM = chatAgent(TITLE_MODEL, 0.6);
 
-export const visionLLM = chatAgent(VISION_MODEL);

@@ -1,10 +1,9 @@
 import type { UserPreference } from "@app/db";
 import { HumanMessage, SystemMessage } from "langchain";
-import { createAgentFromRouter, memoryLLM, titleLLM, visionLLM } from "../config/llm.config.js";
+import { createAgentFromRouter, memoryLLM, titleLLM } from "../config/llm.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
-import { visionPrompt } from "../prompts/vision.prompt.js";
 import { memoryExtractionSchema } from "@app/shared";
 import logger from "./logger.utils.js";
 import prisma from "../config/prisma.config.js";
@@ -21,15 +20,31 @@ type Props = {
   memories: Memories[];
   timezone: string;
   isRag: boolean;
+  imageUrls?: string[];
 };
 
-export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag }: Props) {
+export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag, imageUrls }: Props) {
   const agent = createAgentFromRouter(modelName, systemPrompt(preferences, memories, timezone, isRag), isRag);
 
   const config = { configurable: { thread_id: threadId } };
 
+  // Build message content — include images if present
+  let messageContent: string | Array<{ type: string; text?: string; image_url?: { url: string } }>;
+
+  if (imageUrls?.length) {
+    messageContent = [
+      { type: "text", text: query },
+      ...imageUrls.map((url) => ({
+        type: "image_url" as const,
+        image_url: { url },
+      })),
+    ];
+  } else {
+    messageContent = query;
+  }
+
   try {
-    const stream = agent.streamEvents({ messages: [new HumanMessage(query)] }, { ...config, version: "v2" });
+    const stream = agent.streamEvents({ messages: [new HumanMessage({ content: messageContent })]}, { ...config, version: "v2" });
 
     for await (const event of stream) {
       if (event.event === "on_chat_model_stream" && event.data.chunk && event.data.chunk.content) {
@@ -126,28 +141,4 @@ export function scheduleMemoryExtraction(userId: string, query: string, memories
       logger.error({ error: err }, "Background memory extraction failed");
     }
   });
-}
-
-export async function extractImageData(imageUrl: string) {
-  const messages = [
-    new SystemMessage(visionPrompt),
-    new HumanMessage({
-      content: [
-        {
-          type: "image_url",
-          image_url: {
-            url: imageUrl,
-          },
-        },
-      ],
-    }),
-  ];
-
-  try {
-    const response = await visionLLM.invoke(messages);
-    return response.content as string;
-  } catch (error) {
-    logger.error({ message: "Image Data Extraction Failed", error, imageUrl });
-    return null;
-  }
 }

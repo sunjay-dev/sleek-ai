@@ -13,7 +13,6 @@ const backendEnvSchema = z.object({
   MEMORY_MODEL: z.string().default("auto"),
   TITLE_MODEL: z.string().default("auto"),
   SUMMARIZER_MODEL: z.string().default("auto"),
-  VISION_MODEL: z.string().default("auto"),
 
   CLERK_PUBLISHABLE_KEY: z.string().min(1),
   CLERK_SECRET_KEY: z.string().min(1),
