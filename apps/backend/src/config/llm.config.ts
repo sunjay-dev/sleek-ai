@@ -40,7 +40,8 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
   const llm = getLLM(model);
   const summarizerLLM = getSummarizer();
 
-  const triggerTokens = 3000;
+  const triggerTokens = backendEnv.SUMMARIZER_TRIGGER_TOKENS;
+  const keepTokens = backendEnv.SUMMARIZER_KEEP_TOKENS;
 
   const agentTools = isRag ? tools : tools.filter((t) => t.name !== "search_uploaded_documents");
 
@@ -55,7 +56,7 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
         trigger: {
           tokens: triggerTokens,
         },
-        keep: { tokens: 1000 },
+        keep: { tokens: keepTokens },
       }),
     ],
   });
