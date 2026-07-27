@@ -2,7 +2,6 @@ import { ChatOpenAI } from "@langchain/openai";
 import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
 import checkpointer from "./redisCheckpointer.config.js";
-import { MODELS } from "@app/shared";
 import { backendEnv } from "./env.config.js";
 
 const llmCache = new Map();
@@ -41,8 +40,7 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
   const llm = getLLM(model);
   const summarizerLLM = getSummarizer();
 
-  const modelConfig = MODELS.find((m: (typeof MODELS)[number]) => model === m.id);
-  const triggerTokens = modelConfig ? Math.floor(modelConfig.tpm * 0.5) : 3000;
+  const triggerTokens = 3000;
 
   const agentTools = isRag ? tools : tools.filter((t) => t.name !== "search_uploaded_documents");
 
@@ -56,9 +54,8 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
         model: summarizerLLM,
         trigger: {
           tokens: triggerTokens,
-          fraction: 0.75,
         },
-        keep: { fraction: 0.25 },
+        keep: { tokens: 1000 },
       }),
     ],
   });
