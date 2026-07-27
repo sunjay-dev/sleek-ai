@@ -1,5 +1,4 @@
 import ModelMessage from "./messages/ModelMessage.js";
-import ModelSelector from "./ModelSelector.js";
 import UserMessage from "./messages/UserMessage.js";
 import LoaderContainer from "./loaders/LoaderContainer.js";
 import Loader from "./loaders/Loader.js";
@@ -15,7 +14,6 @@ export {
   ModelMessage,
   UserMessageToolTip,
   ModelMessageToolTip,
-  ModelSelector,
   Sidebar,
   Loader,
   UserMessage,

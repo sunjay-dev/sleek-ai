@@ -4,15 +4,16 @@ const backendEnvSchema = z.object({
   PORT: z.string().default("3000"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
-  GROQ_API_KEY: z.string().min(1),
+  ROUTER_API_KEY: z.string().min(1, "ROUTER_API_KEY is required"),
+  ROUTER_BASE_URL: z.string().url("ROUTER_BASE_URL must be a valid URL").default("https://api.9router.com/v1"),
   TAVILY_API_KEY: z.string().min(1),
   LANGCHAIN_TRACING_V2: z.string().optional(),
   LANGCHAIN_API_KEY: z.string().optional(),
 
-  MEMORY_MODEL: z.string().default("groq/compound-mini"),
-  TITLE_MODEL: z.string().default("groq/compound-mini"),
-  SUMMARIZER_MODEL: z.string().default("groq/compound-mini"),
-  VISION_MODEL: z.string().default("meta-llama/llama-4-scout-17b-16e-instruct"),
+  MEMORY_MODEL: z.string().default("auto"),
+  TITLE_MODEL: z.string().default("auto"),
+  SUMMARIZER_MODEL: z.string().default("auto"),
+  VISION_MODEL: z.string().default("auto"),
 
   CLERK_PUBLISHABLE_KEY: z.string().min(1),
   CLERK_SECRET_KEY: z.string().min(1),

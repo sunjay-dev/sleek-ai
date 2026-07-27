@@ -1,6 +1,6 @@
 import type { UserPreference } from "@app/db";
 import { HumanMessage, SystemMessage } from "langchain";
-import { createGroqAgent, memoryLLM, titleLLM, visionLLM } from "../config/groq.config.js";
+import { createAgentFromRouter, memoryLLM, titleLLM, visionLLM } from "../config/llm.config.js";
 import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag }: Props) {
-  const agent = createGroqAgent(modelName, systemPrompt(preferences, memories, timezone, isRag), isRag);
+  const agent = createAgentFromRouter(modelName, systemPrompt(preferences, memories, timezone, isRag), isRag);
 
   const config = { configurable: { thread_id: threadId } };
 

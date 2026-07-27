@@ -6,9 +6,7 @@ import type { UploadedFile } from "@app/shared/types";
 type Props = {
   sendMessage: (text: string, selectedModel: string, messageFiles?: UploadedFile[] | null) => void;
   isGenerating: boolean;
-  selectedModel: string;
   onStop: () => void;
-  onModelChange: (modelId: string) => void;
   isRagProcessing?: boolean;
   startRagPolling: () => void;
 };
@@ -24,7 +22,7 @@ const SUGGESTIONS = [
   { label: "Explain quantum physics", prompt: "Explain quantum physics in simple terms." },
 ];
 
-export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel, onStop, onModelChange, isRagProcessing, startRagPolling }: Props) {
+export default function WelcomeScreen({ sendMessage, isGenerating, onStop, isRagProcessing, startRagPolling }: Props) {
   const { user, isLoaded } = useUser();
 
   const getGreetingName = () => {
@@ -33,7 +31,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel
   };
 
   const handleSuggestionClick = (prompt: string) => {
-    sendMessage(prompt, selectedModel);
+    sendMessage(prompt, "auto");
   };
 
   return (
@@ -63,9 +61,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, selectedModel
       <InputContainer
         sendMessage={sendMessage}
         isGenerating={isGenerating}
-        selectedModel={selectedModel}
         onStop={onStop}
-        onModelChange={onModelChange}
         autoFocus={true}
         isRagProcessing={isRagProcessing}
         startRagPolling={startRagPolling}

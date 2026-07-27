@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ArrowUp, Loader2, Paperclip, X, AlertCircle, FileText, RefreshCw } from "lucide-react";
-import ModelSelector from "@/components/ModelSelector";
 import { useIsMobile } from "@/hooks";
-import { modelsList } from "@app/shared/models";
 import { useAuth } from "@clerk/react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { UploadedFile } from "@app/shared/types";
@@ -19,9 +17,7 @@ type Attachment = {
 type Props = {
   sendMessage: (text: string, selectedModel: string, messageFiles: UploadedFile[], optimisticFiles?: UploadedFile[]) => void;
   isGenerating: boolean;
-  selectedModel: string;
   onStop: () => void;
-  onModelChange: (modelId: string) => void;
   autoFocus: boolean;
   isRagProcessing?: boolean;
   startRagPolling: () => void;
@@ -43,9 +39,7 @@ const SUPPORTED_EXTENSIONS_DISPLAY = ".pdf, .docx, .pptx, .csv, .txt, .jpg, .jpe
 export default function InputContainer({
   sendMessage,
   isGenerating,
-  selectedModel,
   onStop,
-  onModelChange,
   autoFocus,
   isRagProcessing,
   startRagPolling,
@@ -211,7 +205,7 @@ export default function InputContainer({
         fileUrl: URL.createObjectURL(a.file),
       }));
 
-    sendMessage(message.trim(), selectedModel, successfulUploads, optimisticUploads);
+    sendMessage(message.trim(), "auto", successfulUploads, optimisticUploads);
 
     setMessage("");
     setAttachments([]);
@@ -434,8 +428,6 @@ export default function InputContainer({
               </div>
 
               <div className="flex items-center gap-2">
-                <ModelSelector models={modelsList} selectedModel={selectedModel} onModelChange={onModelChange} isGenerating={isGenerating} />
-
                 <button
                   type="submit"
                   disabled={(!hasContent && !isGenerating) || isGlobalUploading || isRagProcessing}

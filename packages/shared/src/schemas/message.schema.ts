@@ -10,7 +10,7 @@ export const uploadedFileSchema = z.object({
 export const messageSchema = z
   .object({
     query: z.string().max(3000, { message: "Please enter query less than 3000 characters." }).default(""),
-    model: z.enum(modelsId, { message: "Please choose a correct model" }),
+    model: z.enum(modelsId, { message: "Please choose a correct model" }).default("auto"),
 
     messageFiles: z.array(uploadedFileSchema).optional().default([]),
   })

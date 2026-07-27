@@ -1,6 +1,6 @@
 import { lazy, useState } from "react";
 import { Sidebar, LazyLoader } from "@/components";
-import { useChat, useChatDeletion, useModel, useMessages, useIsMobile } from "@/hooks";
+import { useChat, useChatDeletion, useMessages, useIsMobile } from "@/hooks";
 import type { Chat, Tab } from "@app/shared/types";
 import "@/styles/modelMessage.css";
 import "highlight.js/styles/atom-one-light.css";
@@ -24,7 +24,6 @@ export default function ChatPage() {
     setChats,
   });
   const { chatIntent, isDeletingChat, requestDeleteChat, requestDeleteAllChat, confirmDeleteChat, cancelDeleteChat } = useChatDeletion(setChats);
-  const { selectedModel, setSelectedModel } = useModel();
 
   const isSettingsModalOpen = searchParams.get("modal") === "settings";
   const isSearchModalOpen = searchParams.get("modal") === "search";
@@ -52,6 +51,7 @@ export default function ChatPage() {
     setSearchParams((prev) => {
       prev.delete("modal");
       prev.delete("tab");
+
       return prev;
     });
   };
@@ -75,9 +75,7 @@ export default function ChatPage() {
               <WelcomeScreen
                 sendMessage={sendMessage}
                 isGenerating={isGenerating}
-                selectedModel={selectedModel}
                 onStop={stopGeneration}
-                onModelChange={setSelectedModel}
                 isRagProcessing={isRagProcessing}
                 startRagPolling={startRagPolling}
               />
@@ -88,7 +86,7 @@ export default function ChatPage() {
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
               <MessagesContainer
                 messages={messages}
-                onResend={() => resendLastUser(selectedModel)}
+                onResend={() => resendLastUser("auto")}
                 isFetchingMessages={isFetchingMessages}
                 isGenerating={isGenerating}
               />
@@ -97,9 +95,7 @@ export default function ChatPage() {
             <InputContainer
               sendMessage={sendMessage}
               isGenerating={isGenerating}
-              selectedModel={selectedModel}
               onStop={stopGeneration}
-              onModelChange={setSelectedModel}
               autoFocus={!isMobile}
               isRagProcessing={isRagProcessing}
               startRagPolling={startRagPolling}
