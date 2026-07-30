@@ -19,7 +19,7 @@ ENV DATABASE_URL=$DATABASE_URL
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 
-RUN pnpm turbo run build --filter=@app/shared --filter=@app/db --filter=@app/backend --filter=@app/frontend
+RUN pnpm turbo run build --filter=@app/shared --filter=@app/logger --filter=@app/db --filter=@app/backend --filter=@app/frontend
 
 RUN pnpm deploy --filter @app/backend --prod --legacy /deploy
 

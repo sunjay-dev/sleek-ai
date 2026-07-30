@@ -9,12 +9,13 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages/shared ./packages/shared
+COPY packages/logger ./packages/logger
 COPY packages/typescript-config ./packages/typescript-config
 COPY apps/worker ./apps/worker
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
-RUN pnpm turbo run build --filter=@app/shared --filter=@app/worker
+RUN pnpm turbo run build --filter=@app/shared --filter=@app/logger --filter=@app/worker
 
 RUN pnpm deploy --filter @app/worker --prod --legacy /deploy
 
