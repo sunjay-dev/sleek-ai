@@ -19,26 +19,38 @@ type Props = {
   memories: Memories[];
   timezone: string;
   imageUrls?: string[];
+  fileContent?: string;
 };
 
-export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, imageUrls }: Props) {
+export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, imageUrls, fileContent }: Props) {
   const agent = createAgentFromRouter(systemPrompt(preferences, memories, timezone));
 
   const config = { configurable: { thread_id: threadId } };
 
-  // Build message content — include images if present
   let messageContent: string | Array<{ type: string; text?: string; image_url?: { url: string } }>;
 
+  const parts: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
+
+  if (fileContent) {
+    parts.push({ type: "text", text: `[File Content]:\n${fileContent}` });
+  }
+
+  if (query) {
+    parts.push({ type: "text", text: query });
+  }
+
   if (imageUrls?.length) {
-    messageContent = [
-      { type: "text", text: query },
-      ...imageUrls.map((url) => ({
-        type: "image_url" as const,
-        image_url: { url },
-      })),
-    ];
+    for (const url of imageUrls) {
+      parts.push({ type: "image_url", image_url: { url } });
+    }
+  }
+
+  if (parts.length === 1 && parts[0].type === "text") {
+    messageContent = parts[0].text!;
+  } else if (parts.length > 0) {
+    messageContent = parts;
   } else {
-    messageContent = query;
+    messageContent = query || "Please summarize or describe the uploaded document.";
   }
 
   try {

@@ -5,6 +5,7 @@ import prisma from "@app/db";
 import { NotFoundError } from "../utils/appError.utils.js";
 import logger from "@app/logger";
 import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";
+import { parseFileContent } from "../utils/parseFile.utils.js";
 import type { UploadedFile } from "@app/shared";
 
 export async function handleUserMessageResponse(c: Context) {
@@ -18,9 +19,19 @@ export async function handleUserMessageResponse(c: Context) {
     let fullResponse = "";
     const finalQuery = query || "Please summarize or describe the uploaded document.";
 
-    // Extract image URLs to send directly to 9router
     const imageUrls =
       messageFiles?.filter((file: UploadedFile) => file.fileType?.includes("image") && file.fileUrl).map((file: UploadedFile) => file.fileUrl) || [];
+
+    const documentFiles = messageFiles?.filter((file: UploadedFile) => !file.fileType?.includes("image") && file.fileUrl) || [];
+
+    let fileContent: string | undefined;
+    if (documentFiles.length > 0) {
+      const contents = await Promise.all(documentFiles.map((file: UploadedFile) => parseFileContent(file.fileUrl, file.fileType)));
+      const validContents = contents.filter((c): c is string => c !== null);
+      if (validContents.length > 0) {
+        fileContent = validContents.join("\n\n---\n\n");
+      }
+    }
 
     try {
       const [chat, preferences, memories] = await Promise.all([
@@ -41,6 +52,7 @@ export async function handleUserMessageResponse(c: Context) {
         memories,
         timezone,
         imageUrls,
+        fileContent,
       });
 
       let isFirstChunk = true;
