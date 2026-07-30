@@ -23,6 +23,6 @@ export async function apiRequest(url: string, options: ApiOptions = {}) {
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Network Error";
     toast.error(msg);
-    return;
+    throw error;
   }
 }

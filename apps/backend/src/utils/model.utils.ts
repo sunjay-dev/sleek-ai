@@ -78,15 +78,19 @@ export async function* generateAIResponse({ query, threadId, preferences, memori
   }
 }
 
-export async function generateTitle(userMessage: string) {
-  try {
-    const result = await titleLLM.invoke(titlePrompt(userMessage));
-
-    return result.content as string;
-  } catch (error) {
-    logger.error({ message: "Title generation failed", error });
-    throw new Error("Title generation failed", { cause: error });
+export async function generateTitle(userMessage: string, retries = 2): Promise<string> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const result = await titleLLM.invoke(titlePrompt(userMessage));
+      return result.content as string;
+    } catch (error) {
+      logger.warn({ message: "Title generation attempt failed", attempt: attempt + 1, error });
+      if (attempt === retries) {
+        return "New Chat";
+      }
+    }
   }
+  return "New Chat";
 }
 
 export async function extractFactualMemory(userMessage: string, existingMemories: Memories[]) {
