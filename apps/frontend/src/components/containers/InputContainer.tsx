@@ -32,6 +32,7 @@ const SUPPORTED_FORMATS = [
 ];
 
 const SUPPORTED_EXTENSIONS_DISPLAY = ".pdf, .docx, .pptx, .csv, .txt, .jpg, .jpeg, .png, .webp";
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function InputContainer({ sendMessage, isGenerating, onStop, autoFocus }: Props) {
   const [message, setMessage] = useState("");
@@ -73,6 +74,11 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
       }
 
       const validFiles = files.filter((file) => {
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error(`File too large: ${file.name} (max 10MB)`);
+          return false;
+        }
+
         const isSupported =
           SUPPORTED_FORMATS.includes(file.type) ||
           file.name.toLowerCase().endsWith(".txt") ||

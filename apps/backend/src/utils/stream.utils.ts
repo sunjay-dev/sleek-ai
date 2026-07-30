@@ -1,9 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Streamable = { write: (str: string) => Promise<any> };
 
-type StreamEventType = "text" | "loading" | "error";
+type StreamEventType = "text" | "loading" | "error" | "status";
 
-type StreamEvent = { type: "text"; content: string } | { type: "loading"; content: string | null } | { type: "error"; content: string };
+type StreamEvent =
+  | { type: "text"; content: string }
+  | { type: "loading"; content: string | null }
+  | { type: "error"; content: string }
+  | { type: "status"; content: string };
 
 export function streamEvent(stream: Streamable, event: StreamEvent): Promise<void> {
   return stream.write(JSON.stringify(event) + "\n");
@@ -19,6 +23,10 @@ export function streamLoading(stream: Streamable, content: string | null): Promi
 
 export function streamError(stream: Streamable, content: string): Promise<void> {
   return streamEvent(stream, { type: "error", content });
+}
+
+export function streamStatus(stream: Streamable, content: string): Promise<void> {
+  return streamEvent(stream, { type: "status", content });
 }
 
 export type { StreamEventType, StreamEvent };

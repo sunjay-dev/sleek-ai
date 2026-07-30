@@ -4,7 +4,7 @@ import { scheduleMemoryExtraction, generateAIResponse } from "../utils/model.uti
 import prisma from "@app/db";
 import { NotFoundError } from "../utils/appError.utils.js";
 import logger from "@app/logger";
-import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";
+import { streamLoading, streamText, streamError, streamStatus } from "../utils/stream.utils.js";
 import { parseFileContent } from "../utils/parseFile.utils.js";
 import type { UploadedFile } from "@app/shared";
 
@@ -26,10 +26,15 @@ export async function handleUserMessageResponse(c: Context) {
 
     let fileContent: string | undefined;
     if (documentFiles.length > 0) {
-      const contents = await Promise.all(documentFiles.map((file: UploadedFile) => parseFileContent(file.fileUrl, file.fileType)));
-      const validContents = contents.filter((c): c is string => c !== null);
-      if (validContents.length > 0) {
-        fileContent = validContents.join("\n\n---\n\n");
+      await streamStatus(stream, "extracting content...");
+      const results = await Promise.all(documentFiles.map((file: UploadedFile) => parseFileContent(file.fileUrl, file.fileType)));
+      const validResults = results.filter((r): r is NonNullable<typeof r> => r !== null);
+      if (validResults.length > 0) {
+        const truncatedFiles = validResults.filter((r) => r.truncated).map((r) => r.fileName);
+        if (truncatedFiles.length > 0) {
+          await streamStatus(stream, `files truncated (too large for context): ${truncatedFiles.join(", ")}`);
+        }
+        fileContent = validResults.map((r) => r.content).join("\n\n---\n\n");
       }
     }
 

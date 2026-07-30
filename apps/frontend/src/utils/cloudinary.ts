@@ -13,7 +13,7 @@ export const uploadToCloudinary = async ({ file, getToken }: Props) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  const { signature, timestamp, apiKey, cloudName, folder } = signRes;
+  const { signature, timestamp, apiKey, cloudName, folder, uploadPreset } = signRes;
 
   const resourceType = file.type.startsWith("image/") ? "image" : "raw";
 
@@ -23,9 +23,8 @@ export const uploadToCloudinary = async ({ file, getToken }: Props) => {
   formData.append("resource_type", resourceType);
   formData.append("timestamp", timestamp.toString());
   formData.append("signature", signature);
-  formData.append("quality", "auto");
+  formData.append("upload_preset", uploadPreset);
   formData.append("folder", folder);
-  formData.append("angle", "exif");
 
   const data = await apiRequest(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
     method: "POST",

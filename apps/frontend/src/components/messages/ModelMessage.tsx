@@ -57,13 +57,15 @@ type Props = {
 };
 
 export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
+  const isError = text && (text.includes("interrupted") || text.includes("went wrong") || text.includes("stopped"));
+
   return (
     <div className="max-w-full text-[15px] sm:text-sm py-3 rounded-xl">
       {isGenerating && text.length === 0 && !status ? (
         <span className="inline-block animate-pulse font-bold">▍</span>
       ) : (
         <div className={`markdown ${isGenerating && !status && "streamingCursor"}`}>
-          {status && (
+          {status && !isError && (
             <div className="analyzing-container">
               <span>{status}</span>
             </div>

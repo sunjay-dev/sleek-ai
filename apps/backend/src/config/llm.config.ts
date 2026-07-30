@@ -1,7 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { createAgent, summarizationMiddleware } from "langchain";
 import tools from "../tools/index.js";
-import checkpointer from "./redisCheckpointer.config.js";
+import { getRedisCheckpointer } from "./redisCheckpointer.config.js";
 import { backendEnv } from "./env.config.js";
 
 const llmCache = new Map();
@@ -37,17 +37,21 @@ export const chatAgent = (model: string, temperature?: number) => {
   });
 };
 
-export const createAgentFromRouter = (systemPrompt: string) => {
+let cachedAgent: ReturnType<typeof createAgent> | null = null;
+
+export const createAgentFromRouter = async () => {
+  if (cachedAgent) return cachedAgent;
+
   const llm = getLLM(CHAT_MODEL);
   const summarizerLLM = getSummarizer();
+  const checkpointer = await getRedisCheckpointer();
 
   const triggerTokens = backendEnv.SUMMARIZER_TRIGGER_TOKENS;
   const keepTokens = backendEnv.SUMMARIZER_KEEP_TOKENS;
 
-  return createAgent({
+  cachedAgent = createAgent({
     model: llm,
     tools,
-    systemPrompt,
     checkpointer,
     middleware: [
       summarizationMiddleware({
@@ -59,6 +63,8 @@ export const createAgentFromRouter = (systemPrompt: string) => {
       }),
     ],
   });
+
+  return cachedAgent;
 };
 
 export const memoryLLM = chatAgent(MEMORY_MODEL);

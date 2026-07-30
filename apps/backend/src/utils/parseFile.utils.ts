@@ -1,9 +1,24 @@
 import pdf from "pdf-parse";
 import mammoth from "mammoth";
 import logger from "@app/logger";
+import { fileTypeFromBuffer } from "file-type";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_CONTENT_LENGTH = 100_000; // ~25k tokens
+
+const ALLOWED_MIMES = new Set([
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "text/csv",
+  "text/plain",
+]);
+
+export type ParseResult = {
+  content: string;
+  truncated: boolean;
+  fileName: string;
+};
 
 async function fetchFile(url: string): Promise<Buffer> {
   const res = await fetch(url);
@@ -12,9 +27,15 @@ async function fetchFile(url: string): Promise<Buffer> {
   return Buffer.from(arrayBuffer);
 }
 
-function truncateContent(content: string): string {
-  if (content.length <= MAX_CONTENT_LENGTH) return content;
-  return content.slice(0, MAX_CONTENT_LENGTH) + "\n\n[Content truncated...]";
+function truncateContent(content: string, fileName: string): ParseResult {
+  if (content.length <= MAX_CONTENT_LENGTH) {
+    return { content: content.trim(), truncated: false, fileName };
+  }
+  return {
+    content: content.slice(0, MAX_CONTENT_LENGTH) + "\n\n[Content truncated...]",
+    truncated: true,
+    fileName,
+  };
 }
 
 async function parsePdf(buffer: Buffer): Promise<string> {
@@ -35,7 +56,7 @@ function parseCsv(buffer: Buffer): string {
   return buffer.toString("utf-8");
 }
 
-export async function parseFileContent(fileUrl: string, fileType: string): Promise<string | null> {
+export async function parseFileContent(fileUrl: string, fileType: string): Promise<ParseResult | null> {
   if (fileType.includes("image")) return null;
 
   try {
@@ -46,6 +67,13 @@ export async function parseFileContent(fileUrl: string, fileType: string): Promi
       return null;
     }
 
+    const detected = await fileTypeFromBuffer(buffer);
+    if (detected && !ALLOWED_MIMES.has(detected.mime)) {
+      logger.warn({ message: "File type mismatch (magic bytes)", declared: fileType, detected: detected.mime });
+      return null;
+    }
+
+    const fileName = fileUrl.split("/").pop() || "unknown";
     let content: string;
 
     if (fileType.includes("pdf")) {
@@ -58,7 +86,7 @@ export async function parseFileContent(fileUrl: string, fileType: string): Promi
       content = parseText(buffer);
     }
 
-    return truncateContent(content.trim());
+    return truncateContent(content, fileName);
   } catch (error) {
     logger.error({ message: "Failed to parse file", fileType, error });
     return null;

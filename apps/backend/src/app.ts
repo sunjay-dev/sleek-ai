@@ -8,6 +8,7 @@ import { serveFrontend } from "./static/serveFrontend.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { secureHeaders } from "hono/secure-headers";
+import { ensureUploadPreset } from "./config/cloudinary.config.js";
 
 const app = new Hono();
 app.use("*", secureHeaders());
@@ -20,6 +21,8 @@ const frontendRoot = path.resolve(__dirname, "../../frontend/dist");
 serveFrontend(app, frontendRoot);
 
 app.onError(errorHandler);
+
+await ensureUploadPreset();
 
 serve(
   {

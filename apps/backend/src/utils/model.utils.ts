@@ -7,6 +7,7 @@ import { memoryPrompt } from "../prompts/memory.prompt.js";
 import { memoryExtractionSchema } from "@app/shared";
 import logger from "@app/logger";
 import prisma from "@app/db";
+import { shouldExtractMemory } from "./memory.utils.js";
 
 export type Memories = {
   content: string;
@@ -23,7 +24,7 @@ type Props = {
 };
 
 export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, imageUrls, fileContent }: Props) {
-  const agent = createAgentFromRouter(systemPrompt(preferences, memories, timezone));
+  const agent = await createAgentFromRouter();
 
   const config = { configurable: { thread_id: threadId } };
 
@@ -53,8 +54,10 @@ export async function* generateAIResponse({ query, threadId, preferences, memori
     messageContent = query || "Please summarize or describe the uploaded document.";
   }
 
+  const sysMessage = new SystemMessage(systemPrompt(preferences, memories, timezone));
+
   try {
-    const stream = agent.streamEvents({ messages: [new HumanMessage({ content: messageContent })] }, { ...config, version: "v2" });
+    const stream = agent.streamEvents({ messages: [sysMessage, new HumanMessage({ content: messageContent })] }, { ...config, version: "v2" });
 
     try {
       for await (const event of stream) {
@@ -86,18 +89,8 @@ export async function generateTitle(userMessage: string) {
   }
 }
 
-function isPersonallyMeaningful(message: string): boolean {
-  if (message.includes("```")) return false;
-
-  if (/[A-Za-z]:\\|\/[a-z0-9_-]+\/[a-z0-9_-]+/i.test(message)) return false;
-
-  if (/at\s+\w+\s*\(|Error:|TypeError:|SyntaxError:|undefined is not/.test(message)) return false;
-
-  return true;
-}
-
 export async function extractFactualMemory(userMessage: string, existingMemories: Memories[]) {
-  if (!isPersonallyMeaningful(userMessage)) return [];
+  if (!shouldExtractMemory(userMessage)) return [];
 
   const memoryString = existingMemories.map((m) => `- ${m.content}`).join("\n");
 

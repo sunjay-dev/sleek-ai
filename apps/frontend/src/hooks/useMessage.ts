@@ -103,8 +103,12 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
                 const parsed = JSON.parse(line);
                 if (parsed.type === "text") {
                   textBufferRef.current += parsed.content;
+                  statusBufferRef.current = null;
                   changed = true;
                 } else if (parsed.type === "loading") {
+                  statusBufferRef.current = parsed.content;
+                  changed = true;
+                } else if (parsed.type === "status") {
                   statusBufferRef.current = parsed.content;
                   changed = true;
                 } else if (parsed.type === "error") {
@@ -127,12 +131,15 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
           }
         })
         .catch((err) => {
+          statusBufferRef.current = null;
+          textBufferRef.current = textBufferRef.current || err.message || "Something went wrong.";
           setMessages((prev) =>
             prev.map((m) =>
               m.id === assistantId
                 ? {
                     ...m,
-                    text: err.name === "AbortError" ? "Generation stopped." : err.message || "Something went wrong.",
+                    text: err.name === "AbortError" ? "Generation stopped." : textBufferRef.current,
+                    status: null,
                   }
                 : m,
             ),
