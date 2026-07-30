@@ -3,7 +3,7 @@ import { Worker, type Job } from "bullmq";
 import { parseFileWithLangChain } from "./utils/parseFile.js";
 import { chunkFile } from "./utils/chunkFile.js";
 import { embedChunksAndStoreVectors } from "./utils/embedChunksAndStoreVectors.js";
-import logger from "./utils/logger.utils.js";
+import logger from "@app/logger";
 import "./server.js";
 
 type Data = {

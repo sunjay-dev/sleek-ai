@@ -13,6 +13,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@app/logger": "workspace:*",
     "@langchain/classic": "^1.0.9",
     "@langchain/community": "^1.1.4",
     "@langchain/core": "^1.1.15",
@@ -27,8 +28,6 @@
     "officeparser": "^5.2.2",
     "pdf-parse": "^1.1.4",
     "pdfjs-dist": "^5.4.530",
-    "pino": "catalog:",
-    "pino-pretty": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

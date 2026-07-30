@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { backendEnv } from "./config/env.config.js";
 import { Hono } from "hono";
-import logger from "./utils/logger.utils.js";
+import logger from "@app/logger";
 import apiRouter from "./api.routes.js";
 import { errorHandler } from "./middlewares/errorHandler.middlewares.js";
 import { serveFrontend } from "./static/serveFrontend.js";

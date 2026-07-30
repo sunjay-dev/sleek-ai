@@ -17,6 +17,7 @@
     "prisma:studio": "prisma studio --schema=prisma/schema.prisma"
   },
   "dependencies": {
+    "@app/logger": "workspace:*",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "zod": "catalog:"

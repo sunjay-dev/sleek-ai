@@ -1,6 +1,7 @@
 import { dbEnv } from "./config/env.config.js";
 import { PrismaClient } from "./generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import logger from "@app/logger";
 
 export { PrismaClient } from "./generated/prisma/client.js";
 export type { User, UserMemory, UserPreference, Chat, Message, MessageFile } from "./generated/prisma/client.js";
@@ -21,10 +22,10 @@ const prisma = createPrismaClient();
 prisma
   .$connect()
   .then(() => {
-    console.warn("[db] Database connected");
+    logger.warn("[db] Database connected");
   })
   .catch((e) => {
-    console.error("[db] Failed to connect:", e);
+    logger.error("[db] Failed to connect:", e);
     process.exit(1);
   });
 

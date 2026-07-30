@@ -1,6 +1,6 @@
 import { RedisSaver } from "@langchain/langgraph-checkpoint-redis";
 import { InternalServerError } from "../utils/appError.utils.js";
-import logger from "../utils/logger.utils.js";
+import logger from "@app/logger";
 import { backendEnv } from "./env.config.js";
 
 let redisCheckpointer: RedisSaver;

@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "@app/shared";
 import { vectorStore } from "../config/vectorStore.config.js";
-import logger from "../utils/logger.utils.js";
+import logger from "@app/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
 const searchUploadedDocumentsSchema = z.object({

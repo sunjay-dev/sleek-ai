@@ -2,7 +2,7 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { type Document } from "@langchain/core/documents";
-import logger from "./logger.utils.js";
+import logger from "@app/logger";
 import { workerEnv } from "../config/env.config.js";
 
 const embeddingsClient = new GoogleGenerativeAIEmbeddings({

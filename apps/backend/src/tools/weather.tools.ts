@@ -1,6 +1,6 @@
 import { tool } from "langchain";
 import { z } from "@app/shared";
-import logger from "../utils/logger.utils.js";
+import logger from "@app/logger";
 import { backendEnv } from "../config/env.config.js";
 
 export const getCurrentWeather = tool(

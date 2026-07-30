@@ -5,7 +5,7 @@ import { titlePrompt } from "../prompts/title.prompt.js";
 import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
 import { memoryExtractionSchema } from "@app/shared";
-import logger from "./logger.utils.js";
+import logger from "@app/logger";
 import prisma from "@app/db";
 
 export type Memories = {

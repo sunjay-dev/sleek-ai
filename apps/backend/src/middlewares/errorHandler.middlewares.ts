@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import { AppError } from "../utils/appError.utils.js";
-import logger from "../utils/logger.utils.js";
+import logger from "@app/logger";
 import { HTTPException } from "hono/http-exception";
 import { backendEnv } from "../config/env.config.js";
 
