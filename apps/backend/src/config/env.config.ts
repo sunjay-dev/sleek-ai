@@ -10,6 +10,7 @@ const backendEnvSchema = z.object({
   LANGCHAIN_TRACING_V2: z.string().optional(),
   LANGCHAIN_API_KEY: z.string().optional(),
 
+  CHAT_MODEL: z.string().default("auto"),
   MEMORY_MODEL: z.string().default("auto"),
   TITLE_MODEL: z.string().default("auto"),
   SUMMARIZER_MODEL: z.string().default("auto"),

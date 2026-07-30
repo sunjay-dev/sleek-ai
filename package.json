@@ -1,5 +1,6 @@
 {
   "name": "sleek-ai",
+  "private": true,
   "description": "AI chatBot",
   "license": "MIT",
   "author": "https://github.com/sunjay-dev/",
@@ -7,6 +8,8 @@
   "scripts": {
     "prepare": "husky",
     "dev": "turbo run dev",
+    "dev:frontend": "turbo run dev --filter=@app/frontend",
+    "dev:backend": "turbo run dev --filter=@app/backend",
     "build": "turbo run build",
     "start": "turbo run start",
     "lint": "oxlint .",

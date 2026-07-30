@@ -15,7 +15,6 @@ export type Memories = {
 type Props = {
   query: string;
   threadId: string;
-  modelName: string;
   preferences: UserPreference;
   memories: Memories[];
   timezone: string;
@@ -23,8 +22,8 @@ type Props = {
   imageUrls?: string[];
 };
 
-export async function* generateAIResponse({ query, threadId, modelName, preferences, memories, timezone, isRag, imageUrls }: Props) {
-  const agent = createAgentFromRouter(modelName, systemPrompt(preferences, memories, timezone, isRag), isRag);
+export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, isRag, imageUrls }: Props) {
+  const agent = createAgentFromRouter(systemPrompt(preferences, memories, timezone, isRag), isRag);
 
   const config = { configurable: { thread_id: threadId } };
 
@@ -44,7 +43,7 @@ export async function* generateAIResponse({ query, threadId, modelName, preferen
   }
 
   try {
-    const stream = agent.streamEvents({ messages: [new HumanMessage({ content: messageContent })]}, { ...config, version: "v2" });
+    const stream = agent.streamEvents({ messages: [new HumanMessage({ content: messageContent })] }, { ...config, version: "v2" });
 
     for await (const event of stream) {
       if (event.event === "on_chat_model_stream" && event.data.chunk && event.data.chunk.content) {

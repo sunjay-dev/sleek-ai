@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { modelsId } from "../models.js";
 
 export const uploadedFileSchema = z.object({
   fileUrl: z.url(),
@@ -10,8 +9,6 @@ export const uploadedFileSchema = z.object({
 export const messageSchema = z
   .object({
     query: z.string().max(3000, { message: "Please enter query less than 3000 characters." }).default(""),
-    model: z.enum(modelsId, { message: "Please choose a correct model" }).default("auto"),
-
     messageFiles: z.array(uploadedFileSchema).optional().default([]),
   })
   .refine((data) => data.query.trim().length > 0 || data.messageFiles.length > 0, {

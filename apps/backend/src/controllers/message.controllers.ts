@@ -11,7 +11,7 @@ export async function handleUserMessageResponse(c: Context) {
   const requestStartTime = new Date();
   const { chatId } = c.req.param();
   const userId = c.get("user");
-  const { query, model, messageFiles } = c.get("body");
+  const { query, messageFiles } = c.get("body");
   const timezone = c.req.header("x-client-timezone") || "UTC";
 
   return streamSSE(c, async (stream: SSEStreamingApi) => {
@@ -19,9 +19,8 @@ export async function handleUserMessageResponse(c: Context) {
     const finalQuery = query || "Please summarize or describe the uploaded document.";
 
     // Extract image URLs to send directly to 9router
-    const imageUrls = messageFiles
-      ?.filter((file: UploadedFile) => file.fileType?.includes("image") && file.fileUrl)
-      .map((file: UploadedFile) => file.fileUrl) || [];
+    const imageUrls =
+      messageFiles?.filter((file: UploadedFile) => file.fileType?.includes("image") && file.fileUrl).map((file: UploadedFile) => file.fileUrl) || [];
 
     try {
       const [chat, preferences, memories] = await Promise.all([
@@ -38,7 +37,6 @@ export async function handleUserMessageResponse(c: Context) {
       const aiStream = generateAIResponse({
         query: finalQuery,
         threadId: chatId,
-        modelName: model,
         preferences,
         memories,
         timezone,

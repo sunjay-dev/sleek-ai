@@ -1,4 +1,3 @@
-import { modelsList } from "./models.js";
 import { z } from "./index.js";
 import { userPreferencesSchema } from "./schemas/user.schema.js";
 import { uploadedFileSchema } from "./schemas/message.schema.js";
@@ -12,8 +11,6 @@ export type Message = {
   messageFiles?: UploadedFile[] | null;
   status?: string | null;
 };
-
-export type Model = (typeof modelsList)[number];
 
 export type Chat = {
   id: string;

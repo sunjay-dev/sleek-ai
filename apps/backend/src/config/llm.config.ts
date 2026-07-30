@@ -10,6 +10,7 @@ let summarizerCache: ChatOpenAI | null = null;
 const MEMORY_MODEL = backendEnv.MEMORY_MODEL;
 const TITLE_MODEL = backendEnv.TITLE_MODEL;
 const SUMMARIZER_MODEL = backendEnv.SUMMARIZER_MODEL;
+const CHAT_MODEL = backendEnv.CHAT_MODEL;
 
 const getLLM = (model: string) => {
   if (!llmCache.has(model)) {
@@ -36,8 +37,8 @@ export const chatAgent = (model: string, temperature?: number) => {
   });
 };
 
-export const createAgentFromRouter = (model: string, systemPrompt: string, isRag: boolean = false) => {
-  const llm = getLLM(model);
+export const createAgentFromRouter = (systemPrompt: string, isRag: boolean = false) => {
+  const llm = getLLM(CHAT_MODEL);
   const summarizerLLM = getSummarizer();
 
   const triggerTokens = backendEnv.SUMMARIZER_TRIGGER_TOKENS;
@@ -65,4 +66,3 @@ export const createAgentFromRouter = (model: string, systemPrompt: string, isRag
 export const memoryLLM = chatAgent(MEMORY_MODEL);
 
 export const titleLLM = chatAgent(TITLE_MODEL, backendEnv.TITLE_TEMPERATURE);
-
