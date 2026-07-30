@@ -154,6 +154,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
 
     if (!chatId) {
       try {
+        const titleQuery = text.slice(0, 200) || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat");
         const data = await apiRequest(`/api/v1/chat`, {
           method: "POST",
           headers: {
@@ -161,7 +162,7 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            query: text || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat"),
+            query: titleQuery,
           }),
           signal: controller.signal,
         });
