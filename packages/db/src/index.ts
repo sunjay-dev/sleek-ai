@@ -5,7 +5,7 @@ import logger from "@app/logger";
 
 export { PrismaClient } from "./generated/prisma/client.js";
 export type { User, UserMemory, UserPreference, Chat, Message, MessageFile } from "./generated/prisma/client.js";
-export { RagStatus, MessageRole } from "./generated/prisma/client.js";
+export { MessageRole } from "./generated/prisma/client.js";
 
 function createPrismaClient() {
   const adapter = new PrismaPg({

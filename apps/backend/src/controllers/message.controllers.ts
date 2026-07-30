@@ -24,7 +24,7 @@ export async function handleUserMessageResponse(c: Context) {
 
     try {
       const [chat, preferences, memories] = await Promise.all([
-        prisma.chat.findUnique({ where: { id: chatId, userId }, select: { id: true, isRag: true } }),
+        prisma.chat.findUnique({ where: { id: chatId, userId }, select: { id: true } }),
         prisma.userPreference.upsert({ where: { userId }, create: { userId }, update: {} }),
         prisma.userMemory.findMany({ where: { userId }, select: { content: true } }),
       ]);
@@ -40,7 +40,6 @@ export async function handleUserMessageResponse(c: Context) {
         preferences,
         memories,
         timezone,
-        isRag: chat.isRag,
         imageUrls,
       });
 
@@ -100,8 +99,6 @@ export async function handleGetAllChatMessages(c: Context) {
     select: {
       id: true,
       title: true,
-      ragStatus: true,
-      isRag: true,
       messages: {
         orderBy: { createdAt: "asc" },
         select: {

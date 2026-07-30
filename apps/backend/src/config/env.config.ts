@@ -34,11 +34,6 @@ const backendEnvSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().min(1),
   CLOUDINARY_API_KEY: z.string().min(1),
 
-  GOOGLE_EMBEDDINGS_MODEL: z.string().min(1),
-  GOOGLE_API_KEY: z.string().min(1),
-  PINECONE_API_KEY: z.string().min(1),
-  PINECONE_INDEX_NAME: z.string().min(1),
-
   WEATHER_API_KEY: z.string().min(1),
 
   APP_JOB_NAME: z.string().default("chatty-ai-backend"),

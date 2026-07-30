@@ -19,7 +19,7 @@ export default function ChatPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const { chats, setChats, moveChatToTop, isFetchingChats, handleRenameChat } = useChat();
-  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages, isRagProcessing, startRagPolling } = useMessages({
+  const { messages, sendMessage, resendLastUser, isGenerating, stopGeneration, isFetchingMessages } = useMessages({
     moveChatToTop,
     setChats,
   });
@@ -72,13 +72,7 @@ export default function ChatPage() {
         {messages?.length === 0 && !isFetchingMessages ? (
           <LazyLoader>
             <div className="bg-light w-full h-full">
-              <WelcomeScreen
-                sendMessage={sendMessage}
-                isGenerating={isGenerating}
-                onStop={stopGeneration}
-                isRagProcessing={isRagProcessing}
-                startRagPolling={startRagPolling}
-              />
+              <WelcomeScreen sendMessage={sendMessage} isGenerating={isGenerating} onStop={stopGeneration} />
             </div>
           </LazyLoader>
         ) : (
@@ -92,14 +86,7 @@ export default function ChatPage() {
               />
             </div>
 
-            <InputContainer
-              sendMessage={sendMessage}
-              isGenerating={isGenerating}
-              onStop={stopGeneration}
-              autoFocus={!isMobile}
-              isRagProcessing={isRagProcessing}
-              startRagPolling={startRagPolling}
-            />
+            <InputContainer sendMessage={sendMessage} isGenerating={isGenerating} onStop={stopGeneration} autoFocus={!isMobile} />
           </LazyLoader>
         )}
       </main>

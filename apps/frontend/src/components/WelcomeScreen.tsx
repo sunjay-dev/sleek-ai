@@ -7,8 +7,6 @@ type Props = {
   sendMessage: (text: string, messageFiles?: UploadedFile[] | null) => void;
   isGenerating: boolean;
   onStop: () => void;
-  isRagProcessing?: boolean;
-  startRagPolling: () => void;
 };
 
 const SUGGESTIONS = [
@@ -22,7 +20,7 @@ const SUGGESTIONS = [
   { label: "Explain quantum physics", prompt: "Explain quantum physics in simple terms." },
 ];
 
-export default function WelcomeScreen({ sendMessage, isGenerating, onStop, isRagProcessing, startRagPolling }: Props) {
+export default function WelcomeScreen({ sendMessage, isGenerating, onStop }: Props) {
   const { user, isLoaded } = useUser();
 
   const getGreetingName = () => {
@@ -47,7 +45,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, onStop, isRag
             <button
               key={index}
               onClick={() => handleSuggestionClick(item.prompt)}
-              disabled={isGenerating || isRagProcessing}
+              disabled={isGenerating}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-white
                 border-primary rounded-full transition-all duration-200 hover:bg-white/90"
             >
@@ -58,14 +56,7 @@ export default function WelcomeScreen({ sendMessage, isGenerating, onStop, isRag
         </div>
       </div>
 
-      <InputContainer
-        sendMessage={sendMessage}
-        isGenerating={isGenerating}
-        onStop={onStop}
-        autoFocus={true}
-        isRagProcessing={isRagProcessing}
-        startRagPolling={startRagPolling}
-      />
+      <InputContainer sendMessage={sendMessage} isGenerating={isGenerating} onStop={onStop} autoFocus={true} />
     </div>
   );
 }

@@ -18,12 +18,11 @@ type Props = {
   preferences: UserPreference;
   memories: Memories[];
   timezone: string;
-  isRag: boolean;
   imageUrls?: string[];
 };
 
-export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, isRag, imageUrls }: Props) {
-  const agent = createAgentFromRouter(systemPrompt(preferences, memories, timezone, isRag), isRag);
+export async function* generateAIResponse({ query, threadId, preferences, memories, timezone, imageUrls }: Props) {
+  const agent = createAgentFromRouter(systemPrompt(preferences, memories, timezone));
 
   const config = { configurable: { thread_id: threadId } };
 

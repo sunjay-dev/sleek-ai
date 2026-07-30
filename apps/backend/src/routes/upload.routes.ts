@@ -1,10 +1,9 @@
 import { Hono } from "hono";
-import { handleFileSignature, handleStartRag } from "../controllers/upload.controllers.js";
+import { handleFileSignature } from "../controllers/upload.controllers.js";
 import { clerkMiddleware } from "@clerk/hono";
 import { checkUser } from "../middlewares/auth.middlewares.js";
 const router = new Hono();
 
 router.get("/", clerkMiddleware(), checkUser, handleFileSignature);
-router.post("/rag", clerkMiddleware(), checkUser, handleStartRag);
 
 export default router;

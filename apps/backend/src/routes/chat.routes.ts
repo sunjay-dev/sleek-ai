@@ -5,7 +5,6 @@ import {
   handleGetUserChats,
   handleRenameUserChat,
   handleDeleteAllUserChat,
-  handleChatStatus,
 } from "../controllers/chat.controllers.js";
 import { clerkMiddleware } from "@clerk/hono";
 import { checkUser } from "../middlewares/auth.middlewares.js";
@@ -15,7 +14,6 @@ const router = new Hono();
 
 router.get("/", clerkMiddleware(), checkUser, handleGetUserChats);
 router.post("/", clerkMiddleware(), checkUser, validate(querySchema), handleCreateUserChat);
-router.get("/:chatId/status", clerkMiddleware(), checkUser, validateParams(chatIdParamSchema), handleChatStatus);
 router.patch("/:chatId", clerkMiddleware(), checkUser, validateParams(chatIdParamSchema), validate(chatRenameSchema), handleRenameUserChat);
 router.delete("/:chatId", clerkMiddleware(), checkUser, validateParams(chatIdParamSchema), handleDeleteUserChat);
 router.delete("/", clerkMiddleware(), checkUser, handleDeleteAllUserChat);

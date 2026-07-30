@@ -15,8 +15,6 @@ export type Message = {
 export type Chat = {
   id: string;
   title: string | null;
-  ragStatus?: "IDLE" | "PROCESSING" | "COMPLETED" | "FAILED";
-  isRag?: boolean;
 };
 
 export type UserPreferences = z.infer<typeof userPreferencesSchema>;

@@ -37,18 +37,16 @@ export const chatAgent = (model: string, temperature?: number) => {
   });
 };
 
-export const createAgentFromRouter = (systemPrompt: string, isRag: boolean = false) => {
+export const createAgentFromRouter = (systemPrompt: string) => {
   const llm = getLLM(CHAT_MODEL);
   const summarizerLLM = getSummarizer();
 
   const triggerTokens = backendEnv.SUMMARIZER_TRIGGER_TOKENS;
   const keepTokens = backendEnv.SUMMARIZER_KEEP_TOKENS;
 
-  const agentTools = isRag ? tools : tools.filter((t) => t.name !== "search_uploaded_documents");
-
   return createAgent({
     model: llm,
-    tools: agentTools,
+    tools,
     systemPrompt,
     checkpointer,
     middleware: [
