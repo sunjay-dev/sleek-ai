@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 import { NotFoundError } from "../utils/appError.utils.js";
 
 export async function handleGetUserPreferences(c: Context) {

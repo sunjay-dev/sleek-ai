@@ -1,5 +1,5 @@
 import { Queue, QueueEvents } from "bullmq";
-import prisma from "./prisma.config.js";
+import prisma from "@app/db";
 import { backendEnv } from "./env.config.js";
 
 export const fileIngestQueue = new Queue("file-ingest", {

@@ -9,11 +9,33 @@ export { RagStatus, MessageRole } from "./generated/prisma/client.js";
 function createPrismaClient() {
   const adapter = new PrismaPg({
     connectionString: dbEnv.DATABASE_URL,
+    min: dbEnv.DATABASE_CONNECTION_MIN,
+    max: dbEnv.DATABASE_CONNECTION_MAX,
   });
 
   return new PrismaClient({ adapter });
 }
 
 const prisma = createPrismaClient();
+
+prisma
+  .$connect()
+  .then(() => {
+    console.warn("[db] Database connected");
+  })
+  .catch((e) => {
+    console.error("[db] Failed to connect:", e);
+    process.exit(1);
+  });
+
+process.on("SIGINT", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 export default prisma;

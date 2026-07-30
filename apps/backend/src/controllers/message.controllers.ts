@@ -1,7 +1,7 @@
 import { type Context } from "hono";
 import { streamSSE, type SSEStreamingApi } from "hono/streaming";
 import { scheduleMemoryExtraction, generateAIResponse } from "../utils/model.utils.js";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 import { NotFoundError } from "../utils/appError.utils.js";
 import logger from "../utils/logger.utils.js";
 import { streamLoading, streamText, streamError } from "../utils/stream.utils.js";

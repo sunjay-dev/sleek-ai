@@ -1,6 +1,6 @@
 import { type Context } from "hono";
 import { generateTitle } from "../utils/model.utils.js";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 import { NotFoundError } from "../utils/appError.utils.js";
 
 export async function handleGetUserChats(c: Context) {

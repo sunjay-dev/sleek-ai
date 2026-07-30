@@ -1,5 +1,5 @@
 import { type Context } from "hono";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 import { createSnippet } from "../utils/search.utils.js";
 
 export async function handleSearchMessages(c: Context) {

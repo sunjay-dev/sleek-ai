@@ -1,6 +1,6 @@
 import { type Context } from "hono";
 import cloudinary from "../config/cloudinary.config.js";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 import { fileIngestQueue } from "../config/queue.config.js";
 import { backendEnv } from "../config/env.config.js";
 

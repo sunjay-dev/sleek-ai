@@ -6,7 +6,7 @@ import { systemPrompt } from "../prompts/system.prompt.js";
 import { memoryPrompt } from "../prompts/memory.prompt.js";
 import { memoryExtractionSchema } from "@app/shared";
 import logger from "./logger.utils.js";
-import prisma from "../config/prisma.config.js";
+import prisma from "@app/db";
 
 export type Memories = {
   content: string;
@@ -45,14 +45,18 @@ export async function* generateAIResponse({ query, threadId, preferences, memori
   try {
     const stream = agent.streamEvents({ messages: [new HumanMessage({ content: messageContent })] }, { ...config, version: "v2" });
 
-    for await (const event of stream) {
-      if (event.event === "on_chat_model_stream" && event.data.chunk && event.data.chunk.content) {
-        yield event.data.chunk.content;
-      }
+    try {
+      for await (const event of stream) {
+        if (event.event === "on_chat_model_stream" && event.data.chunk && event.data.chunk.content) {
+          yield event.data.chunk.content;
+        }
 
-      if (event.event === "on_tool_start") {
-        yield "\n\n";
+        if (event.event === "on_tool_start") {
+          yield "\n\n";
+        }
       }
+    } finally {
+      stream.return();
     }
   } catch (error) {
     logger.error({ message: "Agent invocation failed:", error });
