@@ -15,6 +15,6 @@ apiRouter.route("/chat/:chatId/message", messageRouter);
 apiRouter.route("/user", userRouter);
 apiRouter.route("/upload", uploadRouter);
 apiRouter.route("/search", searchRouter);
-apiRouter.route("/webhooks", webHookRouter);
+apiRouter.route("/webhook", webHookRouter);
 
 export default apiRouter;

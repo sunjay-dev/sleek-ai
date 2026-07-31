@@ -41,13 +41,13 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
     };
     setMessages((m) => [...m, userMsg]);
 
-    if (text.length > 2000) {
+    if (text.length > 10000) {
       setMessages((m) => [
         ...m,
         {
           id: crypto.randomUUID(),
           role: "ASSISTANT",
-          text: "Message too long (2000 char limit).",
+          text: "Message too long (10000 char limit).",
         },
       ]);
       return;

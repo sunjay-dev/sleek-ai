@@ -8,7 +8,7 @@ export const uploadedFileSchema = z.object({
 
 export const messageSchema = z
   .object({
-    query: z.string().max(3000, { message: "Please enter query less than 3000 characters." }).default(""),
+    query: z.string().max(10000, { message: "Please enter query less than 10000 characters." }).default(""),
     messageFiles: z.array(uploadedFileSchema).optional().default([]),
   })
   .refine((data) => data.query.trim().length > 0 || data.messageFiles.length > 0, {
