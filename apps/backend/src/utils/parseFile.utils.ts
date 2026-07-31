@@ -3,8 +3,8 @@ import mammoth from "mammoth";
 import logger from "@app/logger";
 import { fileTypeFromBuffer } from "file-type";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_CONTENT_LENGTH = 100_000; // ~25k tokens
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_CONTENT_LENGTH = 200_000;
 
 const ALLOWED_MIMES = new Set([
   "application/pdf",
