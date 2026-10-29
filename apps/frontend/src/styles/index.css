@@ -294,7 +294,7 @@ img {
 }
 
 /* =========================================================================
-   OpenUI Comprehensive Component Styling
+   OpenUI Comprehensive Component Styling & Chat Scale Calibration
    ========================================================================= */
 
 /* Outer Widget Card Container */
@@ -302,8 +302,8 @@ img {
   display: block;
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 1rem;
-  padding: 1.25rem 1.5rem;
+  border-radius: 0.875rem;
+  padding: 0.875rem 1.125rem;
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.04),
     0 1px 2px -1px rgba(0, 0, 0, 0.02);
@@ -313,6 +313,58 @@ img {
   --openui-text-neutral-tertiary: #6b7280 !important;
   --openui-border-default: rgba(0, 0, 0, 0.12) !important;
   --openui-border-interactive: rgba(0, 0, 0, 0.2) !important;
+
+  /* Harmonized Typography Scale (calibrated to Sleek AI's 14px chat scale) */
+  --openui-font-size-2xs: 9px;
+  --openui-font-size-xs: 11px;
+  --openui-font-size-sm: 12.5px;
+  --openui-font-size-md: 13.5px;
+  --openui-font-size-lg: 15px;
+  --openui-font-size-xl: 16.5px;
+  --openui-font-size-2xl: 18px;
+  --openui-font-size-3xl: 20px;
+  --openui-font-size-4xl: 24px;
+  --openui-font-size-5xl: 28px;
+
+  --openui-text-body-xs: 400 11px/1.45 "Inter", sans-serif;
+  --openui-text-body-sm: 400 12.5px/1.45 "Inter", sans-serif;
+  --openui-text-body-default: 400 13.5px/1.45 "Inter", sans-serif;
+  --openui-text-body-default-heavy: 560 13.5px/1.45 "Inter", sans-serif;
+  --openui-text-body-lg: 400 15px/1.45 "Inter", sans-serif;
+
+  --openui-text-label-xs: 400 11px/1.25 "Inter", sans-serif;
+  --openui-text-label-sm: 400 12px/1.25 "Inter", sans-serif;
+  --openui-text-label-default: 400 13px/1.25 "Inter", sans-serif;
+  --openui-text-label-default-heavy: 560 13px/1.25 "Inter", sans-serif;
+  --openui-text-label-lg: 400 14px/1.25 "Inter", sans-serif;
+
+  --openui-text-heading-xs: 600 13.5px/1.25 "Inter", sans-serif;
+  --openui-text-heading-sm: 600 15px/1.25 "Inter", sans-serif;
+  --openui-text-heading-md: 600 16.5px/1.2 "Inter", sans-serif;
+  --openui-text-heading-lg: 600 18px/1.2 "Inter", sans-serif;
+  --openui-text-heading-xl: 700 20px/1.2 "Inter", sans-serif;
+
+  --openui-text-numbers-xs: 400 11px/1.45 "Inter", sans-serif;
+  --openui-text-numbers-sm: 400 12.5px/1.45 "Inter", sans-serif;
+  --openui-text-numbers-default: 400 13.5px/1.45 "Inter", sans-serif;
+  --openui-text-numbers-heading-sm: 600 15px/1.25 "Inter", sans-serif;
+  --openui-text-numbers-heading-md: 600 16.5px/1.2 "Inter", sans-serif;
+
+  --openui-text-code-sm: 400 11.5px/1.45 "SFMono-Regular", Menlo, monospace;
+  --openui-text-code-default: 400 12.5px/1.45 "SFMono-Regular", Menlo, monospace;
+
+  /* Conversational Spacing Scale */
+  --openui-space-3xs: 2px;
+  --openui-space-2xs: 3px;
+  --openui-space-xs: 4px;
+  --openui-space-s: 6px;
+  --openui-space-s-m: 8px;
+  --openui-space-m: 10px;
+  --openui-space-m-l: 12px;
+  --openui-space-l: 14px;
+  --openui-space-xl: 16px;
+  --openui-space-2xl: 20px;
+  --openui-space-3xl: 28px;
 }
 
 .dark .openui-container {
@@ -426,6 +478,7 @@ img {
   box-shadow: none !important;
   padding: 0 !important;
   width: 100% !important;
+  gap: 0.875rem !important;
 }
 
 /* Nested Cards (sections / output containers) */
@@ -433,8 +486,9 @@ img {
 .openui-container .openui-card-sunk {
   background-color: #f9fafb !important;
   border: 1px solid rgba(0, 0, 0, 0.07) !important;
-  border-radius: 0.75rem !important;
-  padding: 1rem 1.25rem !important;
+  border-radius: 0.625rem !important;
+  padding: 0.75rem 0.875rem !important;
+  gap: 0.625rem !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
@@ -447,37 +501,42 @@ img {
 
 /* Header & Typography */
 .openui-container .openui-header {
-  margin-bottom: 0.75rem !important;
-  padding-bottom: 0.35rem !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem !important;
+  gap: 0.25rem !important;
 }
 
 .openui-container .openui-header-top-left {
-  font-size: 1.125rem !important;
+  font-size: 0.9375rem !important;
   font-weight: 600 !important;
+  line-height: 1.3 !important;
 }
 
 .openui-container .openui-header-bottom {
-  font-size: 0.875rem !important;
-  margin-top: 0.25rem !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.35 !important;
+  margin-top: 0.15rem !important;
 }
 
 /* Form Controls, Labels & Hints */
 .openui-container .openui-form-control {
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.375rem !important;
+  gap: 0.25rem !important;
   width: 100% !important;
-  margin-bottom: 0.875rem !important;
+  margin-bottom: 0.625rem !important;
 }
 
 .openui-container .openui-label {
-  font-size: 0.875rem !important;
+  font-size: 0.8125rem !important;
   font-weight: 500 !important;
+  line-height: 1.25 !important;
 }
 
 .openui-container .openui-hint {
-  font-size: 0.8125rem !important;
-  margin-top: 0.25rem !important;
+  font-size: 0.75rem !important;
+  line-height: 1.2 !important;
+  margin-top: 0.15rem !important;
 }
 
 /* Input Fields (Text, Number, Email, etc.) */
@@ -491,14 +550,14 @@ img {
   display: block !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  height: 2.625rem !important;
-  padding: 0.5rem 0.875rem !important;
-  font-size: 0.875rem !important;
+  height: 2.25rem !important;
+  padding: 0.375rem 0.625rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.25rem !important;
   color: #111827 !important;
   background-color: #ffffff !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
   transition:
     border-color 0.15s ease,
@@ -546,14 +605,14 @@ img {
   justify-content: space-between !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  height: 2.625rem !important;
-  padding: 0.5rem 0.875rem !important;
-  font-size: 0.875rem !important;
+  height: 2.25rem !important;
+  padding: 0.375rem 0.625rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.25rem !important;
   color: #111827 !important;
   background-color: #ffffff !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
   cursor: pointer !important;
   transition:
@@ -605,11 +664,11 @@ img {
 .openui-select-content {
   background-color: #ffffff !important;
   border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  border-radius: 0.625rem !important;
+  border-radius: 0.5rem !important;
   box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  padding: 0.375rem !important;
+    0 8px 16px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.08) !important;
+  padding: 0.25rem !important;
   z-index: 99999 !important;
 }
 
@@ -621,8 +680,8 @@ img {
 
 .openui-select-item {
   border-radius: 0.375rem !important;
-  padding: 0.5rem 0.75rem !important;
-  font-size: 0.875rem !important;
+  padding: 0.375rem 0.625rem !important;
+  font-size: 0.8125rem !important;
   color: #1f2937 !important;
   cursor: pointer !important;
 }
@@ -650,6 +709,8 @@ img {
   border: 1px solid rgba(0, 0, 0, 0.12) !important;
   background-color: #f9fafb !important;
   color: #111827 !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.75rem !important;
 }
 
 .openui-container .openui-chip-item:hover {
@@ -669,15 +730,15 @@ img {
   display: block !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  padding: 0.625rem 0.875rem !important;
-  font-size: 0.875rem !important;
-  line-height: 1.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25rem !important;
   color: #111827 !important;
   background-color: #ffffff !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-  min-height: 5rem !important;
+  min-height: 4rem !important;
 }
 
 .openui-container .openui-textarea:focus,
@@ -722,9 +783,11 @@ img {
   background-color: #18181b !important;
   color: #ffffff !important;
   border: 1px solid #18181b !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
+  font-size: 0.8125rem !important;
   font-weight: 500 !important;
-  padding: 0.5rem 1rem !important;
+  height: 2.25rem !important;
+  padding: 0.375rem 0.75rem !important;
   cursor: pointer !important;
   transition: background-color 0.15s ease !important;
 }
@@ -737,9 +800,11 @@ img {
   background-color: #ffffff !important;
   color: #374151 !important;
   border: 1px solid #d1d5db !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
+  font-size: 0.8125rem !important;
   font-weight: 500 !important;
-  padding: 0.5rem 1rem !important;
+  height: 2.25rem !important;
+  padding: 0.375rem 0.75rem !important;
   cursor: pointer !important;
 }
 
@@ -771,9 +836,16 @@ img {
 /* Tables */
 .openui-container .openui-table-container {
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-radius: 0.75rem !important;
+  border-radius: 0.625rem !important;
   background-color: #ffffff !important;
   overflow: hidden !important;
+}
+
+.openui-container .openui-table-cell,
+.openui-container .openui-table-head {
+  padding: 0.4375rem 0.625rem !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25 !important;
 }
 
 .openui-container .openui-table-head {
@@ -810,22 +882,22 @@ img {
 
 /* Follow-up / Related Queries Styling */
 .openui-container .openui-follow-up-block {
-  margin-top: 1rem !important;
-  padding-top: 0.75rem !important;
+  margin-top: 0.75rem !important;
+  padding-top: 0.5rem !important;
   border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.5rem !important;
+  gap: 0.375rem !important;
 }
 
 .openui-container .openui-follow-up-block__header {
-  font-size: 0.8125rem !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
   border-bottom: none !important;
   padding: 0 !important;
-  margin-bottom: 0.25rem !important;
+  margin-bottom: 0.15rem !important;
 }
 
 .openui-container .openui-follow-up-item {
@@ -833,15 +905,15 @@ img {
   align-items: center !important;
   justify-content: space-between !important;
   width: 100% !important;
-  padding: 0.625rem 0.875rem !important;
+  padding: 0.4375rem 0.75rem !important;
   background-color: #f9fafb !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-radius: 0.625rem !important;
+  border-radius: 0.5rem !important;
   cursor: pointer !important;
   text-align: left !important;
   transition: all 0.15s ease !important;
   color: #1f2937 !important;
-  font-size: 0.875rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.25rem !important;
 }
 
