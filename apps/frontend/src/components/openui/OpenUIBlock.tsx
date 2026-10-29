@@ -1,7 +1,8 @@
-import { useMemo, memo, useEffect } from "react";
+import { useMemo, memo, useEffect, useState } from "react";
 import { Renderer } from "@openuidev/react-lang";
 import { openuiChatLibrary } from "@openuidev/react-ui";
 import { ErrorBoundary } from "react-error-boundary";
+import { useTheme } from "next-themes";
 
 type Props = {
   code: string;
@@ -84,17 +85,26 @@ export const OpenUIBlock = memo(
   function OpenUIBlock({ code, isStreaming, onAction }: Props) {
     const cleanCode = useMemo(() => normalizeOpenUICode(code), [code]);
 
-    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-    const openuiTheme = isDark ? "dark" : "light";
+    const { resolvedTheme } = useTheme();
+    const [htmlDark, setHtmlDark] = useState(() => typeof document !== "undefined" && document.documentElement.classList.contains("dark"));
 
     useEffect(() => {
       if (typeof document === "undefined") return;
-      const isDarkMode = document.documentElement.classList.contains("dark");
-      const targetTheme = isDarkMode ? "dark" : "light";
-      if (document.documentElement.getAttribute("data-openui-theme") !== targetTheme) {
-        document.documentElement.setAttribute("data-openui-theme", targetTheme);
-      }
+      const observer = new MutationObserver(() => {
+        setHtmlDark(document.documentElement.classList.contains("dark"));
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+      return () => observer.disconnect();
     }, []);
+
+    const openuiTheme = resolvedTheme ? (resolvedTheme === "dark" ? "dark" : "light") : htmlDark ? "dark" : "light";
+
+    useEffect(() => {
+      if (typeof document === "undefined") return;
+      if (document.documentElement.getAttribute("data-openui-theme") !== openuiTheme) {
+        document.documentElement.setAttribute("data-openui-theme", openuiTheme);
+      }
+    }, [openuiTheme]);
 
     return (
       <div className="my-3 w-full">

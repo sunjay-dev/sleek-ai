@@ -74,9 +74,16 @@ export default function ChatPage() {
       };
 
       if (ev.type === "open_url") {
-        const url = (ev.params?.url as string) || (ev.params?.href as string);
-        if (url && typeof window !== "undefined") {
-          window.open(url, "_blank");
+        const raw = ev.params?.url ?? ev.params?.href;
+        if (typeof raw === "string" && raw && typeof window !== "undefined") {
+          try {
+            const parsed = new URL(raw, window.location.origin);
+            if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+              window.open(parsed.href, "_blank", "noopener,noreferrer");
+            }
+          } catch {
+            // Ignore malformed URLs.
+          }
         }
         return;
       }
@@ -93,6 +100,11 @@ export default function ChatPage() {
         textToSend = Object.entries(ev.formState)
           .map(([key, val]) => `${key}: ${typeof val === "object" ? JSON.stringify(val) : val}`)
           .join(", ");
+      }
+
+      if (ev.params?.context !== undefined && ev.params?.context !== null) {
+        const contextStr = typeof ev.params.context === "object" ? JSON.stringify(ev.params.context) : String(ev.params.context);
+        textToSend = textToSend ? `${textToSend}\n[Context: ${contextStr}]` : contextStr;
       }
 
       if (textToSend) {

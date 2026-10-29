@@ -192,7 +192,7 @@ export default memo(function InputContainer({ sendMessage, isGenerating, onStop,
       fileSize: a.file.size,
     }));
 
-    sendMessage(message, uploadedFiles, optimisticFiles);
+    sendMessage(message.trim(), uploadedFiles, optimisticFiles);
 
     setMessage("");
     setAttachments([]);
