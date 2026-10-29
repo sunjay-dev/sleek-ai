@@ -1,4 +1,4 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState, useCallback, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import type { Chat, DeleteChatIntent } from "@app/shared/types";
@@ -14,11 +14,11 @@ export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]
   const [chatIntent, setchatIntent] = useState<DeleteChatIntent>(null);
   const [isDeletingChat, setIsDeletingChat] = useState(false);
 
-  const requestDeleteChat = (chatId: string) => setchatIntent({ type: "single", chatId });
-  const requestDeleteAllChat = () => setchatIntent({ type: "all" });
-  const cancelDeleteChat = () => setchatIntent(null);
+  const requestDeleteChat = useCallback((chatId: string) => setchatIntent({ type: "single", chatId }), []);
+  const requestDeleteAllChat = useCallback(() => setchatIntent({ type: "all" }), []);
+  const cancelDeleteChat = useCallback(() => setchatIntent(null), []);
 
-  const confirmDeleteChat = async () => {
+  const confirmDeleteChat = useCallback(async () => {
     if (!chatIntent) return;
 
     setIsDeletingChat(true);
@@ -61,7 +61,7 @@ export default function useChatDeletion(setChats: Dispatch<SetStateAction<Chat[]
       setIsDeletingChat(false);
       setchatIntent(null);
     }
-  };
+  }, [chatIntent, getToken, location.pathname, navigate, setChats]);
 
   return {
     chatIntent,

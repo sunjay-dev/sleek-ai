@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import { ArrowUp, Loader2, Paperclip, X, AlertCircle, FileText, RefreshCw } from "lucide-react";
 import { useIsMobile } from "@/hooks";
 import { useAuth } from "@clerk/react";
@@ -34,7 +34,7 @@ const SUPPORTED_FORMATS = [
 const SUPPORTED_EXTENSIONS_DISPLAY = ".pdf, .docx, .pptx, .csv, .txt, .jpg, .jpeg, .png, .webp";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-export default function InputContainer({ sendMessage, isGenerating, onStop, autoFocus }: Props) {
+export default memo(function InputContainer({ sendMessage, isGenerating, onStop, autoFocus }: Props) {
   const [message, setMessage] = useState("");
   const { getToken } = useAuth();
 
@@ -109,36 +109,37 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
 
       setAttachments((prev) => [...prev, ...newAttachments]);
 
-      const uploadPromises = newAttachments.map((attachment) => uploadSingleFile(attachment));
-
-      await Promise.allSettled(uploadPromises);
-
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      for (const att of newAttachments) {
+        uploadSingleFile(att);
+      }
     },
     [attachments.length, uploadSingleFile],
   );
 
-  const handleRetryUpload = (attachment: Attachment) => {
-    uploadSingleFile(attachment);
+  const handleRetryUpload = (att: Attachment) => {
+    uploadSingleFile(att);
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files) {
       await processFiles(Array.from(e.target.files));
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const items = e.clipboardData.items;
-    const files: File[] = [];
+  const handleRemoveAttachment = (id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
 
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const files: File[] = [];
     for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        if (file) {
-          files.push(file);
-        }
+      if (items[i].kind === "file") {
+        const file = items[i].getAsFile();
+        if (file) files.push(file);
       }
     }
 
@@ -148,55 +149,66 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
     }
   };
 
-  const handleRemoveAttachment = (idToRemove: string) => {
-    setAttachments((prev) => prev.filter((a) => a.id !== idToRemove));
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 112)}px`;
+    }
   };
 
+  useEffect(() => {
+    resizeTextarea();
+  }, [message]);
+
   const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
+    if (e) e.preventDefault();
 
     if (isGenerating) {
       onStop();
       return;
     }
 
-    if (isGlobalUploading) return;
+    const hasErrors = attachments.some((a) => a.status === "error");
+    if (hasErrors) {
+      toast.error("Please remove or retry failed file uploads before sending.");
+      return;
+    }
 
-    const successfulUploads = attachments.filter((a) => a.status === "success" && a.uploadData).map((a) => a.uploadData!);
+    const isStillUploading = attachments.some((a) => a.status === "uploading");
+    if (isStillUploading) {
+      toast.info("Please wait for files to finish uploading.");
+      return;
+    }
 
-    if (!message.trim() && successfulUploads.length === 0) return;
+    if (!message.trim() && attachments.length === 0) return;
 
-    const optimisticUploads = attachments
-      .filter((a) => a.status === "success" && a.uploadData)
-      .map((a) => ({
-        ...a.uploadData!,
-        fileUrl: URL.createObjectURL(a.file),
-      }));
+    const uploadedFiles: UploadedFile[] = attachments.filter((a) => a.status === "success" && a.uploadData).map((a) => a.uploadData as UploadedFile);
 
-    sendMessage(message.trim(), successfulUploads, optimisticUploads);
+    const optimisticFiles: UploadedFile[] = attachments.map((a) => ({
+      fileUrl: URL.createObjectURL(a.file),
+      fileName: a.file.name,
+      fileType: a.file.type,
+      fileSize: a.file.size,
+    }));
+
+    sendMessage(message, uploadedFiles, optimisticFiles);
 
     setMessage("");
     setAttachments([]);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
+      textareaRef.current.focus();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (!isMobile && e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
   };
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [message]);
 
   const processFilesRef = useRef(processFiles);
   useEffect(() => {
@@ -308,23 +320,23 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
                         <div
                           className={`bg-white p-1.5 rounded-md border shadow-sm transition-colors ${att.status === "error" ? "border-red-200 bg-red-50" : "border-gray-200"}`}
                         >
-                          {att.status === "error" ? (
-                            <RefreshCw
-                              size={16}
-                              className="text-red-500 cursor-pointer hover:rotate-180 transition-transform duration-500"
-                              onClick={() => handleRetryUpload(att)}
-                            />
-                          ) : (
-                            <FileText size={16} className="text-primary" />
-                          )}
+                          <FileText size={16} className="text-primary" />
                         </div>
-                        <span className={`truncate text-xs max-w-24 font-medium ${att.status === "error" ? "text-red-600" : "text-primary"}`}>
-                          {att.file.name}
-                        </span>
+                        <span className="text-xs text-primary font-medium truncate max-w-37.5">{att.file.name}</span>
+                        {att.status === "error" && (
+                          <button
+                            type="button"
+                            onClick={() => handleRetryUpload(att)}
+                            className="p-1 hover:bg-red-100 rounded-full text-red-500 transition-colors"
+                            title="Retry upload"
+                          >
+                            <RefreshCw size={14} />
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleRemoveAttachment(att.id)}
-                          className="ml-1 p-1 hover:bg-gray-200 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
+                          className="text-gray-400 hover:text-gray-600 rounded-full p-0.5"
                         >
                           <X size={14} />
                         </button>
@@ -333,9 +345,7 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
 
                     {att.status === "uploading" && (
                       <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                        <div className="bg-white/80 rounded-full p-1 shadow-sm">
-                          <Loader2 size={16} className="animate-spin text-primary" />
-                        </div>
+                        <Loader2 size={16} className="animate-spin text-primary" />
                       </div>
                     )}
 
@@ -417,4 +427,4 @@ export default function InputContainer({ sendMessage, isGenerating, onStop, auto
       </div>
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useState, isValidElement, memo, useRef, useCallback } from "react";
+import { useState, isValidElement, memo, useRef, useCallback, useMemo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -20,7 +20,15 @@ const extractCodeText = (element: unknown): string => {
   return "";
 };
 
-const DefaultCodeBlock = ({ children, language, ...props }: { children: React.ReactNode; language: string; [key: string]: unknown }) => {
+const DefaultCodeBlock = memo(function DefaultCodeBlock({
+  children,
+  language,
+  ...props
+}: {
+  children: React.ReactNode;
+  language: string;
+  [key: string]: unknown;
+}) {
   const [isCopied, setIsCopied] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
 
@@ -46,7 +54,14 @@ const DefaultCodeBlock = ({ children, language, ...props }: { children: React.Re
       </pre>
     </div>
   );
-};
+});
+
+const REMARK_PLUGINS = [remarkGfm, [remarkMath, { singleDollarTextMath: false }]] as const;
+const REHYPE_PLUGINS = [
+  rehypeHighlight,
+  [rehypeKatex, { strict: false }],
+  [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+] as const;
 
 type Props = {
   text: string;
@@ -59,34 +74,39 @@ type Props = {
   onAction?: (action: unknown) => void;
 };
 
-export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating, onAction }: Props) {
+function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating, onAction }: Props) {
   const isError = text && (text.includes("interrupted") || text.includes("went wrong") || text.includes("stopped"));
   const trimmed = text ? text.trim() : "";
   const isPureOpenUI = trimmed.startsWith("root =") || trimmed.startsWith("]]>openui:");
 
-  const renderPre: Components["pre"] = ({ children, ...props }) => {
-    let language = "text";
-    let childProps: { className?: string; children?: unknown } | undefined;
+  const renderPre: Components["pre"] = useCallback(
+    ({ children, ...props }) => {
+      let language = "text";
+      let childProps: { className?: string; children?: unknown } | undefined;
 
-    if (isValidElement(children)) {
-      childProps = children.props as { className?: string; children?: unknown };
-      if (childProps?.className) {
-        const match = /language-(\w+)/.exec(childProps.className);
-        if (match) language = match[1].toLowerCase();
+      if (isValidElement(children)) {
+        childProps = children.props as { className?: string; children?: unknown };
+        if (childProps?.className) {
+          const match = /language-(\w+)/.exec(childProps.className);
+          if (match) language = match[1].toLowerCase();
+        }
       }
-    }
 
-    if (language === "openui" || language === "openui-lang") {
-      const code = extractCodeText(childProps?.children);
-      return <OpenUIBlock code={code} isStreaming={isGenerating} onAction={onAction} />;
-    }
+      if (language === "openui" || language === "openui-lang") {
+        const code = extractCodeText(childProps?.children);
+        return <OpenUIBlock code={code} isStreaming={isGenerating} onAction={onAction} />;
+      }
 
-    return (
-      <DefaultCodeBlock language={language} {...props}>
-        {children}
-      </DefaultCodeBlock>
-    );
-  };
+      return (
+        <DefaultCodeBlock language={language} {...props}>
+          {children}
+        </DefaultCodeBlock>
+      );
+    },
+    [isGenerating, onAction],
+  );
+
+  const markdownComponents = useMemo<Components>(() => ({ pre: renderPre }), [renderPre]);
 
   return (
     <div className="max-w-full text-[15px] sm:text-sm py-3 rounded-xl">
@@ -104,13 +124,9 @@ export default memo(function ModelMessage({ text, status, isCopied, onCopy, onRe
               <OpenUIBlock code={trimmed} isStreaming={isGenerating} onAction={onAction} />
             ) : (
               <ReactMarkdown
-                remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
-                rehypePlugins={[
-                  rehypeHighlight,
-                  [rehypeKatex, { strict: false }],
-                  [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
-                ]}
-                components={{ pre: renderPre }}
+                remarkPlugins={REMARK_PLUGINS as unknown as any[]}
+                rehypePlugins={REHYPE_PLUGINS as unknown as any[]}
+                components={markdownComponents}
               >
                 {text}
               </ReactMarkdown>
@@ -121,4 +137,18 @@ export default memo(function ModelMessage({ text, status, isCopied, onCopy, onRe
       {!hideToolTip && <ModelMessageToolTip isCopied={isCopied} onCopy={onCopy} onResend={onResend} />}
     </div>
   );
-});
+}
+
+function areModelMessagePropsEqual(prev: Props, next: Props): boolean {
+  return (
+    prev.text === next.text &&
+    prev.status === next.status &&
+    prev.isCopied === next.isCopied &&
+    prev.hideToolTip === next.hideToolTip &&
+    prev.isGenerating === next.isGenerating &&
+    prev.onAction === next.onAction &&
+    prev.onResend === next.onResend
+  );
+}
+
+export default memo(ModelMessage, areModelMessagePropsEqual);

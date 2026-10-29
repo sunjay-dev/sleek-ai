@@ -80,35 +80,41 @@ function normalizeOpenUICode(raw: string): string {
   return codeStr;
 }
 
-export const OpenUIBlock = memo(function OpenUIBlock({ code, isStreaming, onAction }: Props) {
-  const cleanCode = useMemo(() => normalizeOpenUICode(code), [code]);
+export const OpenUIBlock = memo(
+  function OpenUIBlock({ code, isStreaming, onAction }: Props) {
+    const cleanCode = useMemo(() => normalizeOpenUICode(code), [code]);
 
-  const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-  const openuiTheme = isDark ? "dark" : "light";
+    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+    const openuiTheme = isDark ? "dark" : "light";
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    document.documentElement.setAttribute("data-openui-theme", isDarkMode ? "dark" : "light");
-  }, []);
+    useEffect(() => {
+      if (typeof document === "undefined") return;
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      const targetTheme = isDarkMode ? "dark" : "light";
+      if (document.documentElement.getAttribute("data-openui-theme") !== targetTheme) {
+        document.documentElement.setAttribute("data-openui-theme", targetTheme);
+      }
+    }, []);
 
-  return (
-    <div className="my-3 w-full">
-      <ErrorBoundary
-        fallbackRender={({ error }) => (
-          <div className="p-3 text-xs rounded-lg border border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400">
-            <span className="font-semibold">Unable to display component: </span>
-            <span>{(error as Error)?.message || "Invalid syntax"}</span>
+    return (
+      <div className="my-3 w-full">
+        <ErrorBoundary
+          fallbackRender={({ error }) => (
+            <div className="p-3 text-xs rounded-lg border border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400">
+              <span className="font-semibold">Unable to display component: </span>
+              <span>{(error as Error)?.message || "Invalid syntax"}</span>
+            </div>
+          )}
+          resetKeys={[cleanCode]}
+        >
+          <div className="openui-container w-full overflow-x-auto min-h-[3rem]" data-openui-theme={openuiTheme}>
+            <Renderer response={cleanCode} library={openuiChatLibrary} isStreaming={isStreaming} onAction={onAction} />
           </div>
-        )}
-        resetKeys={[cleanCode]}
-      >
-        <div className="openui-container w-full overflow-x-auto min-h-[3rem]" data-openui-theme={openuiTheme}>
-          <Renderer response={cleanCode} library={openuiChatLibrary} isStreaming={isStreaming} onAction={onAction} />
-        </div>
-      </ErrorBoundary>
-    </div>
-  );
-});
+        </ErrorBoundary>
+      </div>
+    );
+  },
+  (prev, next) => prev.code === next.code && prev.isStreaming === next.isStreaming && prev.onAction === next.onAction,
+);
 
 export default OpenUIBlock;

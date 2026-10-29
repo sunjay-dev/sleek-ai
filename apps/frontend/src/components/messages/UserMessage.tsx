@@ -15,7 +15,7 @@ const isImageUrl = (url: string) => {
   return /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(url);
 };
 
-export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
+function UserMessage({ message, isCopied, onCopy }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { text, messageFiles } = message;
 
@@ -89,11 +89,22 @@ export default memo(function UserMessage({ message, isCopied, onCopy }: Props) {
             </button>
           )}
 
-          <p className="text-[15px] sm:text-sm leading-relaxed sm:leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
+          <p className="whitespace-pre-wrap break-words">{displayedText}</p>
         </div>
       )}
 
       <UserMessageToolTip isCopied={isCopied} onCopy={onCopy} />
     </div>
   );
-});
+}
+
+function areUserMessagePropsEqual(prev: Props, next: Props): boolean {
+  return (
+    prev.isCopied === next.isCopied &&
+    prev.message.id === next.message.id &&
+    prev.message.text === next.message.text &&
+    prev.message.messageFiles === next.message.messageFiles
+  );
+}
+
+export default memo(UserMessage, areUserMessagePropsEqual);
