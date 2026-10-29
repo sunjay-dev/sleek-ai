@@ -89,7 +89,7 @@ function UserMessage({ message, isCopied, onCopy }: Props) {
             </button>
           )}
 
-          <p className="whitespace-pre-wrap break-words">{displayedText}</p>
+          <p className="text-[15px] sm:text-sm leading-relaxed sm:leading-normal whitespace-pre-wrap break-words">{displayedText}</p>
         </div>
       )}
 
