@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Chat } from "@app/shared/types";
 import { useAuth } from "@clerk/react";
 import { apiRequest } from "@/utils/api";
@@ -28,7 +28,7 @@ export default function useChat() {
     handleFetchChats();
   }, [getToken]);
 
-  const moveChatToTop = (id: string) => {
+  const moveChatToTop = useCallback((id: string) => {
     setChats((prev) => {
       const index = prev.findIndex((c) => c.id === id);
       if (index <= 0) return prev;
@@ -37,27 +37,30 @@ export default function useChat() {
       newChats.unshift(active);
       return newChats;
     });
-  };
+  }, []);
 
-  const handleRenameChat = async (chatId: string, newTitle: string) => {
-    const result = validate(chatRenameSchema, { title: newTitle });
-    if (!result) return;
+  const handleRenameChat = useCallback(
+    async (chatId: string, newTitle: string) => {
+      const result = validate(chatRenameSchema, { title: newTitle });
+      if (!result) return;
 
-    const token = await getToken();
-    if (!token) throw new Error("You must be logged in to rename chat.");
+      const token = await getToken();
+      if (!token) throw new Error("You must be logged in to rename chat.");
 
-    await apiRequest(`/api/v1/chat/${chatId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(result),
-      successMessage: "New title locked in.",
-    });
+      await apiRequest(`/api/v1/chat/${chatId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(result),
+        successMessage: "New title locked in.",
+      });
 
-    setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
-  };
+      setChats((prev) => prev.map((c) => (c.id === chatId ? { id: c.id, title: newTitle } : c)));
+    },
+    [getToken],
+  );
 
   return { chats, setChats, isFetchingChats, moveChatToTop, handleRenameChat };
 }

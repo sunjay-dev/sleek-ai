@@ -1,6 +1,6 @@
 import { UserButton, useUser } from "@clerk/react";
 import { BadgePlus, MoreHorizontal, Trash2, Settings, Pencil, Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import CollapsedSidebar from "./CollapsedSidebar";
 import { useIsMobile } from "@/hooks";
@@ -18,7 +18,7 @@ type Props = {
   onWelcomeScreen: boolean;
 };
 
-export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, openModal, onWelcomeScreen }: Props) {
+export default memo(function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRenameRequest, openModal, onWelcomeScreen }: Props) {
   const { user } = useUser();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -217,4 +217,4 @@ export default function Sidebar({ chats, isFetchingChats, onDeleteRequest, onRen
       </aside>
     </>
   );
-}
+});

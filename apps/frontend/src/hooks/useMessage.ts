@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, useCallback, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Chat, Message, UploadedFile } from "@app/shared/types";
@@ -26,179 +26,184 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const statusBufferRef = useRef<string | null>(null);
   const rafPendingRef = useRef(false);
   const justCreatedChatRef = useRef<string | null>(null);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
 
-  const sendMessage = async (text: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
-    if (!text.trim() && !messageFiles?.length) return;
+  const sendMessage = useCallback(
+    async (text: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {
+      if (!text.trim() && !messageFiles?.length) return;
 
-    const token = await getToken();
-    if (!token) throw new Error("You must be logged in to send message.");
+      const token = await getToken();
+      if (!token) throw new Error("You must be logged in to send message.");
 
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: "USER",
-      text,
-      messageFiles: optimisticFiles || messageFiles,
-    };
-    setMessages((m) => [...m, userMsg]);
+      const userMsg: Message = {
+        id: crypto.randomUUID(),
+        role: "USER",
+        text,
+        messageFiles: optimisticFiles || messageFiles,
+      };
+      setMessages((m) => [...m, userMsg]);
 
-    if (text.length > 10000) {
-      setMessages((m) => [
-        ...m,
-        {
-          id: crypto.randomUUID(),
-          role: "ASSISTANT",
-          text: "Message too long (10000 char limit).",
-        },
-      ]);
-      return;
-    }
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    const startStreaming = async (activeChatId: string) => {
-      moveChatToTop(activeChatId);
-      setIsGenerating(true);
-
-      const assistantId = crypto.randomUUID();
-      streamingIdRef.current = assistantId;
-      textBufferRef.current = "";
-      statusBufferRef.current = null;
-
-      setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "", status: null }]);
-
-      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      fetch(`/api/v1/chat/${activeChatId}/message`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "x-client-timezone": userTimeZone,
-        },
-        body: JSON.stringify({ query: text, messageFiles }),
-        signal: controller.signal,
-      })
-        .then(async (res) => {
-          if (!res.body) throw new Error("Streaming not supported");
-
-          const reader = res.body.getReader();
-          const decoder = new TextDecoder();
-          let streamBuffer = "";
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            streamBuffer += decoder.decode(value, { stream: true });
-
-            const lines = streamBuffer.split("\n");
-            streamBuffer = lines.pop() || ""; // Keep the last incomplete block in buffer
-
-            let changed = false;
-
-            for (const line of lines) {
-              if (!line.trim()) continue;
-              try {
-                const parsed = JSON.parse(line);
-                if (parsed.type === "text") {
-                  textBufferRef.current += parsed.content;
-                  statusBufferRef.current = null;
-                  changed = true;
-                } else if (parsed.type === "loading") {
-                  statusBufferRef.current = parsed.content;
-                  changed = true;
-                } else if (parsed.type === "status") {
-                  statusBufferRef.current = parsed.content;
-                  changed = true;
-                } else if (parsed.type === "error") {
-                  throw new Error(parsed.content);
-                }
-              } catch {
-                console.error("Failed to parse stream chunk:", line);
-              }
-            }
-
-            if (changed && !rafPendingRef.current) {
-              rafPendingRef.current = true;
-              requestAnimationFrame(() => {
-                setMessages((prev) =>
-                  prev.map((m) => (m.id === assistantId ? { ...m, text: textBufferRef.current, status: statusBufferRef.current } : m)),
-                );
-                rafPendingRef.current = false;
-              });
-            }
-          }
-        })
-        .catch((err) => {
-          statusBufferRef.current = null;
-          textBufferRef.current = textBufferRef.current || err.message || "Something went wrong.";
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId
-                ? {
-                    ...m,
-                    text: err.name === "AbortError" ? "Generation stopped." : textBufferRef.current,
-                    status: null,
-                  }
-                : m,
-            ),
-          );
-        })
-        .finally(() => {
-          setIsGenerating(false);
-          abortRef.current = null;
-          streamingIdRef.current = null;
-        });
-    };
-
-    if (!chatId) {
-      try {
-        const titleQuery = text.slice(0, 200) || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat");
-        const data = await apiRequest(`/api/v1/chat`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            query: titleQuery,
-          }),
-          signal: controller.signal,
-        });
-
-        justCreatedChatRef.current = data.id;
-
-        setChats((c) => [data, ...c]);
-        navigate(`/c/${data.id}`, { replace: true });
-
-        return startStreaming(data.id);
-      } catch (err) {
-        const error = err as Error;
+      if (text.length > 10000) {
         setMessages((m) => [
           ...m,
           {
             id: crypto.randomUUID(),
             role: "ASSISTANT",
-            text: error.name === "AbortError" ? "Generation stopped." : error.message,
+            text: "Message too long (10000 char limit).",
           },
         ]);
+        return;
       }
-    } else {
-      await startStreaming(chatId);
-    }
-  };
 
-  const resendLastUser = () => {
-    const lastUser = [...messages].reverse().find((m) => m.role === "USER");
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      const startStreaming = async (activeChatId: string) => {
+        moveChatToTop(activeChatId);
+        setIsGenerating(true);
+
+        const assistantId = crypto.randomUUID();
+        streamingIdRef.current = assistantId;
+        textBufferRef.current = "";
+        statusBufferRef.current = null;
+
+        setMessages((m) => [...m, { id: assistantId, role: "ASSISTANT", text: "", status: null }]);
+
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        fetch(`/api/v1/chat/${activeChatId}/message`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "x-client-timezone": userTimeZone,
+          },
+          body: JSON.stringify({ query: text, messageFiles }),
+          signal: controller.signal,
+        })
+          .then(async (res) => {
+            if (!res.body) throw new Error("Streaming not supported");
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let streamBuffer = "";
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              streamBuffer += decoder.decode(value, { stream: true });
+
+              const lines = streamBuffer.split("\n");
+              streamBuffer = lines.pop() || ""; // Keep the last incomplete block in buffer
+
+              let changed = false;
+
+              for (const line of lines) {
+                if (!line.trim()) continue;
+                try {
+                  const parsed = JSON.parse(line);
+                  if (parsed.type === "text") {
+                    textBufferRef.current += parsed.content;
+                    statusBufferRef.current = null;
+                    changed = true;
+                  } else if (parsed.type === "loading") {
+                    statusBufferRef.current = parsed.content;
+                    changed = true;
+                  } else if (parsed.type === "status") {
+                    statusBufferRef.current = parsed.content;
+                    changed = true;
+                  } else if (parsed.type === "error") {
+                    throw new Error(parsed.content);
+                  }
+                } catch {
+                  console.error("Failed to parse stream chunk:", line);
+                }
+              }
+
+              if (changed && !rafPendingRef.current) {
+                rafPendingRef.current = true;
+                requestAnimationFrame(() => {
+                  setMessages((prev) =>
+                    prev.map((m) => (m.id === assistantId ? { ...m, text: textBufferRef.current, status: statusBufferRef.current } : m)),
+                  );
+                  rafPendingRef.current = false;
+                });
+              }
+            }
+          })
+          .catch((err) => {
+            statusBufferRef.current = null;
+            textBufferRef.current = textBufferRef.current || err.message || "Something went wrong.";
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantId
+                  ? {
+                      ...m,
+                      text: err.name === "AbortError" ? "Generation stopped." : textBufferRef.current,
+                      status: null,
+                    }
+                  : m,
+              ),
+            );
+          })
+          .finally(() => {
+            setIsGenerating(false);
+            abortRef.current = null;
+            streamingIdRef.current = null;
+          });
+      };
+
+      if (!chatId) {
+        try {
+          const titleQuery = text.slice(0, 200) || (messageFiles?.length ? `Shared ${messageFiles[0].fileName}` : "New Chat");
+          const data = await apiRequest(`/api/v1/chat`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              query: titleQuery,
+            }),
+            signal: controller.signal,
+          });
+
+          justCreatedChatRef.current = data.id;
+
+          setChats((c) => [data, ...c]);
+          navigate(`/c/${data.id}`, { replace: true });
+
+          return startStreaming(data.id);
+        } catch (err) {
+          const error = err as Error;
+          setMessages((m) => [
+            ...m,
+            {
+              id: crypto.randomUUID(),
+              role: "ASSISTANT",
+              text: error.name === "AbortError" ? "Generation stopped." : error.message,
+            },
+          ]);
+        }
+      } else {
+        await startStreaming(chatId);
+      }
+    },
+    [getToken, chatId, navigate, moveChatToTop, setChats],
+  );
+
+  const resendLastUser = useCallback(() => {
+    const lastUser = [...messagesRef.current].reverse().find((m) => m.role === "USER");
     if (lastUser) sendMessage(lastUser.text);
-  };
+  }, [sendMessage]);
 
-  const stopGeneration = () => {
+  const stopGeneration = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
     setIsGenerating(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (!chatId) {

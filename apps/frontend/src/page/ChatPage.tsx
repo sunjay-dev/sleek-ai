@@ -31,30 +31,37 @@ export default function ChatPage() {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
 
-  const onRenameRequest = (chat: Chat) => {
+  const onRenameRequest = useCallback((chat: Chat) => {
     setActiveChat(chat);
     setIsRenameModalOpen(true);
-  };
+  }, []);
 
-  const openModal = (modalName: string, tabName?: Tab) => {
-    setSearchParams((prev) => {
-      prev.set("modal", modalName);
+  const openModal = useCallback(
+    (modalName: string, tabName?: Tab) => {
+      setSearchParams((prev) => {
+        prev.set("modal", modalName);
 
-      if (tabName) prev.set("tab", tabName);
-      else prev.delete("tab");
+        if (tabName) prev.set("tab", tabName);
+        else prev.delete("tab");
 
-      return prev;
-    });
-  };
+        return prev;
+      });
+    },
+    [setSearchParams],
+  );
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setSearchParams((prev) => {
       prev.delete("modal");
       prev.delete("tab");
 
       return prev;
     });
-  };
+  }, [setSearchParams]);
+
+  const handleResend = useCallback(() => {
+    resendLastUser();
+  }, [resendLastUser]);
 
   const handleOpenUIAction = useCallback(
     (event: unknown) => {
@@ -119,7 +126,7 @@ export default function ChatPage() {
             <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain bg-primary">
               <MessagesContainer
                 messages={messages}
-                onResend={() => resendLastUser()}
+                onResend={handleResend}
                 isFetchingMessages={isFetchingMessages}
                 isGenerating={isGenerating}
                 onAction={handleOpenUIAction}
