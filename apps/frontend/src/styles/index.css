@@ -162,19 +162,19 @@ img {
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --chart-1: var(--chart-1);
+  --chart-2: var(--chart-2);
+  --chart-3: var(--chart-3);
+  --chart-4: var(--chart-4);
+  --chart-5: var(--chart-5);
+  --sidebar: var(--sidebar);
+  --sidebar-foreground: var(--sidebar-foreground);
+  --sidebar-primary: var(--sidebar-primary);
+  --sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --sidebar-accent: var(--sidebar-accent);
+  --sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --sidebar-border: var(--sidebar-border);
+  --sidebar-ring: var(--sidebar-ring);
 }
 
 :root {
@@ -210,6 +210,39 @@ img {
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* OpenUI Light Theme integration */
+  --openui-background: #ffffff;
+  --openui-foreground: #ffffff;
+  --openui-text-neutral-primary: #111827;
+  --openui-text-neutral-secondary: #4b5563;
+  --openui-text-neutral-tertiary: #6b7280;
+  --openui-text-neutral-link: #111827;
+  --openui-border-default: rgba(0, 0, 0, 0.12);
+  --openui-border-interactive: rgba(0, 0, 0, 0.2);
+  --openui-border-interactive-emphasis: #111827;
+  --openui-highlight-subtle: #ffffff;
+  --openui-highlight: #f3f4f6;
+  --openui-sunk: #f9fafb;
+}
+
+/* Defeat OpenUI dark-mode media query when Sleek AI is in light mode */
+@media (prefers-color-scheme: dark) {
+  :root:not(.dark),
+  html:not(.dark) {
+    --openui-background: #ffffff !important;
+    --openui-foreground: #ffffff !important;
+    --openui-text-neutral-primary: #111827 !important;
+    --openui-text-neutral-secondary: #4b5563 !important;
+    --openui-text-neutral-tertiary: #6b7280 !important;
+    --openui-text-neutral-link: #111827 !important;
+    --openui-border-default: rgba(0, 0, 0, 0.12) !important;
+    --openui-border-interactive: rgba(0, 0, 0, 0.2) !important;
+    --openui-border-interactive-emphasis: #111827 !important;
+    --openui-highlight-subtle: #ffffff !important;
+    --openui-highlight: #f3f4f6 !important;
+    --openui-sunk: #f9fafb !important;
+  }
 }
 
 .dark {
@@ -244,6 +277,600 @@ img {
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+
+  /* OpenUI Dark Theme integration */
+  --openui-background: #18181b;
+  --openui-foreground: #1e1e20;
+  --openui-text-neutral-primary: #f3f4f6;
+  --openui-text-neutral-secondary: #9ca3af;
+  --openui-text-neutral-tertiary: #6b7280;
+  --openui-text-neutral-link: #f3f4f6;
+  --openui-border-default: rgba(255, 255, 255, 0.12);
+  --openui-border-interactive: rgba(255, 255, 255, 0.2);
+  --openui-border-interactive-emphasis: #f3f4f6;
+  --openui-highlight-subtle: #242427;
+  --openui-highlight: #2e2e32;
+  --openui-sunk: #141416;
+}
+
+/* =========================================================================
+   OpenUI Comprehensive Component Styling
+   ========================================================================= */
+
+/* Outer Widget Card Container */
+.openui-container {
+  display: block;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.04),
+    0 1px 2px -1px rgba(0, 0, 0, 0.02);
+  color: #111827 !important;
+  --openui-text-neutral-primary: #111827 !important;
+  --openui-text-neutral-secondary: #4b5563 !important;
+  --openui-text-neutral-tertiary: #6b7280 !important;
+  --openui-border-default: rgba(0, 0, 0, 0.12) !important;
+  --openui-border-interactive: rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .openui-container {
+  background-color: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  color: #f3f4f6 !important;
+  --openui-text-neutral-primary: #f3f4f6 !important;
+  --openui-text-neutral-secondary: #9ca3af !important;
+  --openui-text-neutral-tertiary: #6b7280 !important;
+  --openui-border-default: rgba(255, 255, 255, 0.12) !important;
+  --openui-border-interactive: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Bulletproof text visibility across all OpenUI components */
+.openui-container,
+.openui-container *:not(.openui-button-base-primary):not([class*="bg-primary"]):not([class*="text-white"]):not([class*="badge"]) {
+  --openui-text-neutral-primary: #111827 !important;
+  --openui-text-neutral-secondary: #4b5563 !important;
+}
+
+.openui-container .openui-text-callout-content-description,
+.openui-container .openui-text-callout-content-title,
+.openui-container .openui-header-top-left,
+.openui-container .openui-chip-item,
+.openui-container .openui-chip-item__text,
+.openui-container .openui-tag,
+.openui-container .openui-chart-legend-item-label,
+.openui-container .openui-chart-legend-axis-label-text,
+.openui-container .openui-stacked-legend__item-label-text,
+.openui-container .openui-stacked-legend__item-value,
+.openui-container .openui-follow-up-item-text,
+.openui-container .openui-label,
+.openui-container .openui-table-cell,
+.openui-container .openui-table-head,
+.openui-container p,
+.openui-container span:not([class*="bg-"]):not([class*="text-"]):not([class*="badge"]),
+.openui-container li,
+.openui-container h1,
+.openui-container h2,
+.openui-container h3,
+.openui-container h4,
+.openui-container h5,
+.openui-container h6 {
+  color: #111827 !important;
+}
+
+.openui-container .openui-header-bottom,
+.openui-container .openui-hint,
+.openui-container .openui-chart-legend-axis-label,
+.openui-container .openui-follow-up-block__header,
+.openui-container .openui-text-neutral-secondary {
+  color: #4b5563 !important;
+}
+
+/* SVG Chart axis and label text */
+.openui-container svg text,
+.openui-container svg tspan {
+  fill: #374151 !important;
+  color: #374151 !important;
+}
+
+/* Dark mode text visibility */
+.dark .openui-container,
+.dark .openui-container *:not(.openui-button-base-primary):not([class*="bg-primary"]):not([class*="badge"]) {
+  --openui-text-neutral-primary: #f3f4f6 !important;
+  --openui-text-neutral-secondary: #9ca3af !important;
+}
+
+.dark .openui-container .openui-text-callout-content-description,
+.dark .openui-container .openui-text-callout-content-title,
+.dark .openui-container .openui-header-top-left,
+.dark .openui-container .openui-chip-item,
+.dark .openui-container .openui-chip-item__text,
+.dark .openui-container .openui-tag,
+.dark .openui-container .openui-chart-legend-item-label,
+.dark .openui-container .openui-chart-legend-axis-label-text,
+.dark .openui-container .openui-stacked-legend__item-label-text,
+.dark .openui-container .openui-stacked-legend__item-value,
+.dark .openui-container .openui-follow-up-item-text,
+.dark .openui-container .openui-label,
+.dark .openui-container .openui-table-cell,
+.dark .openui-container p,
+.dark .openui-container span:not([class*="bg-"]):not([class*="text-"]):not([class*="badge"]),
+.dark .openui-container li,
+.dark .openui-container h1,
+.dark .openui-container h2,
+.dark .openui-container h3 {
+  color: #f3f4f6 !important;
+}
+
+.dark .openui-container .openui-header-bottom,
+.dark .openui-container .openui-hint,
+.dark .openui-container .openui-chart-legend-axis-label,
+.dark .openui-container .openui-follow-up-block__header {
+  color: #9ca3af !important;
+}
+
+.dark .openui-container svg text,
+.dark .openui-container svg tspan {
+  fill: #d1d5db !important;
+  color: #d1d5db !important;
+}
+
+/* OpenUI Top-level Card inside Container */
+.openui-container > .openui-card,
+.openui-container > div > .openui-card,
+.openui-container .openui-card-clear {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Nested Cards (sections / output containers) */
+.openui-container .openui-card .openui-card,
+.openui-container .openui-card-sunk {
+  background-color: #f9fafb !important;
+  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  border-radius: 0.75rem !important;
+  padding: 1rem 1.25rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+.dark .openui-container .openui-card .openui-card,
+.dark .openui-container .openui-card-sunk {
+  background-color: #262626 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* Header & Typography */
+.openui-container .openui-header {
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.35rem !important;
+}
+
+.openui-container .openui-header-top-left {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+}
+
+.openui-container .openui-header-bottom {
+  font-size: 0.875rem !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Form Controls, Labels & Hints */
+.openui-container .openui-form-control {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.375rem !important;
+  width: 100% !important;
+  margin-bottom: 0.875rem !important;
+}
+
+.openui-container .openui-label {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.openui-container .openui-hint {
+  font-size: 0.8125rem !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Input Fields (Text, Number, Email, etc.) */
+.openui-container .openui-input,
+.openui-container input[type="text"],
+.openui-container input[type="email"],
+.openui-container input[type="number"],
+.openui-container input[type="password"],
+.openui-container input[type="search"],
+.openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: 2.625rem !important;
+  padding: 0.5rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease !important;
+}
+
+.openui-container .openui-input:hover,
+.openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):hover {
+  border-color: #9ca3af !important;
+}
+
+.openui-container .openui-input:focus,
+.openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):focus {
+  outline: none !important;
+  border-color: #111827 !important;
+  box-shadow:
+    0 0 0 1px #111827,
+    0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .openui-container .openui-input,
+.dark .openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
+  background-color: #262626 !important;
+  border-color: #404040 !important;
+  color: #f5f5f5 !important;
+  box-shadow: none !important;
+}
+
+.dark .openui-container .openui-input:hover,
+.dark .openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):hover {
+  border-color: #525252 !important;
+}
+
+.dark .openui-container .openui-input:focus,
+.dark .openui-container input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):focus {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+/* Select Dropdown Trigger */
+.openui-container .openui-select-trigger {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: 2.625rem !important;
+  padding: 0.5rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  cursor: pointer !important;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease !important;
+}
+
+.openui-container .openui-select-trigger:hover {
+  border-color: #9ca3af !important;
+}
+
+.openui-container .openui-select-trigger:focus,
+.openui-container .openui-select-trigger[data-state="open"] {
+  outline: none !important;
+  border-color: #111827 !important;
+  box-shadow:
+    0 0 0 1px #111827,
+    0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.openui-container .openui-select-trigger svg {
+  color: #6b7280 !important;
+  opacity: 0.85;
+}
+
+.dark .openui-container .openui-select-trigger {
+  background-color: #262626 !important;
+  border-color: #404040 !important;
+  color: #f5f5f5 !important;
+  box-shadow: none !important;
+}
+
+.dark .openui-container .openui-select-trigger:hover {
+  border-color: #525252 !important;
+}
+
+.dark .openui-container .openui-select-trigger:focus,
+.dark .openui-container .openui-select-trigger[data-state="open"] {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+.dark .openui-container .openui-select-trigger svg {
+  color: #9ca3af !important;
+}
+
+/* Select Popover Content */
+.openui-select-content {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 0.625rem !important;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.375rem !important;
+  z-index: 99999 !important;
+}
+
+.dark .openui-select-content {
+  background-color: #262626 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.openui-select-item {
+  border-radius: 0.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  color: #1f2937 !important;
+  cursor: pointer !important;
+}
+
+.openui-select-item:hover,
+.openui-select-item[data-highlighted],
+.openui-select-item[data-state="checked"] {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.dark .openui-select-item {
+  color: #e5e7eb !important;
+}
+
+.dark .openui-select-item:hover,
+.dark .openui-select-item[data-highlighted],
+.dark .openui-select-item[data-state="checked"] {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+/* Chips & Tags */
+.openui-container .openui-chip-item {
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+}
+
+.openui-container .openui-chip-item:hover {
+  background-color: #f3f4f6 !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .openui-container .openui-chip-item {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: #262626 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Textarea */
+.openui-container .openui-textarea,
+.openui-container textarea {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0.625rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.375rem !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  min-height: 5rem !important;
+}
+
+.openui-container .openui-textarea:focus,
+.openui-container textarea:focus {
+  outline: none !important;
+  border-color: #111827 !important;
+  box-shadow: 0 0 0 1px #111827 !important;
+}
+
+.dark .openui-container .openui-textarea,
+.dark .openui-container textarea {
+  background-color: #262626 !important;
+  border-color: #404040 !important;
+  color: #f5f5f5 !important;
+}
+
+.dark .openui-container .openui-textarea:focus,
+.dark .openui-container textarea:focus {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+/* Placeholders */
+.openui-container .openui-input::placeholder,
+.openui-container input::placeholder,
+.openui-container .openui-textarea::placeholder,
+.openui-container textarea::placeholder,
+.openui-container .openui-select-trigger[data-placeholder] {
+  color: #9ca3af !important;
+}
+
+.dark .openui-container .openui-input::placeholder,
+.dark .openui-container input::placeholder,
+.dark .openui-container .openui-textarea::placeholder,
+.dark .openui-container textarea::placeholder,
+.dark .openui-container .openui-select-trigger[data-placeholder] {
+  color: #6b7280 !important;
+}
+
+/* Buttons */
+.openui-container .openui-button-base-primary {
+  background-color: #18181b !important;
+  color: #ffffff !important;
+  border: 1px solid #18181b !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.openui-container .openui-button-base-primary:hover {
+  background-color: #27272a !important;
+}
+
+.openui-container .openui-button-base-secondary {
+  background-color: #ffffff !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer !important;
+}
+
+.openui-container .openui-button-base-secondary:hover {
+  background-color: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+.dark .openui-container .openui-button-base-primary {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+  border-color: #f4f4f5 !important;
+}
+
+.dark .openui-container .openui-button-base-primary:hover {
+  background-color: #e4e4e7 !important;
+}
+
+.dark .openui-container .openui-button-base-secondary {
+  background-color: #262626 !important;
+  color: #e5e7eb !important;
+  border-color: #404040 !important;
+}
+
+.dark .openui-container .openui-button-base-secondary:hover {
+  background-color: #333333 !important;
+}
+
+/* Tables */
+.openui-container .openui-table-container {
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 0.75rem !important;
+  background-color: #ffffff !important;
+  overflow: hidden !important;
+}
+
+.openui-container .openui-table-head {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background-color: #f9fafb !important;
+  font-weight: 600 !important;
+}
+
+.openui-container .openui-table-row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.openui-container .openui-table-row:nth-child(even) {
+  background-color: #fafafa !important;
+}
+
+.dark .openui-container .openui-table-container {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #1e1e1e !important;
+}
+
+.dark .openui-container .openui-table-head {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #262626 !important;
+}
+
+.dark .openui-container .openui-table-row {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .openui-container .openui-table-row:nth-child(even) {
+  background-color: #242424 !important;
+}
+
+/* Follow-up / Related Queries Styling */
+.openui-container .openui-follow-up-block {
+  margin-top: 1rem !important;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+}
+
+.openui-container .openui-follow-up-block__header {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.openui-container .openui-follow-up-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 0.625rem 0.875rem !important;
+  background-color: #f9fafb !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 0.625rem !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  transition: all 0.15s ease !important;
+  color: #1f2937 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.openui-container .openui-follow-up-item:hover {
+  background-color: #f3f4f6 !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+.openui-container .openui-follow-up-item:active {
+  transform: translateY(0);
+}
+
+.openui-container .openui-follow-up-item-text {
+  font-weight: 450 !important;
+}
+
+.dark .openui-container .openui-follow-up-block {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .openui-container .openui-follow-up-item {
+  background-color: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .openui-container .openui-follow-up-item:hover {
+  background-color: #2e2e2e !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
 @layer base {
