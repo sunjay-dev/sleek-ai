@@ -15,8 +15,8 @@ const backendEnvSchema = z.object({
   TITLE_MODEL: z.string().default("auto"),
   SUMMARIZER_MODEL: z.string().default("auto"),
 
-  SUMMARIZER_TRIGGER_TOKENS: z.coerce.number().default(3000),
-  SUMMARIZER_KEEP_TOKENS: z.coerce.number().default(1000),
+  SUMMARIZER_TRIGGER_TOKENS: z.coerce.number().default(100000),
+  SUMMARIZER_KEEP_TOKENS: z.coerce.number().default(50000),
 
   DEFAULT_TEMPERATURE: z.coerce.number().default(0),
   TITLE_TEMPERATURE: z.coerce.number().default(0.6),

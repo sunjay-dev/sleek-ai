@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy, useState, useCallback } from "react";
 import { Sidebar, LazyLoader } from "@/components";
 import { useChat, useChatDeletion, useMessages, useIsMobile } from "@/hooks";
 import type { Chat, Tab } from "@app/shared/types";
@@ -56,6 +56,45 @@ export default function ChatPage() {
     });
   };
 
+  const handleOpenUIAction = useCallback(
+    (event: unknown) => {
+      if (!event || typeof event !== "object") return;
+      const ev = event as {
+        type?: string;
+        params?: Record<string, unknown>;
+        humanFriendlyMessage?: string;
+        formState?: Record<string, unknown>;
+      };
+
+      if (ev.type === "open_url") {
+        const url = (ev.params?.url as string) || (ev.params?.href as string);
+        if (url && typeof window !== "undefined") {
+          window.open(url, "_blank");
+        }
+        return;
+      }
+
+      let textToSend = ev.humanFriendlyMessage?.trim() || "";
+      if (!textToSend && ev.params?.message) {
+        textToSend = String(ev.params.message).trim();
+      }
+      if (!textToSend && ev.params?.text) {
+        textToSend = String(ev.params.text).trim();
+      }
+
+      if (!textToSend && ev.formState && Object.keys(ev.formState).length > 0) {
+        textToSend = Object.entries(ev.formState)
+          .map(([key, val]) => `${key}: ${typeof val === "object" ? JSON.stringify(val) : val}`)
+          .join(", ");
+      }
+
+      if (textToSend) {
+        sendMessage(textToSend);
+      }
+    },
+    [sendMessage],
+  );
+
   return (
     <div className="flex h-dvh overflow-hidden text-primary">
       <Sidebar
@@ -83,6 +122,7 @@ export default function ChatPage() {
                 onResend={() => resendLastUser()}
                 isFetchingMessages={isFetchingMessages}
                 isGenerating={isGenerating}
+                onAction={handleOpenUIAction}
               />
             </div>
 

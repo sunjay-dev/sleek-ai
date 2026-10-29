@@ -9,6 +9,7 @@ import ErrorPage from "./common/ErrorPage.js";
 import LazyLoader from "./LazyLoader.js";
 import GlobalErrorObserver from "./GlobalErrorObserver.js";
 import RootLayout from "./RootLayout.js";
+import OpenUIBlock from "./openui/OpenUIBlock.js";
 
 export {
   ModelMessage,
@@ -22,4 +23,5 @@ export {
   LazyLoader,
   GlobalErrorObserver,
   RootLayout,
+  OpenUIBlock,
 };

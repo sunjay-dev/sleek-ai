@@ -1,5 +1,6 @@
 import type { UserPreference } from "@app/db";
 import type { Memories } from "../utils/model.utils.js";
+import { openuiSystemPrompt } from "./openui.prompt.js";
 
 export const systemPrompt = (preferences: UserPreference, memories: Memories[], timezone: string) => {
   const { nickname, occupation, about, customInstructions } = preferences;
@@ -57,13 +58,5 @@ ${memoryContext.length ? `### KNOWN FACTS ABOUT THE USER\n${memoryContext.join("
 - Generate ONE comprehensive search query targeting specific details (dates, versions, official sources).
 - Get the answer in the first attempt — avoid iterative searching.
 
-### FORMATTING STANDARDS
-**Math & Currency**
-- Inline math: \`$$...$$\` (double dollar signs for KaTeX). Never \`$...\`.
-- Block math: \`$$...$$\` on separate lines.
-- Currency: Write normally like \`$37,000\` — renders as text.
-
-**Markdown Tables**
-- No multi-line code blocks inside tables — place them outside.
-- Use single backticks for inline code.`;
+${openuiSystemPrompt}`;
 };

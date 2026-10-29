@@ -9,12 +9,13 @@ type Props = {
   onResend?: () => void;
   isGenerating: boolean;
   isFetchingMessages: boolean;
+  onAction?: (action: unknown) => void;
 };
 
 const Header = () => <div className="h-16 sm:h-6" />;
 const Footer = () => <div className="h-6" />;
 
-export default function MessagesContainer({ messages, onResend, isGenerating, isFetchingMessages }: Props) {
+export default function MessagesContainer({ messages, onResend, isGenerating, isFetchingMessages, onAction }: Props) {
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export default function MessagesContainer({ messages, onResend, isGenerating, is
                 onResend={isLastAI ? onResend : undefined}
                 hideToolTip={isLastAI && isGenerating}
                 isGenerating={isLastAI && isGenerating}
+                onAction={onAction}
               />
             ) : (
               <UserMessage key={message.id} message={message} isCopied={isCopied} onCopy={() => handleCopy(message.text, message.id)} />

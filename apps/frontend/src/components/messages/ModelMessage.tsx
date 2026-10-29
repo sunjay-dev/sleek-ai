@@ -7,20 +7,22 @@ import rehypeKatex from "rehype-katex";
 import rehypeExternalLinks from "rehype-external-links";
 import { Copy, Check } from "lucide-react";
 import ModelMessageToolTip from "../tooltips/ModelMessageToolTip";
+import OpenUIBlock from "../openui/OpenUIBlock";
 
-const CodeBlock: Components["pre"] = ({ children, ...props }) => {
+const extractCodeText = (element: unknown): string => {
+  if (typeof element === "string") return element;
+  if (typeof element === "number") return String(element);
+  if (Array.isArray(element)) return element.map(extractCodeText).join("");
+  if (isValidElement(element)) {
+    const p = element.props as { children?: unknown };
+    return extractCodeText(p?.children);
+  }
+  return "";
+};
+
+const DefaultCodeBlock = ({ children, language, ...props }: { children: React.ReactNode; language: string; [key: string]: unknown }) => {
   const [isCopied, setIsCopied] = useState(false);
   const preRef = useRef<HTMLPreElement>(null);
-
-  let language = "text";
-
-  if (isValidElement(children)) {
-    const childProps = children.props as { className?: string };
-    if (childProps.className) {
-      const match = /language-(\w+)/.exec(childProps.className);
-      if (match) language = match[1];
-    }
-  }
 
   const handleCopy = useCallback(() => {
     const text = preRef.current?.textContent || "";
@@ -54,10 +56,37 @@ type Props = {
   hideToolTip?: boolean;
   isGenerating?: boolean;
   status?: string | null;
+  onAction?: (action: unknown) => void;
 };
 
-export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating }: Props) {
+export default memo(function ModelMessage({ text, status, isCopied, onCopy, onResend, hideToolTip, isGenerating, onAction }: Props) {
   const isError = text && (text.includes("interrupted") || text.includes("went wrong") || text.includes("stopped"));
+  const trimmed = text ? text.trim() : "";
+  const isPureOpenUI = trimmed.startsWith("root =") || trimmed.startsWith("]]>openui:");
+
+  const renderPre: Components["pre"] = ({ children, ...props }) => {
+    let language = "text";
+    let childProps: { className?: string; children?: unknown } | undefined;
+
+    if (isValidElement(children)) {
+      childProps = children.props as { className?: string; children?: unknown };
+      if (childProps?.className) {
+        const match = /language-(\w+)/.exec(childProps.className);
+        if (match) language = match[1].toLowerCase();
+      }
+    }
+
+    if (language === "openui" || language === "openui-lang") {
+      const code = extractCodeText(childProps?.children);
+      return <OpenUIBlock code={code} isStreaming={isGenerating} onAction={onAction} />;
+    }
+
+    return (
+      <DefaultCodeBlock language={language} {...props}>
+        {children}
+      </DefaultCodeBlock>
+    );
+  };
 
   return (
     <div className="max-w-full text-[15px] sm:text-sm py-3 rounded-xl">
@@ -70,19 +99,22 @@ export default memo(function ModelMessage({ text, status, isCopied, onCopy, onRe
               <span>{status}</span>
             </div>
           )}
-          {text && (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
-              rehypePlugins={[
-                rehypeHighlight,
-                [rehypeKatex, { strict: false }],
-                [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
-              ]}
-              components={{ pre: CodeBlock }}
-            >
-              {text}
-            </ReactMarkdown>
-          )}
+          {text &&
+            (isPureOpenUI ? (
+              <OpenUIBlock code={trimmed} isStreaming={isGenerating} onAction={onAction} />
+            ) : (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
+                rehypePlugins={[
+                  rehypeHighlight,
+                  [rehypeKatex, { strict: false }],
+                  [rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }],
+                ]}
+                components={{ pre: renderPre }}
+              >
+                {text}
+              </ReactMarkdown>
+            ))}
         </div>
       )}
 
