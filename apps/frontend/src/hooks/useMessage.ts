@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, type Dispatch, type SetStateAction } from "react";
 import { useAuth } from "@clerk/react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Chat, Message, UploadedFile } from "@app/shared/types";
@@ -27,7 +27,9 @@ export default function useMessages({ moveChatToTop, setChats }: Props) {
   const rafPendingRef = useRef(false);
   const justCreatedChatRef = useRef<string | null>(null);
   const messagesRef = useRef(messages);
-  messagesRef.current = messages;
+  useLayoutEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const sendMessage = useCallback(
     async (text: string, messageFiles?: UploadedFile[] | null, optimisticFiles?: UploadedFile[]) => {

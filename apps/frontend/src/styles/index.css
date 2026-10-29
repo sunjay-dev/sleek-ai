@@ -447,19 +447,24 @@ img {
 .dark .openui-container .openui-follow-up-item-text,
 .dark .openui-container .openui-label,
 .dark .openui-container .openui-table-cell,
+.dark .openui-container .openui-table-head,
 .dark .openui-container p,
 .dark .openui-container span:not([class*="bg-"]):not([class*="text-"]):not([class*="badge"]),
 .dark .openui-container li,
 .dark .openui-container h1,
 .dark .openui-container h2,
-.dark .openui-container h3 {
+.dark .openui-container h3,
+.dark .openui-container h4,
+.dark .openui-container h5,
+.dark .openui-container h6 {
   color: #f3f4f6 !important;
 }
 
 .dark .openui-container .openui-header-bottom,
 .dark .openui-container .openui-hint,
 .dark .openui-container .openui-chart-legend-axis-label,
-.dark .openui-container .openui-follow-up-block__header {
+.dark .openui-container .openui-follow-up-block__header,
+.dark .openui-container .openui-text-neutral-secondary {
   color: #9ca3af !important;
 }
 
